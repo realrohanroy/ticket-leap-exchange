@@ -19,6 +19,7 @@ export type Ticket = {
   contactInfo: string;
   viewCount: number;
   createdAt: string;
+  additionalInfo?: string;
 };
 
 export type TicketFormData = Omit<Ticket, 'id' | 'userId' | 'viewCount' | 'createdAt'>;

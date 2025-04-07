@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Bus, RailSymbol } from 'lucide-react';
 
 const TicketForm: React.FC = () => {
   const { user } = useAuth();
@@ -60,7 +59,6 @@ const TicketForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // In a real app, this would call an API to save the ticket
       const ticketWithDefaults: TicketFormData = {
         mode: formData.mode || 'rail',
         fromCity: formData.fromCity || '',
@@ -73,7 +71,6 @@ const TicketForm: React.FC = () => {
         contactInfo: formData.contactInfo || '',
       };
       
-      // Store in localStorage for demo purposes
       const storedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
       const newTicket = {
         ...ticketWithDefaults,
