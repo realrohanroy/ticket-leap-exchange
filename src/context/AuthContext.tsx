@@ -65,6 +65,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: email.split('@')[0]
       };
       
+      // Also sign in to Supabase (for demo/development purposes)
+      // Using a demo account for Supabase auth
+      const { error } = await supabase.auth.signInWithPassword({
+        email: 'demo@example.com',
+        password: 'password123'
+      });
+      
+      if (error) {
+        console.error('Supabase auth error:', error);
+        // Fallback to mock user even if Supabase auth fails
+      }
+      
       setUser(mockUser);
       localStorage.setItem('ticketUser', JSON.stringify(mockUser));
       toast.success("Logged in successfully!");
@@ -92,6 +104,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: name || email.split('@')[0]
       };
       
+      // Also sign in to Supabase (for demo/development purposes)
+      // Using a demo account for Supabase auth
+      const { error } = await supabase.auth.signInWithPassword({
+        email: 'demo@example.com',
+        password: 'password123'
+      });
+      
+      if (error) {
+        console.error('Supabase auth error:', error);
+        // Fallback to mock user even if Supabase auth fails
+      }
+      
       setUser(mockUser);
       localStorage.setItem('ticketUser', JSON.stringify(mockUser));
       toast.success("Account created successfully!");
@@ -105,6 +129,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    // Also sign out from Supabase
+    supabase.auth.signOut().catch(error => {
+      console.error('Supabase signout error:', error);
+    });
+    
     setUser(null);
     localStorage.removeItem('ticketUser');
     toast.success("Logged out successfully!");

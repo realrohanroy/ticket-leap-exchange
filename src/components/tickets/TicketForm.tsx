@@ -61,6 +61,32 @@ const TicketForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // First check if authenticated with Supabase
+      const { data: sessionData } = await supabase.auth.getSession();
+      console.log('Current Supabase session:', sessionData);
+      
+      if (!sessionData.session) {
+        console.log('No Supabase session found, attempting to sign in with demo account');
+        // Sign in with demo account for development purposes
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: 'demo@example.com',
+          password: 'password123'
+        });
+        
+        if (signInError) {
+          console.error('Failed to sign in with demo account:', signInError);
+          throw new Error('Authentication failed. Please try again.');
+        }
+        
+        // Verify we got a session
+        const { data: verifySession } = await supabase.auth.getSession();
+        console.log('Verified Supabase session after sign-in:', verifySession);
+        
+        if (!verifySession.session) {
+          throw new Error('Failed to establish a Supabase session');
+        }
+      }
+      
       const ticketWithDefaults: TicketFormData = {
         mode: formData.mode || 'rail',
         fromCity: formData.fromCity || '',
@@ -75,8 +101,11 @@ const TicketForm: React.FC = () => {
       };
       
       // Convert the form data to match the Supabase schema
+      // Use the Supabase session user ID instead of the mock user ID
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
       const ticketData = {
-        user_id: user.id,
+        user_id: authUser?.id || user.id, // Use auth user ID if available
         mode: ticketWithDefaults.mode,
         from_city: ticketWithDefaults.fromCity,
         to_city: ticketWithDefaults.toCity,
@@ -89,7 +118,7 @@ const TicketForm: React.FC = () => {
         view_count: 0
       };
 
-      console.log('User ID:', user.id);
+      console.log('User ID:', authUser?.id || user.id);
       console.log('Submitting ticket data:', ticketData);
       
       // Insert ticket into Supabase

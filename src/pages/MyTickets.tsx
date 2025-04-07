@@ -49,10 +49,31 @@ const MyTickets = () => {
     console.log('Fetching tickets for user:', user.id);
     
     try {
+      // First check if authenticated with Supabase
+      const { data: sessionData } = await supabase.auth.getSession();
+      console.log('Current Supabase session for fetch:', sessionData);
+      
+      if (!sessionData.session) {
+        console.log('No Supabase session found for fetch, attempting to sign in with demo account');
+        // Sign in with demo account for development purposes
+        await supabase.auth.signInWithPassword({
+          email: 'demo@example.com',
+          password: 'password123'
+        });
+      }
+      
+      // Get the authenticated user ID
+      const { data: userData } = await supabase.auth.getUser();
+      const authUserId = userData?.user?.id;
+      console.log('Auth user ID for fetching tickets:', authUserId);
+      
+      // If we have an auth user ID, use that, otherwise fall back to the local user ID
+      const userId = authUserId || user.id;
+      
       const { data, error } = await supabase
         .from('tickets')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -74,6 +95,16 @@ const MyTickets = () => {
   const handleDeleteTicket = async (ticketId: string) => {
     try {
       console.log('Deleting ticket:', ticketId);
+      
+      // Ensure we have a Supabase session
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        await supabase.auth.signInWithPassword({
+          email: 'demo@example.com',
+          password: 'password123'
+        });
+      }
+      
       const { error } = await supabase
         .from('tickets')
         .delete()
