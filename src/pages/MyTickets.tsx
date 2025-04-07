@@ -39,13 +39,14 @@ const MyTickets = () => {
     contactInfo: dbTicket.contact_info,
     viewCount: dbTicket.view_count,
     createdAt: dbTicket.created_at,
-    additionalInfo: ""
+    additionalInfo: dbTicket.additional_info || ""
   });
 
   const fetchUserTickets = async () => {
     if (!user) return;
     
     setLoading(true);
+    console.log('Fetching tickets for user:', user.id);
     
     try {
       const { data, error } = await supabase
@@ -58,6 +59,7 @@ const MyTickets = () => {
         throw error;
       }
       
+      console.log('Fetched tickets:', data);
       const mappedTickets = data.map(mapTicket);
       setTickets(mappedTickets);
     } catch (error) {
@@ -71,6 +73,7 @@ const MyTickets = () => {
 
   const handleDeleteTicket = async (ticketId: string) => {
     try {
+      console.log('Deleting ticket:', ticketId);
       const { error } = await supabase
         .from('tickets')
         .delete()

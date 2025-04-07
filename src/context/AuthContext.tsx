@@ -33,7 +33,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = localStorage.getItem('ticketUser');
     if (storedUser) {
       try {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        // Ensure user has a valid UUID
+        if (!parsedUser.id || parsedUser.id.startsWith('user-')) {
+          parsedUser.id = uuidv4();
+          localStorage.setItem('ticketUser', JSON.stringify(parsedUser));
+        }
+        setUser(parsedUser);
       } catch (e) {
         console.error('Failed to parse stored user data');
         localStorage.removeItem('ticketUser');
@@ -51,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const userId = uuidv4();
+      console.log(`Generated login user ID: ${userId}`);
       
       const mockUser: User = {
         id: userId,
@@ -77,6 +84,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const userId = uuidv4();
+      console.log(`Generated register user ID: ${userId}`);
       
       const mockUser: User = {
         id: userId,

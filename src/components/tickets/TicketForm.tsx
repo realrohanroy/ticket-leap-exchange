@@ -65,11 +65,11 @@ const TicketForm: React.FC = () => {
         mode: formData.mode || 'rail',
         fromCity: formData.fromCity || '',
         toCity: formData.toCity || '',
-        travelDate: formData.travelDate || '',
+        travelDate: formData.travelDate || format(new Date(), 'yyyy-MM-dd'),
         departureTime: formData.departureTime || '',
         ticketType: formData.ticketType || '',
         trainOrBusName: formData.trainOrBusName || '',
-        price: formData.price !== undefined ? Number(formData.price) : 0, // Ensure price is a number
+        price: formData.price !== undefined ? Number(formData.price) : 0,
         contactInfo: formData.contactInfo || '',
         additionalInfo: formData.additionalInfo || '',
       };
@@ -84,23 +84,26 @@ const TicketForm: React.FC = () => {
         departure_time: ticketWithDefaults.departureTime || null,
         ticket_type: ticketWithDefaults.ticketType,
         train_or_bus_name: ticketWithDefaults.trainOrBusName,
-        price: Number(ticketWithDefaults.price), // Ensure price is a number
+        price: Number(ticketWithDefaults.price),
         contact_info: ticketWithDefaults.contactInfo,
         view_count: 0
       };
 
+      console.log('User ID:', user.id);
       console.log('Submitting ticket data:', ticketData);
       
       // Insert ticket into Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('tickets')
-        .insert(ticketData);
+        .insert(ticketData)
+        .select();
       
       if (error) {
         console.error('Supabase error:', error);
         throw error;
       }
       
+      console.log('Ticket posted successfully, response:', data);
       toast.success("Ticket posted successfully!");
       navigate('/my-tickets');
     } catch (error) {
