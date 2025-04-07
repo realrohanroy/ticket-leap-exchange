@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bus, RailSymbol } from 'lucide-react';
+import { Bus, RailSymbol, Calendar as CalendarIcon } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
