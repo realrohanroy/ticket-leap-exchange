@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -68,8 +69,9 @@ const TicketForm: React.FC = () => {
         departureTime: formData.departureTime || '',
         ticketType: formData.ticketType || '',
         trainOrBusName: formData.trainOrBusName || '',
-        price: formData.price !== undefined ? formData.price : 0,
+        price: formData.price !== undefined ? Number(formData.price) : 0, // Ensure price is a number
         contactInfo: formData.contactInfo || '',
+        additionalInfo: formData.additionalInfo || '',
       };
       
       // Convert the form data to match the Supabase schema
@@ -79,20 +81,23 @@ const TicketForm: React.FC = () => {
         from_city: ticketWithDefaults.fromCity,
         to_city: ticketWithDefaults.toCity,
         travel_date: ticketWithDefaults.travelDate,
-        departure_time: ticketWithDefaults.departureTime,
+        departure_time: ticketWithDefaults.departureTime || null,
         ticket_type: ticketWithDefaults.ticketType,
         train_or_bus_name: ticketWithDefaults.trainOrBusName,
-        price: ticketWithDefaults.price,
+        price: Number(ticketWithDefaults.price), // Ensure price is a number
         contact_info: ticketWithDefaults.contactInfo,
         view_count: 0
       };
 
+      console.log('Submitting ticket data:', ticketData);
+      
       // Insert ticket into Supabase
       const { error } = await supabase
         .from('tickets')
         .insert(ticketData);
       
       if (error) {
+        console.error('Supabase error:', error);
         throw error;
       }
       

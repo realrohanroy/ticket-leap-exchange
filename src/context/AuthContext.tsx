@@ -2,6 +2,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User } from '@/types';
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
 
 type AuthContextType = {
   user: User | null;
@@ -48,8 +50,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      const userId = uuidv4();
+      
       const mockUser: User = {
-        id: `user-${Date.now()}`,
+        id: userId,
         email,
         name: email.split('@')[0]
       };
@@ -72,8 +76,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      const userId = uuidv4();
+      
       const mockUser: User = {
-        id: `user-${Date.now()}`,
+        id: userId,
         email,
         name: name || email.split('@')[0]
       };
