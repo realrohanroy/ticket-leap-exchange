@@ -8,6 +8,7 @@ import { Ticket } from '@/types';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const MyTickets = () => {
   const { user, isAuthenticated } = useAuth();
@@ -24,29 +25,60 @@ const MyTickets = () => {
     fetchUserTickets();
   }, [isAuthenticated, user]);
 
-  const fetchUserTickets = () => {
+  const mapTicket = (dbTicket: any): Ticket => ({
+    id: dbTicket.id,
+    userId: dbTicket.user_id,
+    mode: dbTicket.mode,
+    fromCity: dbTicket.from_city,
+    toCity: dbTicket.to_city,
+    travelDate: dbTicket.travel_date,
+    departureTime: dbTicket.departure_time,
+    ticketType: dbTicket.ticket_type,
+    trainOrBusName: dbTicket.train_or_bus_name,
+    price: dbTicket.price,
+    contactInfo: dbTicket.contact_info,
+    viewCount: dbTicket.view_count,
+    createdAt: dbTicket.created_at,
+    additionalInfo: ""
+  });
+
+  const fetchUserTickets = async () => {
+    if (!user) return;
+    
     setLoading(true);
     
-    // In a real app, this would be an API call
-    setTimeout(() => {
-      try {
-        const allTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-        const userTickets = allTickets.filter((ticket: Ticket) => ticket.userId === user?.id);
-        setTickets(userTickets);
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-        setTickets([]);
-      } finally {
-        setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from('tickets')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw error;
       }
-    }, 500);
+      
+      const mappedTickets = data.map(mapTicket);
+      setTickets(mappedTickets);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+      toast.error("Failed to load tickets");
+      setTickets([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteTicket = (ticketId: string) => {
+  const handleDeleteTicket = async (ticketId: string) => {
     try {
-      const allTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-      const updatedTickets = allTickets.filter((ticket: Ticket) => ticket.id !== ticketId);
-      localStorage.setItem('tickets', JSON.stringify(updatedTickets));
+      const { error } = await supabase
+        .from('tickets')
+        .delete()
+        .eq('id', ticketId);
+      
+      if (error) {
+        throw error;
+      }
       
       // Update state with filtered tickets
       setTickets(tickets.filter(ticket => ticket.id !== ticketId));

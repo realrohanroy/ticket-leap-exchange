@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Bus, RailSymbol } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const TicketForm: React.FC = () => {
   const { user } = useAuth();
@@ -49,7 +51,7 @@ const TicketForm: React.FC = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       toast.error("You must be logged in to post a ticket");
@@ -71,16 +73,29 @@ const TicketForm: React.FC = () => {
         contactInfo: formData.contactInfo || '',
       };
       
-      const storedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-      const newTicket = {
-        ...ticketWithDefaults,
-        id: `ticket-${Date.now()}`,
-        userId: user.id,
-        viewCount: 0,
-        createdAt: new Date().toISOString(),
+      // Convert the form data to match the Supabase schema
+      const ticketData = {
+        user_id: user.id,
+        mode: ticketWithDefaults.mode,
+        from_city: ticketWithDefaults.fromCity,
+        to_city: ticketWithDefaults.toCity,
+        travel_date: ticketWithDefaults.travelDate,
+        departure_time: ticketWithDefaults.departureTime,
+        ticket_type: ticketWithDefaults.ticketType,
+        train_or_bus_name: ticketWithDefaults.trainOrBusName,
+        price: ticketWithDefaults.price,
+        contact_info: ticketWithDefaults.contactInfo,
+        view_count: 0
       };
+
+      // Insert ticket into Supabase
+      const { error } = await supabase
+        .from('tickets')
+        .insert(ticketData);
       
-      localStorage.setItem('tickets', JSON.stringify([...storedTickets, newTicket]));
+      if (error) {
+        throw error;
+      }
       
       toast.success("Ticket posted successfully!");
       navigate('/my-tickets');

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -8,6 +7,7 @@ import { SearchFilters, Ticket } from '@/types';
 import { format, parseISO, isAfter, startOfDay } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TriangleAlert } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Search = () => {
   const location = useLocation();
@@ -17,78 +17,79 @@ const Search = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchTickets = () => {
+  const mapTicket = (dbTicket: any): Ticket => ({
+    id: dbTicket.id,
+    userId: dbTicket.user_id,
+    mode: dbTicket.mode,
+    fromCity: dbTicket.from_city,
+    toCity: dbTicket.to_city,
+    travelDate: dbTicket.travel_date,
+    departureTime: dbTicket.departure_time,
+    ticketType: dbTicket.ticket_type,
+    trainOrBusName: dbTicket.train_or_bus_name,
+    price: dbTicket.price,
+    contactInfo: dbTicket.contact_info,
+    viewCount: dbTicket.view_count,
+    createdAt: dbTicket.created_at,
+    additionalInfo: ""
+  });
+
+  const fetchTickets = async () => {
     setLoading(true);
     
-    // In a real app, this would be an API call
-    // For demo purposes, we'll use localStorage
-    setTimeout(() => {
-      try {
-        const storedTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
-        
-        // Filter expired tickets (past travel date)
-        const today = startOfDay(new Date());
-        const validTickets = storedTickets.filter((ticket: Ticket) => {
-          const ticketDate = parseISO(ticket.travelDate);
-          return isAfter(ticketDate, today);
-        });
-        
-        // Apply search filters
-        let filteredTickets = [...validTickets];
-        
-        if (filters.fromCity) {
-          filteredTickets = filteredTickets.filter(ticket => 
-            ticket.fromCity.toLowerCase().includes(filters.fromCity!.toLowerCase())
-          );
-        }
-        
-        if (filters.toCity) {
-          filteredTickets = filteredTickets.filter(ticket => 
-            ticket.toCity.toLowerCase().includes(filters.toCity!.toLowerCase())
-          );
-        }
-        
-        if (filters.travelDate) {
-          const searchDate = filters.travelDate;
-          filteredTickets = filteredTickets.filter(ticket => 
-            ticket.travelDate === searchDate
-          );
-        }
-        
-        if (filters.mode && filters.mode !== 'all') {
-          filteredTickets = filteredTickets.filter(ticket => 
-            ticket.mode === filters.mode
-          );
-        }
-        
-        if (filters.ticketType) {
-          filteredTickets = filteredTickets.filter(ticket => 
-            ticket.ticketType === filters.ticketType
-          );
-        }
-        
-        // Update view counts (in a real app, this would be done via API)
-        const updatedTickets = filteredTickets.map((ticket: Ticket) => ({
-          ...ticket,
-          viewCount: ticket.viewCount + 1
-        }));
-        
-        // Save updated view counts
-        const allTicketsWithUpdatedViews = storedTickets.map((ticket: Ticket) => {
-          const updatedTicket = updatedTickets.find((t: Ticket) => t.id === ticket.id);
-          return updatedTicket || ticket;
-        });
-        
-        localStorage.setItem('tickets', JSON.stringify(allTicketsWithUpdatedViews));
-        
-        setTickets(updatedTickets);
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-        setTickets([]);
-      } finally {
-        setLoading(false);
+    try {
+      // Start with base query
+      let query = supabase
+        .from('tickets')
+        .select('*');
+      
+      // Apply filters
+      if (filters.fromCity) {
+        query = query.ilike('from_city', `%${filters.fromCity}%`);
       }
-    }, 1000);
+      
+      if (filters.toCity) {
+        query = query.ilike('to_city', `%${filters.toCity}%`);
+      }
+      
+      if (filters.travelDate) {
+        query = query.eq('travel_date', filters.travelDate);
+      }
+      
+      if (filters.mode && filters.mode !== 'all') {
+        query = query.eq('mode', filters.mode);
+      }
+      
+      if (filters.ticketType) {
+        query = query.eq('ticket_type', filters.ticketType);
+      }
+      
+      // Order by recently added
+      query = query.order('created_at', { ascending: false });
+      
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      const mappedTickets = data.map(mapTicket);
+      
+      // Update view counts
+      for (const ticket of data) {
+        await supabase
+          .from('tickets')
+          .update({ view_count: ticket.view_count + 1 })
+          .eq('id', ticket.id);
+      }
+      
+      setTickets(mappedTickets);
+    } catch (error) {
+      console.error('Error fetching tickets:', error);
+      setTickets([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
