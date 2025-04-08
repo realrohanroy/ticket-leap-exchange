@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Search } from 'lucide-react';
 import { SearchFilters } from '@/types';
+import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
@@ -41,19 +41,19 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
     >
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
         <div className="sm:col-span-2">
-          <Input
+          <AutocompleteInput
             placeholder="From City"
             value={fromCity}
-            onChange={(e) => setFromCity(e.target.value)}
+            onChange={setFromCity}
             className="w-full"
           />
         </div>
         
         <div className="sm:col-span-2">
-          <Input
+          <AutocompleteInput
             placeholder="To City"
             value={toCity}
-            onChange={(e) => setToCity(e.target.value)}
+            onChange={setToCity}
             className="w-full"
           />
         </div>

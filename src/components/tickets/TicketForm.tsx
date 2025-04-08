@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Bus, RailSymbol } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 
 const TicketForm: React.FC = () => {
   const { user } = useAuth();
@@ -38,6 +40,10 @@ const TicketForm: React.FC = () => {
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCityChange = (field: 'fromCity' | 'toCity', value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -158,25 +164,19 @@ const TicketForm: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fromCity">From City *</Label>
-            <Input
-              id="fromCity"
-              name="fromCity"
+            <AutocompleteInput
               placeholder="e.g. Mumbai"
-              required
               value={formData.fromCity || ''}
-              onChange={handleChange}
+              onChange={(value) => handleCityChange('fromCity', value)}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="toCity">To City *</Label>
-            <Input
-              id="toCity"
-              name="toCity"
+            <AutocompleteInput
               placeholder="e.g. Delhi"
-              required
               value={formData.toCity || ''}
-              onChange={handleChange}
+              onChange={(value) => handleCityChange('toCity', value)}
             />
           </div>
         </div>
