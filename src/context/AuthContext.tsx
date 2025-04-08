@@ -11,6 +11,7 @@ type AuthContextType = {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name?: string) => Promise<void>;
   logout: () => void;
+  signInWithGoogle: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -155,6 +156,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // The redirect will happen automatically, so we don't need to do anything else here
+    } catch (error: any) {
+      console.error('Google sign in failed:', error);
+      toast.error(error.message || "Google sign-in failed. Please try again.");
+      setIsLoading(false);
+      throw error;
+    }
+  };
+
   const logout = () => {
     supabase.auth.signOut()
       .then(() => {
@@ -175,7 +200,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoading,
         login,
         register,
-        logout
+        logout,
+        signInWithGoogle
       }}
     >
       {children}

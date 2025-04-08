@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
+import { Separator } from "@/components/ui/separator";
+import { Google } from 'lucide-react';
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -26,7 +28,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login, register } = useAuth();
+  const { login, register, signInWithGoogle } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +48,17 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     } catch (error) {
       console.error('Authentication error:', error);
       // Error toast is shown in login/register functions
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      // Auth state change is handled by the listener in AuthContext
+    } catch (error) {
+      console.error('Google authentication error:', error);
       setLoading(false);
     }
   };
@@ -96,6 +109,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 {loading ? "Loading..." : "Login"}
               </Button>
               
+              <div className="flex items-center my-4">
+                <Separator className="flex-1" />
+                <span className="px-2 text-xs text-muted-foreground">OR</span>
+                <Separator className="flex-1" />
+              </div>
+              
+              <Button 
+                type="button"
+                variant="outline" 
+                className="w-full"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+              >
+                <Google className="mr-2 h-4 w-4" /> Continue with Google
+              </Button>
+              
               <p className="text-xs text-center text-muted-foreground">
                 For demo purposes: Email can be any valid format, password must be 6+ characters
               </p>
@@ -143,6 +172,22 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <Button className="w-full" type="submit" disabled={loading}>
                 {loading ? "Loading..." : "Create Account"}
+              </Button>
+              
+              <div className="flex items-center my-4">
+                <Separator className="flex-1" />
+                <span className="px-2 text-xs text-muted-foreground">OR</span>
+                <Separator className="flex-1" />
+              </div>
+              
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full"
+                onClick={handleGoogleSignIn}
+                disabled={loading}
+              >
+                <Google className="mr-2 h-4 w-4" /> Continue with Google
               </Button>
             </form>
           </TabsContent>
