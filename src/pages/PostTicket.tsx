@@ -6,41 +6,17 @@ import TicketForm from '@/components/tickets/TicketForm';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
 import { Bus, RailSymbol } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 const PostTicket = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
 
-  // Check for Supabase auth session on component mount
   useEffect(() => {
-    const checkAuthSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      console.log("Current Supabase auth session:", data.session);
-      
-      if (!data.session && isAuthenticated) {
-        console.log("Local auth exists but no Supabase session, attempting demo login");
-        try {
-          // Sign in with demo account for development purposes
-          await supabase.auth.signInWithPassword({
-            email: 'demo@example.com',
-            password: 'password123'
-          });
-        } catch (error) {
-          console.error("Failed to establish Supabase session:", error);
-        }
-      }
-    };
-    
-    checkAuthSession();
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       setAuthModalOpen(true);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isLoading]);
 
   return (
     <div className="min-h-screen flex flex-col">

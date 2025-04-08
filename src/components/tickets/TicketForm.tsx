@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -66,25 +65,8 @@ const TicketForm: React.FC = () => {
       console.log('Current Supabase session:', sessionData);
       
       if (!sessionData.session) {
-        console.log('No Supabase session found, attempting to sign in with demo account');
-        // Sign in with demo account for development purposes
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email: 'demo@example.com',
-          password: 'password123'
-        });
-        
-        if (signInError) {
-          console.error('Failed to sign in with demo account:', signInError);
-          throw new Error('Authentication failed. Please try again.');
-        }
-        
-        // Verify we got a session
-        const { data: verifySession } = await supabase.auth.getSession();
-        console.log('Verified Supabase session after sign-in:', verifySession);
-        
-        if (!verifySession.session) {
-          throw new Error('Failed to establish a Supabase session');
-        }
+        toast.error("Authentication session expired. Please log in again.");
+        throw new Error('No active session');
       }
       
       const ticketWithDefaults: TicketFormData = {
@@ -101,11 +83,8 @@ const TicketForm: React.FC = () => {
       };
       
       // Convert the form data to match the Supabase schema
-      // Use the Supabase session user ID instead of the mock user ID
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
       const ticketData = {
-        user_id: authUser?.id || user.id, // Use auth user ID if available
+        user_id: user.id, // Use auth user ID
         mode: ticketWithDefaults.mode,
         from_city: ticketWithDefaults.fromCity,
         to_city: ticketWithDefaults.toCity,
@@ -118,7 +97,7 @@ const TicketForm: React.FC = () => {
         view_count: 0
       };
 
-      console.log('User ID:', authUser?.id || user.id);
+      console.log('User ID:', user.id);
       console.log('Submitting ticket data:', ticketData);
       
       // Insert ticket into Supabase
@@ -135,14 +114,15 @@ const TicketForm: React.FC = () => {
       console.log('Ticket posted successfully, response:', data);
       toast.success("Ticket posted successfully!");
       navigate('/my-tickets');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to post ticket:', error);
-      toast.error("Failed to post ticket. Please try again.");
+      toast.error(error.message || "Failed to post ticket. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">

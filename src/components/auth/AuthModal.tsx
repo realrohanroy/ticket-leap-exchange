@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from '@/context/AuthContext';
+import { toast } from "sonner";
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -37,10 +38,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       } else {
         await register(email, password, name);
       }
-      onClose();
+      
+      // Wait a short time to ensure the auth state updates before closing
+      setTimeout(() => {
+        onClose();
+      }, 500);
     } catch (error) {
       console.error('Authentication error:', error);
-    } finally {
+      // Error toast is shown in login/register functions
       setLoading(false);
     }
   };
@@ -90,6 +95,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <Button className="w-full" type="submit" disabled={loading}>
                 {loading ? "Loading..." : "Login"}
               </Button>
+              
+              <p className="text-xs text-center text-muted-foreground">
+                For demo purposes: Email can be any valid format, password must be 6+ characters
+              </p>
             </form>
           </TabsContent>
 
@@ -127,6 +136,9 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <p className="text-xs text-muted-foreground">
+                  Password must be at least 6 characters long
+                </p>
               </div>
 
               <Button className="w-full" type="submit" disabled={loading}>

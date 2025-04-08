@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -32,7 +31,7 @@ const Search = () => {
     contactInfo: dbTicket.contact_info,
     viewCount: dbTicket.view_count,
     createdAt: dbTicket.created_at,
-    additionalInfo: ""
+    additionalInfo: dbTicket.additional_info || ""
   });
 
   const fetchTickets = async () => {
@@ -101,8 +100,7 @@ const Search = () => {
     setFilters({...filters, ...newFilters});
   };
 
-  // Construct search summary text
-  const getSearchSummary = () => {
+  function getSearchSummary() {
     const parts = [];
     
     if (filters.fromCity && filters.toCity) {

@@ -11,19 +11,21 @@ import { AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const MyTickets = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (isLoading) return;
+    
     if (!isAuthenticated) {
       navigate('/');
       return;
     }
 
     fetchUserTickets();
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, isLoading, user]);
 
   const mapTicket = (dbTicket: any): Ticket => ({
     id: dbTicket.id,
@@ -49,31 +51,10 @@ const MyTickets = () => {
     console.log('Fetching tickets for user:', user.id);
     
     try {
-      // First check if authenticated with Supabase
-      const { data: sessionData } = await supabase.auth.getSession();
-      console.log('Current Supabase session for fetch:', sessionData);
-      
-      if (!sessionData.session) {
-        console.log('No Supabase session found for fetch, attempting to sign in with demo account');
-        // Sign in with demo account for development purposes
-        await supabase.auth.signInWithPassword({
-          email: 'demo@example.com',
-          password: 'password123'
-        });
-      }
-      
-      // Get the authenticated user ID
-      const { data: userData } = await supabase.auth.getUser();
-      const authUserId = userData?.user?.id;
-      console.log('Auth user ID for fetching tickets:', authUserId);
-      
-      // If we have an auth user ID, use that, otherwise fall back to the local user ID
-      const userId = authUserId || user.id;
-      
       const { data, error } = await supabase
         .from('tickets')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       
       if (error) {
@@ -83,9 +64,9 @@ const MyTickets = () => {
       console.log('Fetched tickets:', data);
       const mappedTickets = data.map(mapTicket);
       setTickets(mappedTickets);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching tickets:', error);
-      toast.error("Failed to load tickets");
+      toast.error(error.message || "Failed to load tickets");
       setTickets([]);
     } finally {
       setLoading(false);
@@ -95,15 +76,6 @@ const MyTickets = () => {
   const handleDeleteTicket = async (ticketId: string) => {
     try {
       console.log('Deleting ticket:', ticketId);
-      
-      // Ensure we have a Supabase session
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (!sessionData.session) {
-        await supabase.auth.signInWithPassword({
-          email: 'demo@example.com',
-          password: 'password123'
-        });
-      }
       
       const { error } = await supabase
         .from('tickets')
@@ -117,11 +89,24 @@ const MyTickets = () => {
       // Update state with filtered tickets
       setTickets(tickets.filter(ticket => ticket.id !== ticketId));
       toast.success("Ticket deleted successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting ticket:', error);
-      toast.error("Failed to delete ticket");
+      toast.error(error.message || "Failed to delete ticket");
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1 py-8">
+          <div className="container">
+            <p className="text-center py-8">Loading...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) return null;
 

@@ -3,7 +3,6 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User } from '@/types';
 import { toast } from "sonner";
 import { supabase } from '@/integrations/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
 
 type AuthContextType = {
   user: User | null;
@@ -28,61 +27,97 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for existing user session on mount
+  // Check for existing Supabase session on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('ticketUser');
-    if (storedUser) {
+    const checkAuthSession = async () => {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        // Ensure user has a valid UUID
-        if (!parsedUser.id || parsedUser.id.startsWith('user-')) {
-          parsedUser.id = uuidv4();
-          localStorage.setItem('ticketUser', JSON.stringify(parsedUser));
+        const { data: sessionData, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error checking session:', error);
+          return;
         }
-        setUser(parsedUser);
-      } catch (e) {
-        console.error('Failed to parse stored user data');
-        localStorage.removeItem('ticketUser');
+        
+        if (sessionData?.session) {
+          const { data: userData } = await supabase.auth.getUser();
+          
+          // Get profile data
+          if (userData?.user) {
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', userData.user.id)
+              .single();
+              
+            const userWithProfile: User = {
+              id: userData.user.id,
+              email: userData.user.email || '',
+              name: profileData?.name || userData.user.email?.split('@')[0] || '',
+            };
+            
+            setUser(userWithProfile);
+          }
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+    
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event);
+        if (session) {
+          try {
+            // Get profile data
+            const { data: profileData } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+              
+            const userWithProfile: User = {
+              id: session.user.id,
+              email: session.user.email || '',
+              name: profileData?.name || session.user.email?.split('@')[0] || '',
+            };
+            
+            setUser(userWithProfile);
+          } catch (error) {
+            console.error('Error fetching profile:', error);
+          }
+        } else {
+          setUser(null);
+        }
+      }
+    );
+    
+    checkAuthSession();
+    
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
-  // For demo purposes, using local storage. In a real app, use Supabase/Firebase
   const login = async (email: string, password: string) => {
-    // In a real app, validate credentials with backend
     try {
       setIsLoading(true);
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const userId = uuidv4();
-      console.log(`Generated login user ID: ${userId}`);
-      
-      const mockUser: User = {
-        id: userId,
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        name: email.split('@')[0]
-      };
-      
-      // Also sign in to Supabase (for demo/development purposes)
-      // Using a demo account for Supabase auth
-      const { error } = await supabase.auth.signInWithPassword({
-        email: 'demo@example.com',
-        password: 'password123'
+        password,
       });
       
       if (error) {
-        console.error('Supabase auth error:', error);
-        // Fallback to mock user even if Supabase auth fails
+        throw error;
       }
       
-      setUser(mockUser);
-      localStorage.setItem('ticketUser', JSON.stringify(mockUser));
       toast.success("Logged in successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login failed:', error);
-      toast.error("Login failed. Please try again.");
+      toast.error(error.message || "Login failed. Please try again.");
       throw error;
     } finally {
       setIsLoading(false);
@@ -92,36 +127,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (email: string, password: string, name?: string) => {
     try {
       setIsLoading(true);
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const userId = uuidv4();
-      console.log(`Generated register user ID: ${userId}`);
-      
-      const mockUser: User = {
-        id: userId,
+      // Add name to user metadata
+      const { data, error } = await supabase.auth.signUp({
         email,
-        name: name || email.split('@')[0]
-      };
-      
-      // Also sign in to Supabase (for demo/development purposes)
-      // Using a demo account for Supabase auth
-      const { error } = await supabase.auth.signInWithPassword({
-        email: 'demo@example.com',
-        password: 'password123'
+        password,
+        options: {
+          data: { name },
+        },
       });
       
       if (error) {
-        console.error('Supabase auth error:', error);
-        // Fallback to mock user even if Supabase auth fails
+        throw error;
       }
       
-      setUser(mockUser);
-      localStorage.setItem('ticketUser', JSON.stringify(mockUser));
       toast.success("Account created successfully!");
-    } catch (error) {
+      
+      if (data?.user && !data?.session) {
+        toast.info("Please check your email to confirm your account.");
+      }
+    } catch (error: any) {
       console.error('Registration failed:', error);
-      toast.error("Registration failed. Please try again.");
+      toast.error(error.message || "Registration failed. Please try again.");
       throw error;
     } finally {
       setIsLoading(false);
@@ -129,14 +156,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
-    // Also sign out from Supabase
-    supabase.auth.signOut().catch(error => {
-      console.error('Supabase signout error:', error);
-    });
-    
-    setUser(null);
-    localStorage.removeItem('ticketUser');
-    toast.success("Logged out successfully!");
+    supabase.auth.signOut()
+      .then(() => {
+        setUser(null);
+        toast.success("Logged out successfully!");
+      })
+      .catch(error => {
+        console.error('Logout failed:', error);
+        toast.error("Logout failed. Please try again.");
+      });
   };
 
   return (
