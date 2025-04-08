@@ -1,1 +1,7 @@
+
 project_id = "bleshhobnminvsghtqzn"
+
+[auth.email]
+enable_confirmations = true
+# Set OTP expiry to 30 minutes (1800 seconds) instead of the default longer duration
+otp_exp_time = 1800
