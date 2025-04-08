@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Google } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -122,7 +122,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 onClick={handleGoogleSignIn}
                 disabled={loading}
               >
-                <Google className="mr-2 h-4 w-4" /> Continue with Google
+                <Mail className="mr-2 h-4 w-4" /> Continue with Google
               </Button>
               
               <p className="text-xs text-center text-muted-foreground">
@@ -187,7 +187,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 onClick={handleGoogleSignIn}
                 disabled={loading}
               >
-                <Google className="mr-2 h-4 w-4" /> Continue with Google
+                <Mail className="mr-2 h-4 w-4" /> Continue with Google
               </Button>
             </form>
           </TabsContent>
