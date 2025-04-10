@@ -36,7 +36,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     onChange(selectedOption ? selectedOption.value : '');
   };
 
-  // Custom styles to match our design
+  // Custom styles to match our design and ensure text visibility
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
@@ -50,7 +50,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }),
     menu: (provided: any) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--background))',
+      backgroundColor: 'white',  // Explicit white background for the dropdown
       zIndex: 50,
       border: '1px solid hsl(var(--border))',
       boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
@@ -61,8 +61,10 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         ? 'hsl(var(--primary))' 
         : state.isFocused 
           ? 'hsl(var(--accent))' 
-          : 'transparent',
-      color: state.isSelected ? 'hsl(var(--primary-foreground))' : 'inherit',
+          : 'white',   // White background for non-selected/non-focused options
+      color: state.isSelected 
+        ? 'hsl(var(--primary-foreground))' 
+        : 'black',   // Black text for options
       cursor: 'pointer',
       '&:active': {
         backgroundColor: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--accent))'
@@ -70,7 +72,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }),
     input: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--foreground))'
+      color: 'black'  // Black text for input
     }),
     singleValue: (provided: any) => ({
       ...provided,
@@ -79,6 +81,23 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     placeholder: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--muted-foreground))'
+    }),
+    dropdownIndicator: (provided: any) => ({
+      ...provided,
+      color: 'hsl(var(--muted-foreground))'
+    }),
+    clearIndicator: (provided: any) => ({
+      ...provided,
+      color: 'hsl(var(--muted-foreground))'
+    }),
+    // Ensure the multi-value display has proper contrast
+    multiValue: (provided: any) => ({
+      ...provided,
+      backgroundColor: 'hsl(var(--secondary))'
+    }),
+    multiValueLabel: (provided: any) => ({
+      ...provided,
+      color: 'black'
     })
   };
 
@@ -94,6 +113,27 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       isSearchable
       styles={customStyles}
       menuPlacement="auto"
+      theme={(theme) => ({
+        ...theme,
+        colors: {
+          ...theme.colors,
+          primary: 'hsl(var(--primary))',
+          primary75: 'hsl(var(--primary) / 0.75)',
+          primary50: 'hsl(var(--primary) / 0.5)',
+          primary25: 'hsl(var(--primary) / 0.25)',
+          neutral0: 'white',       // Background color
+          neutral5: '#f9f9f9',
+          neutral10: '#f3f3f3',
+          neutral20: '#e0e0e0',    // Border
+          neutral30: '#cccccc',
+          neutral40: '#999999',    // Placeholder text
+          neutral50: '#808080',
+          neutral60: '#666666',
+          neutral70: '#4d4d4d',
+          neutral80: '#333333',    // Text
+          neutral90: '#1a1a1a',
+        },
+      })}
     />
   );
 };
