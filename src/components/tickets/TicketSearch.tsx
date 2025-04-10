@@ -72,7 +72,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
                 {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-white" align="start">
               <Calendar
                 mode="single"
                 selected={date}
