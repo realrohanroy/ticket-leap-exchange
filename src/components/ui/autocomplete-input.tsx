@@ -30,6 +30,9 @@ const popularCities: Location[] = [
   { name: 'Bhopal', displayName: 'Bhopal, Madhya Pradesh, India' },
 ];
 
+// Mapbox access token - this is a frontend public token, so it's safe to include in the code
+const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibG92YWJsZS1haSIsImEiOiJjbGYzcWt4c2QwYzZtM3FxdXBpNjZwZmR6In0.DXpq_TN0zZPz_lJQftr0Xg';
+
 interface AutocompleteInputProps {
   placeholder?: string;
   value: string;
@@ -56,7 +59,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   
   // Show popular cities when input is focused but empty
   useEffect(() => {
-    if (open && inputValue.length === 0) {
+    if (open && inputValue.trim().length === 0) {
       setSuggestions(popularCities);
       setLoading(false);
       setError(null);
@@ -73,7 +76,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       clearTimeout(searchTimeout.current);
     }
     
-    if (newValue.length === 0) {
+    if (newValue.trim().length === 0) {
       setSuggestions(popularCities);
       setLoading(false);
       return;
@@ -88,20 +91,20 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     setSuggestions(filteredPopular);
     
     // Only trigger API search if we have at least 2 characters
-    if (newValue.length >= 2) {
+    if (newValue.trim().length >= 2) {
       setLoading(true);
       searchTimeout.current = setTimeout(() => {
         fetchSuggestions(newValue);
-      }, 300); // Reduced delay for better responsiveness
+      }, 200); // Reduced delay for better responsiveness
     }
   };
 
   const fetchSuggestions = async (query: string) => {
     try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&city=${encodeURIComponent(query)}&limit=5`,
-        { headers: { 'Accept-Language': 'en' } }
-      );
+      // Use Mapbox Places API
+      const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&types=place&limit=5&language=en`;
+      
+      const response = await fetch(endpoint);
       
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -109,55 +112,36 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       
       const data = await response.json();
       
-      // Process and extract city/state information
-      const processedData = data.map((item: any) => {
-        // Try to extract meaningful location data
-        const address = item.address || {};
-        let name = address.city || address.town || address.village || address.state || item.name || '';
+      // Process and extract city information from Mapbox response
+      if (data.features && Array.isArray(data.features)) {
+        const locations: Location[] = data.features.map((feature: any) => {
+          // Extract the city name (usually the first part of the place_name)
+          const name = feature.text;
+          // Use the full place name as display name for context
+          const displayName = feature.place_name;
+          
+          return { name, displayName };
+        });
         
-        // For the display name, include the state/country for better context
-        let displayName = name;
-        if (address.state && address.state !== name) {
-          displayName += `, ${address.state}`;
-        }
-        if (address.country) {
-          displayName += `, ${address.country}`;
-        }
+        // Combine with popular city matches for better results
+        const filteredPopular = popularCities.filter(city => 
+          city.name.toLowerCase().includes(query.toLowerCase()) || 
+          city.displayName.toLowerCase().includes(query.toLowerCase())
+        );
         
-        return {
-          name: name,
-          displayName: displayName
-        };
-      });
-      
-      // Filter out duplicates based on name
-      const uniqueLocations: Location[] = [];
-      const names = new Set();
-      
-      processedData.forEach((location: Location) => {
-        if (!names.has(location.name.toLowerCase())) {
-          names.add(location.name.toLowerCase());
-          uniqueLocations.push(location);
-        }
-      });
-      
-      // Combine with popular city matches for better results
-      const filteredPopular = popularCities.filter(city => 
-        city.name.toLowerCase().includes(query.toLowerCase()) || 
-        city.displayName.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      // Remove duplicates when combining results
-      const combinedResults = [...uniqueLocations];
-      
-      filteredPopular.forEach(city => {
-        if (!names.has(city.name.toLowerCase())) {
-          names.add(city.name.toLowerCase());
-          combinedResults.push(city);
-        }
-      });
-      
-      setSuggestions(combinedResults);
+        // Remove duplicates when combining results
+        const names = new Set(locations.map(loc => loc.name.toLowerCase()));
+        const combinedResults = [...locations];
+        
+        filteredPopular.forEach(city => {
+          if (!names.has(city.name.toLowerCase())) {
+            names.add(city.name.toLowerCase());
+            combinedResults.push(city);
+          }
+        });
+        
+        setSuggestions(combinedResults);
+      }
     } catch (error) {
       console.error('Error fetching location suggestions:', error);
       setError('Failed to fetch suggestions. Please try again.');
@@ -207,34 +191,38 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start" side="bottom">
         <Command className="rounded-lg border shadow-md">
-          <CommandInput placeholder="Search city..." value={inputValue} onValueChange={(value) => {
-            setInputValue(value);
-            onChange(value);
-            
-            if (value.length === 0) {
-              setSuggestions(popularCities);
-              setError(null);
-              setLoading(false);
-              return;
-            }
+          <CommandInput 
+            placeholder="Search city..." 
+            value={inputValue}
+            onValueChange={(value) => {
+              setInputValue(value);
+              onChange(value);
+              
+              if (value.trim().length === 0) {
+                setSuggestions(popularCities);
+                setError(null);
+                setLoading(false);
+                return;
+              }
 
-            if (searchTimeout.current) {
-              clearTimeout(searchTimeout.current);
-            }
-            
-            // Filter from popular cities first
-            const filteredPopular = popularCities.filter(city => 
-              city.name.toLowerCase().includes(value.toLowerCase()) || 
-              city.displayName.toLowerCase().includes(value.toLowerCase())
-            );
-            
-            setSuggestions(filteredPopular);
-            
-            if (value.length >= 2) {
-              setLoading(true);
-              searchTimeout.current = setTimeout(() => fetchSuggestions(value), 300);
-            }
-          }} />
+              if (searchTimeout.current) {
+                clearTimeout(searchTimeout.current);
+              }
+              
+              // Filter from popular cities first
+              const filteredPopular = popularCities.filter(city => 
+                city.name.toLowerCase().includes(value.toLowerCase()) || 
+                city.displayName.toLowerCase().includes(value.toLowerCase())
+              );
+              
+              setSuggestions(filteredPopular);
+              
+              if (value.trim().length >= 2) {
+                setLoading(true);
+                searchTimeout.current = setTimeout(() => fetchSuggestions(value), 200);
+              }
+            }} 
+          />
           <CommandList>
             {loading && (
               <div className="flex items-center justify-center p-4 text-sm text-muted-foreground">
@@ -252,7 +240,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
             
             {!loading && !error && suggestions.length === 0 && (
               <CommandEmpty>
-                {inputValue.length < 2 
+                {inputValue.trim().length < 2 
                   ? <div className="flex items-center p-2 text-sm">
                       <Search className="mr-2 h-4 w-4 text-muted-foreground" />
                       Type at least 2 characters to search
