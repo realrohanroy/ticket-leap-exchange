@@ -44,7 +44,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
           <AutocompleteInput
             placeholder="From City"
             value={fromCity}
-            onChange={setFromCity}
+            onChange={(value) => setFromCity(value)}
             className="w-full"
           />
         </div>
@@ -53,7 +53,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
           <AutocompleteInput
             placeholder="To City"
             value={toCity}
-            onChange={setToCity}
+            onChange={(value) => setToCity(value)}
             className="w-full"
           />
         </div>

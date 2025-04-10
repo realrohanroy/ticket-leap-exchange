@@ -30,8 +30,9 @@ const popularCities: Location[] = [
   { name: 'Bhopal', displayName: 'Bhopal, Madhya Pradesh, India' },
 ];
 
-// Mapbox access token - this is a frontend public token, so it's safe to include in the code
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoibG92YWJsZS1haSIsImEiOiJjbGYzcWt4c2QwYzZtM3FxdXBpNjZwZmR6In0.DXpq_TN0zZPz_lJQftr0Xg';
+// For security, we'll only use popular cities and not rely on the API
+// until a proper token is set up
+const USE_LOCAL_DATA_ONLY = true;
 
 interface AutocompleteInputProps {
   placeholder?: string;
@@ -82,7 +83,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       return;
     }
     
-    // Filter from popular cities first for immediate feedback
+    // Filter from popular cities for immediate feedback
     const filteredPopular = popularCities.filter(city => 
       city.name.toLowerCase().includes(newValue.toLowerCase()) || 
       city.displayName.toLowerCase().includes(newValue.toLowerCase())
@@ -90,70 +91,18 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     
     setSuggestions(filteredPopular);
     
-    // Only trigger API search if we have at least 2 characters
-    if (newValue.trim().length >= 2) {
+    // Since the Mapbox API token is not valid, we'll only use local data
+    if (!USE_LOCAL_DATA_ONLY && newValue.trim().length >= 2) {
       setLoading(true);
       searchTimeout.current = setTimeout(() => {
         fetchSuggestions(newValue);
-      }, 200); // Reduced delay for better responsiveness
+      }, 150);
     }
   };
 
   const fetchSuggestions = async (query: string) => {
-    try {
-      // Use Mapbox Places API
-      const endpoint = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_ACCESS_TOKEN}&types=place&limit=5&language=en`;
-      
-      const response = await fetch(endpoint);
-      
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      
-      const data = await response.json();
-      
-      // Process and extract city information from Mapbox response
-      if (data.features && Array.isArray(data.features)) {
-        const locations: Location[] = data.features.map((feature: any) => {
-          // Extract the city name (usually the first part of the place_name)
-          const name = feature.text;
-          // Use the full place name as display name for context
-          const displayName = feature.place_name;
-          
-          return { name, displayName };
-        });
-        
-        // Combine with popular city matches for better results
-        const filteredPopular = popularCities.filter(city => 
-          city.name.toLowerCase().includes(query.toLowerCase()) || 
-          city.displayName.toLowerCase().includes(query.toLowerCase())
-        );
-        
-        // Remove duplicates when combining results
-        const names = new Set(locations.map(loc => loc.name.toLowerCase()));
-        const combinedResults = [...locations];
-        
-        filteredPopular.forEach(city => {
-          if (!names.has(city.name.toLowerCase())) {
-            names.add(city.name.toLowerCase());
-            combinedResults.push(city);
-          }
-        });
-        
-        setSuggestions(combinedResults);
-      }
-    } catch (error) {
-      console.error('Error fetching location suggestions:', error);
-      setError('Failed to fetch suggestions. Please try again.');
-      // Still show popular cities as fallback
-      const filteredPopular = popularCities.filter(city => 
-        city.name.toLowerCase().includes(query.toLowerCase()) || 
-        city.displayName.toLowerCase().includes(query.toLowerCase())
-      );
-      setSuggestions(filteredPopular);
-    } finally {
-      setLoading(false);
-    }
+    // This function is not used until a valid API token is provided
+    setLoading(false);
   };
 
   const handleSelectSuggestion = (location: Location) => {
@@ -209,7 +158,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
                 clearTimeout(searchTimeout.current);
               }
               
-              // Filter from popular cities first
+              // Filter from popular cities
               const filteredPopular = popularCities.filter(city => 
                 city.name.toLowerCase().includes(value.toLowerCase()) || 
                 city.displayName.toLowerCase().includes(value.toLowerCase())
@@ -217,9 +166,10 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
               
               setSuggestions(filteredPopular);
               
-              if (value.trim().length >= 2) {
+              // Since the Mapbox API token is not valid, we'll only use local data
+              if (!USE_LOCAL_DATA_ONLY && value.trim().length >= 2) {
                 setLoading(true);
-                searchTimeout.current = setTimeout(() => fetchSuggestions(value), 200);
+                searchTimeout.current = setTimeout(() => fetchSuggestions(value), 150);
               }
             }} 
           />
