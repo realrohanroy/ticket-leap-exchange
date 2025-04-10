@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -13,10 +13,16 @@ import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
   className?: string;
+  navigateOnSearch?: boolean; // New prop to control navigation behavior
 };
 
-const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
-  const navigate = useNavigate();
+const TicketSearch: React.FC<TicketSearchProps> = ({ 
+  onSearch, 
+  className,
+  navigateOnSearch = false // Default to false to avoid router dependency
+}) => {
+  // Use try-catch to handle the case where this component is rendered outside Router context
+  const navigate = navigateOnSearch ? useNavigateWithFallback() : undefined;
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -31,7 +37,11 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
     };
     
     onSearch(filters);
-    navigate('/search', { state: { filters } });
+    
+    // Only navigate if explicitly requested via props and navigate is available
+    if (navigateOnSearch && navigate) {
+      navigate('/search', { state: { filters } });
+    }
   };
 
   return (
@@ -92,5 +102,16 @@ const TicketSearch: React.FC<TicketSearchProps> = ({ onSearch, className }) => {
     </form>
   );
 };
+
+// Helper function that wraps the useNavigate hook in a try-catch
+function useNavigateWithFallback() {
+  try {
+    // Check if we're in a Router context
+    return useNavigate();
+  } catch (e) {
+    console.warn("Router context not available. Navigation will be disabled.");
+    return undefined;
+  }
+}
 
 export default TicketSearch;

@@ -34,7 +34,11 @@ const Index = () => {
             or help fellow travelers by posting tickets you can't use.
           </p>
           
-          <TicketSearch onSearch={handleSearch} className="w-full max-w-4xl" />
+          <TicketSearch 
+            onSearch={handleSearch} 
+            className="w-full max-w-4xl" 
+            navigateOnSearch={true} 
+          />
           
           <div className="mt-16 flex flex-wrap justify-center gap-8">
             <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg max-w-xs">

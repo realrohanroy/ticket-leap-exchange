@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -130,7 +131,10 @@ const Search = () => {
       <main className="flex-1 py-8">
         <div className="container">
           <div className="mb-8">
-            <TicketSearch onSearch={handleSearch} />
+            <TicketSearch 
+              onSearch={handleSearch} 
+              navigateOnSearch={false} 
+            />
           </div>
           
           <div className="mb-6">
