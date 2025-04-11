@@ -27,6 +27,27 @@ export type Database = {
         }
         Relationships: []
       }
+      site_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
       tickets: {
         Row: {
           contact_info: string
@@ -35,6 +56,11 @@ export type Database = {
           from_city: string
           id: string
           mode: string
+          report_date: string | null
+          report_reason: string | null
+          reported: boolean | null
+          reported_by: string | null
+          status: string | null
           ticket_type: string
           to_city: string
           train_or_bus_name: string
@@ -49,6 +75,11 @@ export type Database = {
           from_city: string
           id?: string
           mode: string
+          report_date?: string | null
+          report_reason?: string | null
+          reported?: boolean | null
+          reported_by?: string | null
+          status?: string | null
           ticket_type: string
           to_city: string
           train_or_bus_name: string
@@ -63,6 +94,11 @@ export type Database = {
           from_city?: string
           id?: string
           mode?: string
+          report_date?: string | null
+          report_reason?: string | null
+          reported?: boolean | null
+          reported_by?: string | null
+          status?: string | null
           ticket_type?: string
           to_city?: string
           train_or_bus_name?: string

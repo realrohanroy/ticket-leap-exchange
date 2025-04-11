@@ -5,6 +5,7 @@ import Navbar from '@/components/layout/Navbar';
 import TicketForm from '@/components/tickets/TicketForm';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
+import Disclaimer from '@/components/layout/Disclaimer';
 import { Bus, RailSymbol } from 'lucide-react';
 
 const PostTicket = () => {
@@ -25,7 +26,10 @@ const PostTicket = () => {
       <main className="flex-1 py-10">
         <div className="container max-w-3xl">
           {isAuthenticated ? (
-            <TicketForm />
+            <>
+              <Disclaimer className="mb-6" />
+              <TicketForm />
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full py-16 text-center">
               <div className="flex items-center mb-6">

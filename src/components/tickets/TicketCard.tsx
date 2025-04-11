@@ -4,10 +4,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { Ticket } from '@/types';
-import { RailSymbol, Bus, Calendar, Eye } from 'lucide-react';
+import { RailSymbol, Bus, Calendar, Eye, Flag } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import AuthModal from '../auth/AuthModal';
+import ReportTicketModal from './ReportTicketModal';
 
 type TicketCardProps = {
   ticket: Ticket;
@@ -17,6 +18,7 @@ type TicketCardProps = {
 const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
   const { isAuthenticated } = useAuth();
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
+  const [reportModalOpen, setReportModalOpen] = React.useState(false);
   
   const formattedDate = format(parseISO(ticket.travelDate), 'MMM dd, yyyy');
   const isOwner = onDelete !== undefined;
@@ -37,6 +39,11 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
             <Badge variant="outline" className="ml-2">
               {ticket.ticketType}
             </Badge>
+            {ticket.status && ticket.status !== 'active' && (
+              <Badge variant="destructive" className="ml-2">
+                {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
+              </Badge>
+            )}
           </div>
           <Badge variant={ticket.price === 'Free' ? 'outline' : 'secondary'}>
             {ticket.price === 'Free' ? 'Free' : `₹${ticket.price}`}
@@ -61,7 +68,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
             <div className="mt-2">
               <a 
                 href={`https://wa.me/${ticket.contactInfo}?text=${encodeURIComponent(
-                  `Hi, I'm interested in your ${ticket.mode} ticket from ${ticket.fromCity} to ${ticket.toCity} on ${formattedDate} for ${ticket.price}. Is it still available?`
+                  `Hi, I'm interested in your ${ticket.mode} ticket from ${ticket.fromCity} to ${ticket.toCity} on ${formattedDate}. Is it still available?`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -73,6 +80,17 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
                   Message on WhatsApp
                 </Button>
               </a>
+              
+              {!isOwner && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2 text-red-600 border-red-200 hover:bg-red-50"
+                  onClick={() => setReportModalOpen(true)}
+                >
+                  <Flag className="h-4 w-4 mr-1" /> Report Ticket
+                </Button>
+              )}
             </div>
           ) : (
             <div className="mt-2 p-2 bg-muted rounded-md">
@@ -109,6 +127,12 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
+      />
+
+      <ReportTicketModal 
+        isOpen={reportModalOpen} 
+        onClose={() => setReportModalOpen(false)} 
+        ticketId={ticket.id}
       />
     </Card>
   );

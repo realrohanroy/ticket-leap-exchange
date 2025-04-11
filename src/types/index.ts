@@ -20,9 +20,14 @@ export type Ticket = {
   viewCount: number;
   createdAt: string;
   additionalInfo?: string;
+  status?: 'active' | 'sold' | 'expired' | 'suspended';
+  reported?: boolean;
+  reportReason?: string;
+  reportedBy?: string;
+  reportDate?: string;
 };
 
-export type TicketFormData = Omit<Ticket, 'id' | 'userId' | 'viewCount' | 'createdAt'>;
+export type TicketFormData = Omit<Ticket, 'id' | 'userId' | 'viewCount' | 'createdAt' | 'status' | 'reported' | 'reportReason' | 'reportedBy' | 'reportDate'>;
 
 export type SearchFilters = {
   fromCity?: string;

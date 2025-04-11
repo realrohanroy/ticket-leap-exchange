@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import TicketList from '@/components/tickets/TicketList';
+import Disclaimer from '@/components/layout/Disclaimer';
 import { SearchFilters, Ticket } from '@/types';
 import { format, parseISO, isAfter, startOfDay } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,7 +33,8 @@ const Search = () => {
     contactInfo: dbTicket.contact_info,
     viewCount: dbTicket.view_count,
     createdAt: dbTicket.created_at,
-    additionalInfo: dbTicket.additional_info || ""
+    additionalInfo: dbTicket.additional_info || "",
+    status: dbTicket.status || "active"
   });
 
   const fetchTickets = async () => {
@@ -42,7 +44,8 @@ const Search = () => {
       // Start with base query
       let query = supabase
         .from('tickets')
-        .select('*');
+        .select('*')
+        .eq('status', 'active'); // Only show active tickets
       
       // Apply filters
       if (filters.fromCity) {
@@ -136,6 +139,8 @@ const Search = () => {
               navigateOnSearch={false} 
             />
           </div>
+          
+          <Disclaimer className="mb-6" />
           
           <div className="mb-6">
             <h1 className="text-2xl font-bold">Search Results</h1>

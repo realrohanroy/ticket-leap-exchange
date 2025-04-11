@@ -95,6 +95,20 @@ const TicketForm: React.FC = () => {
         throw new Error("No active session");
       }
 
+      const { data: activeTickets, error: countError } = await supabase
+        .from('tickets')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'active');
+        
+      if (countError) throw countError;
+      
+      if (activeTickets && activeTickets.length >= 2) {
+        toast.error("You can only have up to 2 active tickets at a time. Please delete an existing ticket to post a new one.");
+        setIsSubmitting(false);
+        return;
+      }
+
       const ticketWithDefaults: TicketFormData = {
         mode: formData.mode || "rail",
         fromCity: formData.fromCity || "",
@@ -118,6 +132,7 @@ const TicketForm: React.FC = () => {
         train_or_bus_name: ticketWithDefaults.trainOrBusName,
         contact_info: ticketWithDefaults.contactInfo,
         view_count: 0,
+        status: 'active'
       };
 
       const { data, error } = await supabase
