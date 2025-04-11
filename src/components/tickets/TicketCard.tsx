@@ -58,8 +58,21 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
           <p className="text-sm font-medium mt-1">{ticket.trainOrBusName}</p>
           
           {isAuthenticated ? (
-            <div className="mt-2 p-2 bg-muted rounded-md">
-              <p className="text-sm font-medium">Contact: {ticket.contactInfo}</p>
+            <div className="mt-2">
+              <a 
+                href={`https://wa.me/${ticket.contactInfo}?text=${encodeURIComponent(
+                  `Hi, I'm interested in your ${ticket.mode} ticket from ${ticket.fromCity} to ${ticket.toCity} on ${formattedDate} for ${ticket.price}. Is it still available?`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-[#25D366] hover:bg-[#128C7E] text-white">
+                  <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-6.29-3.61c.173.099.347.148.52.148.173 0 .347-.05.52-.148.297-.149.52-.446.644-.743.124-.297.124-.644-.025-.892-.149-.248-.421-.446-.717-.595-.297-.15-.644-.2-.99-.15-.347.05-.644.248-.842.446-.198.198-.347.545-.297.892.05.347.248.694.545.842h.001zM12 0a12 12 0 00-9.364 19.527L0 24l4.473-2.636A12 12 0 1012 0zm0 21.43a9.43 9.43 0 01-5.11-1.49l-.364-.216-3.75.99 1-3.645-.24-.38a9.43 9.43 0 1114.99-7.69 9.43 9.43 0 01-6.53 12.43z"/>
+                  </svg>
+                  Message on WhatsApp
+                </Button>
+              </a>
             </div>
           ) : (
             <div className="mt-2 p-2 bg-muted rounded-md">

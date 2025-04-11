@@ -32,12 +32,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkAuthSession = async () => {
       try {
-        const { data: sessionData, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Error checking session:', error);
+        // First try to restore session from localStorage
+        const storedSession = localStorage.getItem('sb-session');
+        if (storedSession) {
+          const { data: { session }, error } = await supabase.auth.setSession(
+            JSON.parse(storedSession)
+          );
+          if (error) throw error;
           return;
         }
+
+        // Fallback to regular session check
+        const { data: sessionData, error } = await supabase.auth.getSession();
+        if (error) throw error;
         
         if (sessionData?.session) {
           const { data: userData } = await supabase.auth.getUser();
@@ -111,10 +118,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         password,
       });
       
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       
+      // Store session in localStorage
+      localStorage.setItem('sb-session', JSON.stringify(data.session));
       toast.success("Logged in successfully!");
     } catch (error: any) {
       console.error('Login failed:', error);
@@ -183,6 +190,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     supabase.auth.signOut()
       .then(() => {
+        // Clear stored session
+        localStorage.removeItem('sb-session');
         setUser(null);
         toast.success("Logged out successfully!");
       })

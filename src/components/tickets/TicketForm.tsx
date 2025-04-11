@@ -1,39 +1,61 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { RadioGroup, RadioGroupItem } from "../../components/ui/radio-group";
+import { Textarea } from "../../components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import { useAuth } from "../../context/AuthContext";
+import { toast } from "sonner";
+import { cn } from "../../lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "../../components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../components/ui/popover";
+import { CalendarIcon, Bus, RailSymbol } from "lucide-react";
+import { supabase } from "../../integrations/supabase/client";
+import { AutocompleteInput } from "../../components/ui/autocomplete-input";
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
-import { TicketFormData } from '@/types';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Bus, RailSymbol } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { AutocompleteInput } from '@/components/ui/autocomplete-input';
+interface TicketFormData {
+  mode: "rail" | "bus";
+  fromCity: string;
+  toCity: string;
+  travelDate: string;
+  departureTime: string;
+  ticketType: string;
+  trainOrBusName: string;
+  contactInfo: string;
+  additionalInfo: string;
+}
 
 const TicketForm: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState<Partial<TicketFormData>>({
-    mode: 'rail',
-    ticketType: 'Sleeper',
+    mode: "rail",
+    ticketType: "Sleeper",
   });
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const ticketTypes = {
-    rail: ['Sleeper', '3AC', '2AC', '1AC', 'Chair Car', 'General'],
-    bus: ['Seater', 'Semi-Sleeper', 'Sleeper', 'AC', 'Non-AC'],
+    rail: ["Sleeper", "3AC", "2AC", "1AC", "Chair Car", "General"],
+    bus: ["Seater", "Semi-Sleeper", "Sleeper", "AC", "Non-AC"],
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -42,7 +64,7 @@ const TicketForm: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCityChange = (field: 'fromCity' | 'toCity', value: string) => {
+  const handleCityChange = (field: "fromCity" | "toCity", value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -51,7 +73,7 @@ const TicketForm: React.FC = () => {
     if (selectedDate) {
       setFormData((prev) => ({
         ...prev,
-        travelDate: format(selectedDate, 'yyyy-MM-dd'),
+        travelDate: format(selectedDate, "yyyy-MM-dd"),
       }));
     }
   };
@@ -66,31 +88,27 @@ const TicketForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // First check if authenticated with Supabase
       const { data: sessionData } = await supabase.auth.getSession();
-      console.log('Current Supabase session:', sessionData);
-      
+
       if (!sessionData.session) {
         toast.error("Authentication session expired. Please log in again.");
-        throw new Error('No active session');
+        throw new Error("No active session");
       }
-      
+
       const ticketWithDefaults: TicketFormData = {
-        mode: formData.mode || 'rail',
-        fromCity: formData.fromCity || '',
-        toCity: formData.toCity || '',
-        travelDate: formData.travelDate || format(new Date(), 'yyyy-MM-dd'),
-        departureTime: formData.departureTime || '',
-        ticketType: formData.ticketType || '',
-        trainOrBusName: formData.trainOrBusName || '',
-        price: formData.price !== undefined ? Number(formData.price) : 0,
-        contactInfo: formData.contactInfo || '',
-        additionalInfo: formData.additionalInfo || '',
+        mode: formData.mode || "rail",
+        fromCity: formData.fromCity || "",
+        toCity: formData.toCity || "",
+        travelDate: formData.travelDate || format(new Date(), "yyyy-MM-dd"),
+        departureTime: formData.departureTime || "",
+        ticketType: formData.ticketType || "",
+        trainOrBusName: formData.trainOrBusName || "",
+        contactInfo: formData.contactInfo || "",
+        additionalInfo: formData.additionalInfo || "",
       };
-      
-      // Convert the form data to match the Supabase schema
+
       const ticketData = {
-        user_id: user.id, // Use auth user ID
+        user_id: user.id,
         mode: ticketWithDefaults.mode,
         from_city: ticketWithDefaults.fromCity,
         to_city: ticketWithDefaults.toCity,
@@ -98,37 +116,26 @@ const TicketForm: React.FC = () => {
         departure_time: ticketWithDefaults.departureTime || null,
         ticket_type: ticketWithDefaults.ticketType,
         train_or_bus_name: ticketWithDefaults.trainOrBusName,
-        price: Number(ticketWithDefaults.price),
         contact_info: ticketWithDefaults.contactInfo,
-        view_count: 0
+        view_count: 0,
       };
 
-      console.log('User ID:', user.id);
-      console.log('Submitting ticket data:', ticketData);
-      
-      // Insert ticket into Supabase
       const { data, error } = await supabase
-        .from('tickets')
+        .from("tickets")
         .insert(ticketData)
         .select();
-      
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      
-      console.log('Ticket posted successfully, response:', data);
+
+      if (error) throw error;
+
       toast.success("Ticket posted successfully!");
-      navigate('/my-tickets');
+      navigate("/my-tickets");
     } catch (error: any) {
-      console.error('Failed to post ticket:', error);
       toast.error(error.message || "Failed to post ticket. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
@@ -143,12 +150,15 @@ const TicketForm: React.FC = () => {
           <Label>Mode of Travel</Label>
           <RadioGroup
             value={formData.mode}
-            onValueChange={(value) => handleSelectChange('mode', value)}
+            onValueChange={(value) => handleSelectChange("mode", value)}
             className="flex space-x-4 mt-2"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="rail" id="rail" />
-              <Label htmlFor="rail" className="cursor-pointer flex items-center">
+              <Label
+                htmlFor="rail"
+                className="cursor-pointer flex items-center"
+              >
                 <RailSymbol className="mr-1 h-4 w-4" /> Rail
               </Label>
             </div>
@@ -166,8 +176,8 @@ const TicketForm: React.FC = () => {
             <Label htmlFor="fromCity">From City *</Label>
             <AutocompleteInput
               placeholder="e.g. Mumbai"
-              value={formData.fromCity || ''}
-              onChange={(value) => handleCityChange('fromCity', value)}
+              value={formData.fromCity || ""}
+              onChange={(value) => handleCityChange("fromCity", value)}
             />
           </div>
 
@@ -175,8 +185,8 @@ const TicketForm: React.FC = () => {
             <Label htmlFor="toCity">To City *</Label>
             <AutocompleteInput
               placeholder="e.g. Delhi"
-              value={formData.toCity || ''}
-              onChange={(value) => handleCityChange('toCity', value)}
+              value={formData.toCity || ""}
+              onChange={(value) => handleCityChange("toCity", value)}
             />
           </div>
         </div>
@@ -203,7 +213,9 @@ const TicketForm: React.FC = () => {
                   selected={date}
                   onSelect={handleDateSelect}
                   initialFocus
-                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                  disabled={(date) =>
+                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                  }
                 />
               </PopoverContent>
             </Popover>
@@ -211,13 +223,44 @@ const TicketForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="departureTime">Departure Time (Optional)</Label>
-            <Input
-              id="departureTime"
-              name="departureTime"
-              type="time"
-              value={formData.departureTime || ''}
-              onChange={handleChange}
-            />
+            <div className="flex items-center gap-2">
+              <Input
+                id="departureTime"
+                name="departureTime"
+                type="time"
+                value={formData.departureTime || ""}
+                onChange={handleChange}
+                className="w-full"
+                placeholder="HH:MM"
+                pattern="[0-9]{2}:[0-9]{2}"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (formData.departureTime) {
+                    const [hours, minutes] = formData.departureTime.split(":");
+                    const newHours =
+                      parseInt(hours) >= 12
+                        ? (parseInt(hours) - 12).toString().padStart(2, "0")
+                        : (parseInt(hours) + 12).toString().padStart(2, "0");
+                    setFormData((prev) => ({
+                      ...prev,
+                      departureTime: `${newHours}:${minutes}`,
+                    }));
+                  }
+                }}
+              >
+                {formData.departureTime &&
+                parseInt(formData.departureTime.split(":")[0]) >= 12
+                  ? "PM"
+                  : "AM"}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Format: HH:MM (24-hour) or use AM/PM toggle
+            </p>
           </div>
         </div>
 
@@ -226,13 +269,13 @@ const TicketForm: React.FC = () => {
             <Label htmlFor="ticketType">Ticket Type *</Label>
             <Select
               value={formData.ticketType}
-              onValueChange={(value) => handleSelectChange('ticketType', value)}
+              onValueChange={(value) => handleSelectChange("ticketType", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select ticket type" />
               </SelectTrigger>
               <SelectContent>
-                {formData.mode === 'rail'
+                {formData.mode === "rail"
                   ? ticketTypes.rail.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
@@ -249,62 +292,67 @@ const TicketForm: React.FC = () => {
 
           <div className="space-y-2">
             <Label htmlFor="trainOrBusName">
-              {formData.mode === 'rail' ? 'Train Name & Number *' : 'Bus Company Name *'}
+              {formData.mode === "rail"
+                ? "Train Name & Number *"
+                : "Bus Company Name *"}
             </Label>
             <Input
               id="trainOrBusName"
               name="trainOrBusName"
-              placeholder={formData.mode === 'rail' ? 'e.g. Rajdhani Express 12951' : 'e.g. KSRTC Airavat'}
+              placeholder={
+                formData.mode === "rail"
+                  ? "e.g. Rajdhani Express 12951"
+                  : "e.g. KSRTC Airavat"
+              }
               required
-              value={formData.trainOrBusName || ''}
+              value={formData.trainOrBusName || ""}
               onChange={handleChange}
             />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="price">Asking Price (₹) *</Label>
-            <Input
-              id="price"
-              name="price"
-              placeholder="e.g. 1200 or 0 for free"
-              type="number"
-              min="0"
-              required
-              value={formData.price !== undefined ? formData.price : ''}
-              onChange={(e) => handleSelectChange('price', e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contactInfo">Contact Information *</Label>
+            <Label htmlFor="contactInfo">WhatsApp Number (10 digits) *</Label>
             <Input
               id="contactInfo"
               name="contactInfo"
-              placeholder="e.g. Phone or WhatsApp number"
+              placeholder="Please enter your WhatsApp number"
               required
-              value={formData.contactInfo || ''}
-              onChange={handleChange}
+              value={formData.contactInfo || ""}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                setFormData((prev) => ({ ...prev, contactInfo: value }));
+              }}
+              pattern="[0-9]{10}"
+              minLength={10}
+              maxLength={10}
+              inputMode="tel"
+              style={{ textSizeAdjust: "100%" }}
             />
+            <p className="text-xs text-muted-foreground">
+              Please enter your 10-digit WhatsApp number
+            </p>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="additionalInfo">Additional Information (Optional)</Label>
+          <Label htmlFor="additionalInfo">
+            Additional Information (Optional)
+          </Label>
           <Textarea
             id="additionalInfo"
             name="additionalInfo"
             placeholder="Any other details about the ticket"
             rows={3}
-            value={formData.additionalInfo || ''}
+            value={formData.additionalInfo || ""}
             onChange={handleChange}
           />
         </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? 'Posting...' : 'Post Ticket'}
+        {isSubmitting ? "Posting..." : "Post Ticket"}
       </Button>
     </form>
   );
