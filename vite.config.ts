@@ -1,7 +1,6 @@
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import { readFileSync } from "fs";
 import { resolve } from "path";
 
 export default defineConfig({
@@ -9,10 +8,7 @@ export default defineConfig({
   server: {
     host: true,
     port: 8080,
-    https: {
-      key: readFileSync(resolve(__dirname, 'localhost+2-key.pem')),
-      cert: readFileSync(resolve(__dirname, 'localhost+2.pem'))
-    },
+    // Removed HTTPS configuration to use standard HTTP for development
     strictPort: true,
   },
   resolve: {
