@@ -5,9 +5,10 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import { SearchFilters } from '@/types';
-import { RailSymbol, Bus, Calendar, Search } from 'lucide-react';
+import { RailSymbol, Bus, Calendar, Search, Shield, Info, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -73,6 +74,48 @@ const Index = () => {
               <p className="text-sm opacity-80">
                 Browse tickets for both train and bus journeys across all routes.
               </p>
+            </div>
+          </div>
+          
+          {/* Terms of Use Key Points Section */}
+          <div className="mt-16 w-full max-w-4xl mx-auto">
+            <div className="bg-white bg-opacity-10 backdrop-blur-md p-6 rounded-lg">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Info className="h-6 w-6 text-accent" />
+                <h2 className="text-2xl font-semibold">Important Information</h2>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div className="bg-white bg-opacity-5 p-4 rounded-md flex items-start gap-3">
+                  <div className="bg-white bg-opacity-10 p-2 rounded-full text-accent">
+                    <AlertTriangle className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium">Not a Ticket Broker</h3>
+                    <p className="text-sm opacity-80">We don't facilitate ticket transfers or guarantee validity of tickets.</p>
+                  </div>
+                </div>
+                
+                <div className="bg-white bg-opacity-5 p-4 rounded-md flex items-start gap-3">
+                  <div className="bg-white bg-opacity-10 p-2 rounded-full text-accent">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-medium">Verify Before Meeting</h3>
+                    <p className="text-sm opacity-80">Always verify ticket validity before arranging any transaction.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <Button 
+                asChild
+                variant="outline"
+                className="mt-6 border-white/20 text-white hover:bg-white/10"
+              >
+                <Link to="/terms">
+                  Read Full Terms of Use
+                </Link>
+              </Button>
             </div>
           </div>
           
