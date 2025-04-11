@@ -13,6 +13,7 @@ import Search from "@/pages/Search";
 import MyTickets from "@/pages/MyTickets";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/NotFound";
+import TermsOfUse from "@/pages/TermsOfUse";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/search" element={<Search />} />
               <Route path="/my-tickets" element={<MyTickets />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/terms" element={<TermsOfUse />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

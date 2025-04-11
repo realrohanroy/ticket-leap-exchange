@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import { SearchFilters } from '@/types';
 import { RailSymbol, Bus, Calendar, Search } from 'lucide-react';
@@ -98,12 +99,7 @@ const Index = () => {
         </div>
       </div>
       
-      <footer className="bg-gray-900 text-white py-6">
-        <div className="container text-center text-sm">
-          <p>© 2025 TicketLeap Exchange. All rights reserved.</p>
-          <p className="mt-2 text-gray-400">A simple platform to help travelers find tickets.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

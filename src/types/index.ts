@@ -38,3 +38,16 @@ export type SearchFilters = {
 };
 
 export type AlertVariant = 'default' | 'destructive' | 'warning';
+
+// Terms of Use structure
+export type TermSection = {
+  id: string;
+  title: string;
+  content: string | string[];
+};
+
+export type KeyTakeaway = {
+  icon: string;
+  title: string;
+  description: string;
+};
