@@ -35,7 +35,6 @@ export type Database = {
           from_city: string
           id: string
           mode: string
-          price: number
           ticket_type: string
           to_city: string
           train_or_bus_name: string
@@ -50,7 +49,6 @@ export type Database = {
           from_city: string
           id?: string
           mode: string
-          price: number
           ticket_type: string
           to_city: string
           train_or_bus_name: string
@@ -65,7 +63,6 @@ export type Database = {
           from_city?: string
           id?: string
           mode?: string
-          price?: number
           ticket_type?: string
           to_city?: string
           train_or_bus_name?: string
