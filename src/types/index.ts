@@ -36,3 +36,5 @@ export type SearchFilters = {
   mode?: 'rail' | 'bus' | 'all';
   ticketType?: string;
 };
+
+export type AlertVariant = 'default' | 'destructive' | 'warning';
