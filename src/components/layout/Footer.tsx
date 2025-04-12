@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChairIcon, ExternalLink } from 'lucide-react';
+import { Armchair, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -15,7 +15,7 @@ const Footer = () => {
           <div className="mb-6 md:mb-0">
             <Link to="/" className="flex items-center space-x-2 mb-3">
               <div className="flex items-center justify-center bg-gradient-to-r from-brand-blue to-brand-orange p-1.5 rounded-lg shadow-sm">
-                <ChairIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                <Armchair className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex flex-col">
                 <span className="text-lg md:text-xl font-serif tracking-wide">
