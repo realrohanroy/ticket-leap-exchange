@@ -167,19 +167,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(true);
   
       const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+      const redirectTo = isLocalhost
+        ? 'http://localhost:3000/'  // For localhost, adjust to your local dev URL
+        : 'https://sharemyseat.vercel.app/';  // Production URL
   
+      // Use Supabase's built-in method to sign in with Google OAuth
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: isLocalhost
-            ? 'http://localhost:3000/'
-            : 'https://sharemyseat.vercel.app/',
+          redirectTo,  // Redirect URL after successful login
         },
       });
   
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
+  
+      toast.success("Redirecting to Google sign-in...");
     } catch (error: any) {
       console.error('Google sign in failed:', error);
       toast.error(error.message || "Google sign-in failed. Please try again.");
@@ -187,6 +189,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw error;
     }
   };
+  
+  
   
 
   const logout = () => {

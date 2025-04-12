@@ -65,7 +65,7 @@ const Footer = () => {
             <div>
               <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Support</h3>
               <ul className="space-y-1 md:space-y-2">
-                <li>
+                <li className="break-all">
                   <a href="mailto:support@sharemyseat.com" className="text-gray-400 hover:text-white transition text-sm">
                     support@sharemyseat.com
                   </a>

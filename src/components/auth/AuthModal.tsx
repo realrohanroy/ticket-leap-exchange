@@ -155,7 +155,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </Button>
               
               <p className="text-xs text-center text-muted-foreground">
-                For demo purposes: Email can be any valid format, password must be 6+ characters
               </p>
             </form>
           </TabsContent>
