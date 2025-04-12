@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '../auth/AuthModal';
-import { Armchair, User } from 'lucide-react';
+import { Bus, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,8 +20,8 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full py-4 bg-white border-b shadow-sm">
       <div className="container flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <div className="flex items-center justify-center bg-gradient-to-r from-brand-blue to-brand-orange p-2 rounded-lg shadow-md">
-            <Armchair className="w-5 h-5 text-white" />
+          <div className="p-1.5 rounded-lg">
+            <Bus className="w-6 h-6 text-brand-blue" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-serif tracking-wide text-brand-dark">
