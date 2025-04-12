@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User } from '@/types';
 import { toast } from "sonner";
@@ -170,7 +169,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: import.meta.env.MODE === 'development' 
+            ? window.location.origin + '/'
+            : 'https://sharemyseat.vercel.app/',
         }
       });
       

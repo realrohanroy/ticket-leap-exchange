@@ -12,8 +12,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
-    // Removed HTTPS configuration to use standard HTTP for development
     strictPort: true,
+  },
+  base: mode === 'production' ? '/' : '/',
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    sourcemap: mode !== 'production',
   },
   resolve: {
     alias: {

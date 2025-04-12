@@ -31,7 +31,7 @@ const Footer = () => {
             </p>
           </div>
           
-          <div className={`grid ${isMobile ? 'grid-cols-2' : 'grid-cols-2 gap-8'} gap-6`}>
+          <div className={`grid ${isMobile ? 'grid-cols-3' : 'grid-cols-3 gap-8'} gap-6`}>
             <div>
               <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Platform</h3>
               <ul className="space-y-1 md:space-y-2">
@@ -59,6 +59,16 @@ const Footer = () => {
                   <Link to="#" className="text-gray-400 hover:text-white transition text-sm">
                     Privacy Policy
                   </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Support</h3>
+              <ul className="space-y-1 md:space-y-2">
+                <li>
+                  <a href="mailto:support@sharemyseat.com" className="text-gray-400 hover:text-white transition text-sm">
+                    support@sharemyseat.com
+                  </a>
                 </li>
               </ul>
             </div>
