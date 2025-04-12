@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '../auth/AuthModal';
-import { Bus, RailSymbol, User } from 'lucide-react';
+import { ChairIcon, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,15 +20,16 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full py-4 bg-white border-b shadow-sm">
       <div className="container flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <div className="flex items-center justify-center bg-gradient-to-r from-brand-blue to-brand-orange p-1.5 rounded-lg shadow-md">
-            <div className="relative">
-              <RailSymbol className="w-5 h-5 text-white" />
-              <Bus className="w-5 h-5 text-white absolute -bottom-1 -right-1" />
-            </div>
+          <div className="flex items-center justify-center bg-gradient-to-r from-brand-blue to-brand-orange p-2 rounded-lg shadow-md">
+            <ChairIcon className="w-5 h-5 text-white" />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-bold text-brand-dark leading-tight">ShareMy<span className="text-brand-blue">Seat</span></span>
-            <span className="text-[10px] text-brand-orange font-medium tracking-wider -mt-1">TRAVEL CONNECTED</span>
+            <span className="text-xl font-serif tracking-wide text-brand-dark">
+              <span className="font-light">Share</span>
+              <span className="font-medium">My</span>
+              <span className="text-brand-blue font-semibold">Seat</span>
+            </span>
+            <span className="text-[10px] text-brand-orange font-medium tracking-widest -mt-1">TRAVEL CONNECTED</span>
           </div>
         </Link>
 

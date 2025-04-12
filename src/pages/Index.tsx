@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import { SearchFilters } from '@/types';
-import { RailSymbol, Bus, Calendar, Search, Shield, Info, AlertTriangle } from 'lucide-react';
+import { ChairIcon, Calendar, Search, Shield, Info, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -68,10 +67,7 @@ const Index = () => {
             
             <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 md:p-6 rounded-lg max-w-xs mx-auto w-full sm:col-span-2 lg:col-span-1">
               <div className="mb-3 md:mb-4 text-accent bg-white bg-opacity-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mx-auto">
-                <div className="flex">
-                  <RailSymbol className="h-4 w-4 md:h-5 md:w-5" />
-                  <Bus className="h-4 w-4 md:h-5 md:w-5 -ml-1" />
-                </div>
+                <ChairIcon className="h-5 w-5 md:h-6 md:w-6" />
               </div>
               <h3 className="text-lg md:text-xl font-semibold mb-2">Rail & Bus Options</h3>
               <p className="text-xs md:text-sm opacity-80">
@@ -80,7 +76,6 @@ const Index = () => {
             </div>
           </div>
           
-          {/* Terms of Use Key Points Section */}
           <div className="mt-10 md:mt-16 w-full max-w-4xl mx-auto">
             <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 md:p-6 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">

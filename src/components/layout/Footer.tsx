@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Bus, RailSymbol, ExternalLink } from 'lucide-react';
+import { ChairIcon, ExternalLink } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -15,14 +15,15 @@ const Footer = () => {
           <div className="mb-6 md:mb-0">
             <Link to="/" className="flex items-center space-x-2 mb-3">
               <div className="flex items-center justify-center bg-gradient-to-r from-brand-blue to-brand-orange p-1.5 rounded-lg shadow-sm">
-                <div className="relative">
-                  <RailSymbol className="w-4 h-4 md:w-5 md:h-5 text-white" />
-                  <Bus className="w-4 h-4 md:w-5 md:h-5 text-white absolute -bottom-1 -right-1" />
-                </div>
+                <ChairIcon className="w-4 h-4 md:w-5 md:h-5 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-lg md:text-xl font-bold leading-tight">ShareMy<span className="text-brand-blue">Seat</span></span>
-                <span className="text-[9px] md:text-[10px] text-brand-orange font-medium tracking-wider -mt-1">TRAVEL CONNECTED</span>
+                <span className="text-lg md:text-xl font-serif tracking-wide">
+                  <span className="font-light">Share</span>
+                  <span className="font-medium">My</span>
+                  <span className="text-brand-blue font-semibold">Seat</span>
+                </span>
+                <span className="text-[9px] md:text-[10px] text-brand-orange font-medium tracking-widest -mt-1">TRAVEL CONNECTED</span>
               </div>
             </Link>
             <p className="text-gray-400 text-sm max-w-md">
