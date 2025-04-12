@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
-import { Mail } from 'lucide-react';
+import { Mail, Eye, EyeOff, Loader2 } from 'lucide-react';
 
 type AuthModalProps = {
   isOpen: boolean;
@@ -25,6 +25,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +40,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       if (activeTab === "login") {
         await login(email, password);
       } else {
+        if (password !== confirmPassword) {
+          toast.error("Passwords don't match");
+          setLoading(false);
+          return;
+        }
         await register(email, password, name);
       }
       
@@ -65,7 +72,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="w-[95vw] max-w-[100vw] sm:max-w-[425px] mx-2">
         <DialogHeader>
           <DialogTitle>Welcome to TicketLeap</DialogTitle>
           <DialogDescription>
@@ -95,18 +102,33 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
 
-              <Button className="w-full" type="submit" disabled={loading}>
-                {loading ? "Loading..." : "Login"}
+              <Button className="w-full py-3 text-base" type="submit" disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Authenticating...
+                  </div>
+                ) : "Login"}
               </Button>
               
               <div className="flex items-center my-4">
@@ -116,11 +138,12 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
               
               <Button 
-                type="button"
+                type="button" 
                 variant="outline" 
                 className="w-full"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
+                aria-busy={loading}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -163,21 +186,58 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
               <div className="space-y-2">
                 <Label htmlFor="register-password">Password</Label>
-                <Input
-                  id="register-password"
-                  type="password"
-                  placeholder="••••••••"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <p className="text-xs text-muted-foreground">
+                <div className="relative mb-4">
+                  <Input
+                    id="register-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">
                   Password must be at least 6 characters long
                 </p>
+
+                <div className="space-y-2 mb-4">
+                  <Label htmlFor="confirm-password">Confirm Password</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <Button className="w-full" type="submit" disabled={loading}>
-                {loading ? "Loading..." : "Create Account"}
+              <Button className="w-full py-3 text-base" type="submit" disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating Account...
+                  </div>
+                ) : "Create Account"}
               </Button>
               
               <div className="flex items-center my-4">
@@ -192,6 +252,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                 className="w-full"
                 onClick={handleGoogleSignIn}
                 disabled={loading}
+                aria-busy={loading}
               >
                 <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>

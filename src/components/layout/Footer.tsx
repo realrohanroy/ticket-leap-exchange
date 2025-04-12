@@ -18,7 +18,7 @@ const Footer = () => {
               <span className="text-xl font-bold">TicketLeap</span>
             </Link>
             <p className="text-gray-400 max-w-md">
-              A platform for travelers to find and list unused intercity rail and bus tickets.
+              {/* A platform for travelers to find and list unused intercity rail and bus tickets. */}
             </p>
           </div>
           

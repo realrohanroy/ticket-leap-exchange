@@ -29,11 +29,12 @@ const Index = () => {
         
         <div className="container relative pt-16 pb-24 flex flex-col items-center text-center z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            Connect with Travelers, Find Your Ticket
+            Travel Smarter, Together
           </h1>
           <p className="text-lg md:text-xl max-w-2xl mb-10 opacity-90">
-            Find last-minute confirmed tickets for bus and rail travel, 
-            or help fellow travelers by posting tickets you can't use.
+          Only place to share or find valid intercity travel tickets.
+            <br />
+            We don't sell or transfer tickets. We simply connect verified users who want to help other travelers.
           </p>
           
           <TicketSearch 
@@ -109,11 +110,12 @@ const Index = () => {
               
               <Button 
                 asChild
-                variant="outline"
-                className="mt-6 border-white/20 text-white hover:bg-white/10"
+                variant="default"
+                className="mt-6 bg-accent hover:bg-accent/90 text-white shadow-lg hover:shadow-accent/30 transition-all"
               >
-                <Link to="/terms">
-                  Read Full Terms of Use
+                <Link to="/terms" className="flex items-center gap-2">
+                  <Shield className="h-4 w-4" />
+                  <span>Read Full Terms of Use</span>
                 </Link>
               </Button>
             </div>
