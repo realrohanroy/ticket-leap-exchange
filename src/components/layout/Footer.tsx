@@ -18,7 +18,7 @@ const Footer = () => {
                 <RailSymbol className="w-5 h-5 md:w-6 md:h-6 text-brand-blue" />
                 <Bus className="w-5 h-5 md:w-6 md:h-6 text-brand-orange -ml-1" />
               </div>
-              <span className="text-lg md:text-xl font-bold">TicketLeap</span>
+              <span className="text-lg md:text-xl font-bold">ShareMySeat</span>
             </Link>
             <p className="text-gray-400 text-sm max-w-md">
               A platform for travelers to find and list unused intercity rail and bus tickets.
@@ -63,7 +63,7 @@ const Footer = () => {
         
         <div className="pt-4 md:pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs md:text-sm text-gray-400 text-center md:text-left">
-            © 2025 TicketLeap Exchange. All rights reserved.
+            © 2025 ShareMySeat. All rights reserved.
           </p>
           <p className="text-xs text-gray-500 mt-2 md:mt-0 text-center md:text-left">
             <span className="text-gray-400">Important: </span>

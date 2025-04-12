@@ -24,7 +24,7 @@ const Navbar = () => {
             <RailSymbol className="w-6 h-6 text-brand-blue" />
             <Bus className="w-6 h-6 text-brand-orange -ml-1" />
           </div>
-          <span className="text-xl font-bold text-brand-dark">TicketLeap</span>
+          <span className="text-xl font-bold text-brand-dark">ShareMySeat</span>
         </Link>
 
         <div className="flex items-center space-x-4">

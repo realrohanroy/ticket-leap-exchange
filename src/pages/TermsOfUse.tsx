@@ -159,7 +159,7 @@ const TermsOfUse = () => {
             <h2 className="text-xl font-semibold mb-4 flex items-center">
               <Shield className="mr-2 h-5 w-5 text-green-600" /> Building a Trustworthy Community
             </h2>
-            <p className="mb-4">At TicketLeap, we're committed to creating a safe, honest platform where travelers can help each other. To build trust:</p>
+            <p className="mb-4">At ShareMySeat, we're committed to creating a safe, honest platform where travelers can help each other. To build trust:</p>
             <ul className="space-y-2">
               <li className="flex items-start">
                 <Check className="h-5 w-5 mr-2 text-green-600 flex-shrink-0 mt-0.5" />
