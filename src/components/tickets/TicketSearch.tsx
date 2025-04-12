@@ -9,23 +9,24 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, Search } from 'lucide-react';
 import { SearchFilters } from '@/types';
 import { AutocompleteInput } from '@/components/ui/autocomplete-input';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
   className?: string;
-  navigateOnSearch?: boolean; // New prop to control navigation behavior
+  navigateOnSearch?: boolean;
 };
 
 const TicketSearch: React.FC<TicketSearchProps> = ({ 
   onSearch, 
   className,
-  navigateOnSearch = false // Default to false to avoid router dependency
+  navigateOnSearch = false
 }) => {
-  // Use try-catch to handle the case where this component is rendered outside Router context
   const navigate = navigateOnSearch ? useNavigateWithFallback() : undefined;
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const isMobile = useIsMobile();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +39,6 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
     
     onSearch(filters);
     
-    // Only navigate if explicitly requested via props and navigate is available
     if (navigateOnSearch && navigate) {
       navigate('/search', { state: { filters } });
     }
@@ -47,57 +47,115 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   return (
     <form 
       onSubmit={handleSearch}
-      className={cn("bg-white rounded-lg shadow-lg p-6", className)}
+      className={cn(
+        "bg-white rounded-lg shadow-lg p-4 md:p-6",
+        className
+      )}
     >
-      <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-        <div className="sm:col-span-2">
-          <AutocompleteInput
-            placeholder="From City"
-            value={fromCity}
-            onChange={(value) => setFromCity(value)}
-            className="w-full"
-          />
-        </div>
-        
-        <div className="sm:col-span-2">
-          <AutocompleteInput
-            placeholder="To City"
-            value={toCity}
-            onChange={(value) => setToCity(value)}
-            className="w-full"
-          />
-        </div>
-        
-        <div className="sm:col-span-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left",
-                  !date && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-white" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                initialFocus
+      <div className={`${isMobile ? 'space-y-3' : 'grid grid-cols-1 sm:grid-cols-6 gap-4'}`}>
+        {isMobile ? (
+          <>
+            <div className="w-full">
+              <AutocompleteInput
+                placeholder="From City"
+                value={fromCity}
+                onChange={(value) => setFromCity(value)}
+                className="w-full"
               />
-            </PopoverContent>
-          </Popover>
-        </div>
-        
-        <div className="sm:col-span-1">
-          <Button type="submit" className="w-full">
-            <Search className="mr-2 h-4 w-4" /> Search
-          </Button>
-        </div>
+            </div>
+            
+            <div className="w-full">
+              <AutocompleteInput
+                placeholder="To City"
+                value={toCity}
+                onChange={(value) => setToCity(value)}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="w-full">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <div className="w-full">
+              <Button type="submit" className="w-full">
+                <Search className="mr-2 h-4 w-4" /> Search
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="sm:col-span-2">
+              <AutocompleteInput
+                placeholder="From City"
+                value={fromCity}
+                onChange={(value) => setFromCity(value)}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="sm:col-span-2">
+              <AutocompleteInput
+                placeholder="To City"
+                value={toCity}
+                onChange={(value) => setToCity(value)}
+                className="w-full"
+              />
+            </div>
+            
+            <div className="sm:col-span-1">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left",
+                      !date && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            
+            <div className="sm:col-span-1">
+              <Button type="submit" className="w-full">
+                <Search className="mr-2 h-4 w-4" /> Search
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </form>
   );
@@ -106,7 +164,6 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
 // Helper function that wraps the useNavigate hook in a try-catch
 function useNavigateWithFallback() {
   try {
-    // Check if we're in a Router context
     return useNavigate();
   } catch (e) {
     console.warn("Router context not available. Navigation will be disabled.");
