@@ -45,9 +45,9 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
               </Badge>
             )}
           </div>
-          <Badge variant={ticket.price === 'Free' ? 'outline' : 'secondary'}>
+          {/* <Badge variant={ticket.price === 'Free' ? 'outline' : 'secondary'}>
             {ticket.price === 'Free' ? 'Free' : `₹${ticket.price}`}
-          </Badge>
+          </Badge> */}
         </div>
         <CardTitle className="text-xl mt-2 font-bold">
           {ticket.fromCity} → {ticket.toCity}

@@ -211,16 +211,18 @@ const TicketForm: React.FC = () => {
             <Label htmlFor="travelDate">Travel Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
-                </Button>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      date ? "bg-white text-black" : "text-muted-foreground",
+                      "transition-colors duration-200 ease-in-out"
+                    )}
+                    aria-label={date ? format(date, "PPP") : "Pick a date"}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar

@@ -26,6 +26,10 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   const [fromCity, setFromCity] = useState('');
   const [toCity, setToCity] = useState('');
   const [date, setDate] = useState<Date | undefined>(undefined);
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+  };
   const isMobile = useIsMobile();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -79,20 +83,36 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left",
-                      !date && "text-muted-foreground"
+                      "w-full justify-start text-left font-medium",
+                      !date ? "text-muted-foreground" : "bg-white text-black"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
+                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    {date ? (
+                      <span className="truncate">
+                        {format(date, "EEE, MMM d, yyyy")}
+                      </span>
+                    ) : (
+                      <span>Select Travel Date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                <PopoverContent 
+                  className="w-auto p-0 bg-white shadow-lg rounded-lg"
+                  align="start"
+                  side={isMobile ? "bottom" : "right"}
+                  sideOffset={isMobile ? 8 : 12}
+                >
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
                     initialFocus
+                    className="border-0"
+                    modifiersClassNames={{
+                      selected: "bg-primary text-white",
+                      today: "font-bold"
+                    }}
                   />
                 </PopoverContent>
               </Popover>
@@ -130,20 +150,36 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left",
+                      "w-full justify-start text-left font-medium",
                       !date && "text-muted-foreground"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "MMM d, yyyy") : <span>Travel Date</span>}
+                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    {date ? (
+                      <span className="truncate">
+                        {format(date, "EEE, MMM d, yyyy")}
+                      </span>
+                    ) : (
+                      <span>Select Travel Date</span>
+                    )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                <PopoverContent 
+                  className="w-auto p-0 bg-white shadow-lg rounded-lg"
+                  align="start"
+                  side="right"
+                  sideOffset={12}
+                >
                   <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
                     initialFocus
+                    className="border-0"
+                    modifiersClassNames={{
+                      selected: "bg-primary text-white",
+                      today: "font-bold"
+                    }}
                   />
                 </PopoverContent>
               </Popover>
