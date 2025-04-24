@@ -3,14 +3,12 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { cn } from '@/lib/utils';
 
-// Maharashtra cities as specified
 const maharashtraCities = [
-  'Mumbai', 'Thane', 'Kalyan', 'Murbad', 'Igatpuri', 'Nashik', 'Malegaon', 
-  'Dhule', 'Jalgaon', 'Malkapur', 'Khamgaon', 'Akola', 'Amravati', 'Badnera', 
-  'Wardha', 'Nagpur', 'Pune', 'Ahmednagar', 'Aurangabad', 'Jalna', 'Solapur', 
+  'Mumbai', 'Thane', 'Kalyan', 'Murbad', 'Igatpuri', 'Nashik', 'Malegaon',
+  'Dhule', 'Jalgaon', 'Malkapur', 'Khamgaon', 'Akola', 'Amravati', 'Badnera',
+  'Wardha', 'Nagpur', 'Pune', 'Ahmednagar', 'Aurangabad', 'Jalna', 'Solapur',
   'Chandrapur', 'Ballarshah', 'Latur', 'Nanded'
-];
-
+  ].sort((a, b) => a.localeCompare(b));
 // Format cities for react-select
 const cityOptions = maharashtraCities.map(city => ({
   value: city,
