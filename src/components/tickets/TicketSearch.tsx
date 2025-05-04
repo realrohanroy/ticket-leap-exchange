@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
@@ -10,6 +10,7 @@ import { CalendarIcon, Search } from 'lucide-react';
 import { SearchFilters } from '@/types';
 import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from '@/hooks/use-toast';
 
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
@@ -32,8 +33,44 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   };
   const isMobile = useIsMobile();
 
+  // Update fromCity and prevent same city selection
+  const handleFromCityChange = (value: string) => {
+    setFromCity(value);
+    if (value && value === toCity) {
+      setToCity('');
+      toast({
+        title: "Same city selected",
+        description: "Departure and destination cities cannot be the same",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Update toCity and prevent same city selection
+  const handleToCityChange = (value: string) => {
+    if (value && value === fromCity) {
+      toast({
+        title: "Same city selected",
+        description: "Departure and destination cities cannot be the same",
+        variant: "destructive"
+      });
+      return;
+    }
+    setToCity(value);
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Prevent search with same cities
+    if (fromCity && toCity && fromCity === toCity) {
+      toast({
+        title: "Invalid search",
+        description: "Departure and destination cities cannot be the same",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const filters: SearchFilters = {
       fromCity: fromCity || undefined,
@@ -63,7 +100,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               <AutocompleteInput
                 placeholder="From City"
                 value={fromCity}
-                onChange={(value) => setFromCity(value)}
+                onChange={handleFromCityChange}
                 className="w-full"
               />
             </div>
@@ -72,7 +109,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               <AutocompleteInput
                 placeholder="To City"
                 value={toCity}
-                onChange={(value) => setToCity(value)}
+                onChange={handleToCityChange}
                 className="w-full"
               />
             </div>
@@ -83,7 +120,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-medium",
+                      "w-full justify-start text-left font-medium overflow-hidden",
                       !date ? "text-muted-foreground" : "bg-white text-black"
                     )}
                   >
@@ -93,7 +130,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                         {format(date, "EEE, MMM d, yyyy")}
                       </span>
                     ) : (
-                      <span>Select Travel Date</span>
+                      <span className="truncate">Select Travel Date</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -108,7 +145,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                     selected={date}
                     onSelect={setDate}
                     initialFocus
-                    className="border-0"
+                    className="border-0 pointer-events-auto"
                     modifiersClassNames={{
                       selected: "bg-primary text-white",
                       today: "font-bold"
@@ -130,7 +167,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               <AutocompleteInput
                 placeholder="From City"
                 value={fromCity}
-                onChange={(value) => setFromCity(value)}
+                onChange={handleFromCityChange}
                 className="w-full"
               />
             </div>
@@ -139,7 +176,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               <AutocompleteInput
                 placeholder="To City"
                 value={toCity}
-                onChange={(value) => setToCity(value)}
+                onChange={handleToCityChange}
                 className="w-full"
               />
             </div>
@@ -150,7 +187,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-medium",
+                      "w-full justify-start text-left font-medium overflow-hidden",
                       !date && "text-muted-foreground"
                     )}
                   >
@@ -160,7 +197,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                         {format(date, "EEE, MMM d, yyyy")}
                       </span>
                     ) : (
-                      <span>Select Travel Date</span>
+                      <span className="truncate">Select Travel Date</span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -175,7 +212,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                     selected={date}
                     onSelect={setDate}
                     initialFocus
-                    className="border-0"
+                    className="border-0 pointer-events-auto"
                     modifiersClassNames={{
                       selected: "bg-primary text-white",
                       today: "font-bold"

@@ -10,6 +10,7 @@ import { format, parseISO, isAfter, startOfDay } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TriangleAlert } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 const Search = () => {
   const location = useLocation();
@@ -99,10 +100,32 @@ const Search = () => {
   };
 
   useEffect(() => {
+    // Validate that from and to cities are not the same
+    if (filters.fromCity && filters.toCity && filters.fromCity === filters.toCity) {
+      toast({
+        title: "Invalid search",
+        description: "Departure and destination cities cannot be the same",
+        variant: "destructive"
+      });
+      // Reset toCity to prevent the search
+      setFilters({...filters, toCity: undefined});
+      return;
+    }
+    
     fetchTickets();
   }, [filters]);
 
   const handleSearch = (newFilters: SearchFilters) => {
+    // Check if from and to cities are the same
+    if (newFilters.fromCity && newFilters.toCity && newFilters.fromCity === newFilters.toCity) {
+      toast({
+        title: "Invalid search",
+        description: "Departure and destination cities cannot be the same",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setFilters({...filters, ...newFilters});
   };
 
