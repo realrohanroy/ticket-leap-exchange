@@ -170,7 +170,7 @@ const TicketForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Post Your Ticket</h2>
+        <h2 className="text-2xl font-bold">Post Your Seat</h2>
         <p className="text-muted-foreground">
           Fill in the details of the ticket you want to post.
         </p>
