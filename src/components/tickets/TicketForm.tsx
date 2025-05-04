@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/button";
@@ -22,12 +23,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../../components/ui/popover";
-import { CalendarIcon, Bus, RailSymbol } from "lucide-react";
+import { CalendarIcon, Bus, RailSymbol, Car } from "lucide-react";
 import { supabase } from "../../integrations/supabase/client";
 import { AutocompleteInput } from "../../components/ui/autocomplete-input";
 
 interface TicketFormData {
-  mode: "rail" | "bus";
+  mode: "rail" | "bus" | "car";
   fromCity: string;
   toCity: string;
   travelDate: string;
@@ -36,6 +37,8 @@ interface TicketFormData {
   trainOrBusName: string;
   contactInfo: string;
   additionalInfo: string;
+  carModel?: string;
+  seatsAvailable?: number;
 }
 
 const TicketForm: React.FC = () => {
@@ -51,6 +54,7 @@ const TicketForm: React.FC = () => {
   const ticketTypes = {
     rail: ["Sleeper", "3AC", "2AC", "1AC", "Chair Car", "General"],
     bus: ["Seater", "Semi-Sleeper", "Sleeper", "AC", "Non-AC"],
+    car: ["Economy", "Sedan", "SUV", "Luxury", "Mini-Van"]
   };
 
   const handleChange = (
@@ -58,6 +62,14 @@ const TicketForm: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleNumberChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    const numValue = value === "" ? undefined : parseInt(value, 10);
+    setFormData((prev) => ({ ...prev, [name]: numValue }));
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -116,9 +128,11 @@ const TicketForm: React.FC = () => {
         travelDate: formData.travelDate || format(new Date(), "yyyy-MM-dd"),
         departureTime: formData.departureTime || "",
         ticketType: formData.ticketType || "",
-        trainOrBusName: formData.trainOrBusName || "",
+        trainOrBusName: formData.mode === "car" ? formData.carModel || "" : formData.trainOrBusName || "",
         contactInfo: formData.contactInfo || "",
         additionalInfo: formData.additionalInfo || "",
+        carModel: formData.mode === "car" ? formData.carModel : undefined,
+        seatsAvailable: formData.mode === "car" ? formData.seatsAvailable : undefined,
       };
 
       const ticketData = {
@@ -132,7 +146,9 @@ const TicketForm: React.FC = () => {
         train_or_bus_name: ticketWithDefaults.trainOrBusName,
         contact_info: ticketWithDefaults.contactInfo,
         view_count: 0,
-        status: 'active'
+        status: 'active',
+        car_model: ticketWithDefaults.carModel,
+        seats_available: ticketWithDefaults.seatsAvailable
       };
 
       const { data, error } = await supabase
@@ -166,7 +182,7 @@ const TicketForm: React.FC = () => {
           <RadioGroup
             value={formData.mode}
             onValueChange={(value) => handleSelectChange("mode", value)}
-            className="flex space-x-4 mt-2"
+            className="flex flex-wrap gap-4 mt-2"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="rail" id="rail" />
@@ -181,6 +197,12 @@ const TicketForm: React.FC = () => {
               <RadioGroupItem value="bus" id="bus" />
               <Label htmlFor="bus" className="cursor-pointer flex items-center">
                 <Bus className="mr-1 h-4 w-4" /> Bus
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="car" id="car" />
+              <Label htmlFor="car" className="cursor-pointer flex items-center">
+                <Car className="mr-1 h-4 w-4" /> Car Pool
               </Label>
             </div>
           </RadioGroup>
@@ -233,6 +255,7 @@ const TicketForm: React.FC = () => {
                   disabled={(date) =>
                     date < new Date(new Date().setHours(0, 0, 0, 0))
                   }
+                  className="pointer-events-auto"
                 />
               </PopoverContent>
             </Popover>
@@ -283,13 +306,15 @@ const TicketForm: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="ticketType">Ticket Type *</Label>
+            <Label htmlFor="ticketType">
+              {formData.mode === "car" ? "Car Type *" : "Ticket Type *"}
+            </Label>
             <Select
               value={formData.ticketType}
               onValueChange={(value) => handleSelectChange("ticketType", value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select ticket type" />
+                <SelectValue placeholder={formData.mode === "car" ? "Select car type" : "Select ticket type"} />
               </SelectTrigger>
               <SelectContent>
                 {formData.mode === "rail"
@@ -298,11 +323,18 @@ const TicketForm: React.FC = () => {
                         {type}
                       </SelectItem>
                     ))
-                  : ticketTypes.bus.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
+                  : formData.mode === "bus"
+                    ? ticketTypes.bus.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))
+                    : ticketTypes.car.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))
+                }
               </SelectContent>
             </Select>
           </div>
@@ -311,22 +343,52 @@ const TicketForm: React.FC = () => {
             <Label htmlFor="trainOrBusName">
               {formData.mode === "rail"
                 ? "Train Name & Number *"
-                : "Bus Company Name *"}
+                : formData.mode === "bus"
+                  ? "Bus Company Name *"
+                  : "Car Model *"}
             </Label>
-            <Input
-              id="trainOrBusName"
-              name="trainOrBusName"
-              placeholder={
-                formData.mode === "rail"
-                  ? "e.g. Rajdhani Express 12951"
-                  : "e.g. KSRTC Airavat"
-              }
-              required
-              value={formData.trainOrBusName || ""}
-              onChange={handleChange}
-            />
+            {formData.mode === "car" ? (
+              <Input
+                id="carModel"
+                name="carModel"
+                placeholder="e.g. Honda Civic, Toyota Innova"
+                required
+                value={formData.carModel || ""}
+                onChange={handleChange}
+              />
+            ) : (
+              <Input
+                id="trainOrBusName"
+                name="trainOrBusName"
+                placeholder={
+                  formData.mode === "rail"
+                    ? "e.g. Rajdhani Express 12951"
+                    : "e.g. KSRTC Airavat"
+                }
+                required
+                value={formData.trainOrBusName || ""}
+                onChange={handleChange}
+              />
+            )}
           </div>
         </div>
+
+        {formData.mode === "car" && (
+          <div className="space-y-2">
+            <Label htmlFor="seatsAvailable">Number of Seats Available *</Label>
+            <Input
+              id="seatsAvailable"
+              name="seatsAvailable"
+              type="number"
+              placeholder="Enter number of available seats"
+              required
+              min={1}
+              max={8}
+              value={formData.seatsAvailable || ""}
+              onChange={handleNumberChange}
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
           <div className="space-y-2">

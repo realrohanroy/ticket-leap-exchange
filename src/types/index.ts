@@ -8,7 +8,7 @@ export type User = {
 export type Ticket = {
   id: string;
   userId: string;
-  mode: 'rail' | 'bus';
+  mode: 'rail' | 'bus' | 'car';
   fromCity: string;
   toCity: string;
   travelDate: string;
@@ -25,6 +25,9 @@ export type Ticket = {
   reportReason?: string;
   reportedBy?: string;
   reportDate?: string;
+  // Car-specific fields
+  carModel?: string;
+  seatsAvailable?: number;
 };
 
 export type TicketFormData = Omit<Ticket, 'id' | 'userId' | 'viewCount' | 'createdAt' | 'status' | 'reported' | 'reportReason' | 'reportedBy' | 'reportDate'>;
@@ -33,7 +36,7 @@ export type SearchFilters = {
   fromCity?: string;
   toCity?: string;
   travelDate?: string;
-  mode?: 'rail' | 'bus' | 'all';
+  mode?: 'rail' | 'bus' | 'car' | 'all';
   ticketType?: string;
 };
 

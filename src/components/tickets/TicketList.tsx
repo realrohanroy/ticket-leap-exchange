@@ -3,7 +3,7 @@ import React from 'react';
 import { Ticket } from '@/types';
 import TicketCard from './TicketCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { RailSymbol, Bus, Ticket as TicketIcon } from 'lucide-react';
+import { RailSymbol, Bus, Ticket as TicketIcon, Car } from 'lucide-react';
 
 type TicketListProps = {
   tickets: Ticket[];
@@ -21,11 +21,12 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
 
   const railTickets = tickets.filter(ticket => ticket.mode === 'rail');
   const busTickets = tickets.filter(ticket => ticket.mode === 'bus');
+  const carTickets = tickets.filter(ticket => ticket.mode === 'car');
 
   return (
     <div>
       <Tabs defaultValue="all">
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 flex flex-wrap">
           <TabsTrigger value="all" className="flex items-center">
             <TicketIcon className="mr-1 h-4 w-4" /> All ({tickets.length})
           </TabsTrigger>
@@ -34,6 +35,9 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
           </TabsTrigger>
           <TabsTrigger value="bus" className="flex items-center">
             <Bus className="mr-1 h-4 w-4" /> Bus ({busTickets.length})
+          </TabsTrigger>
+          <TabsTrigger value="car" className="flex items-center">
+            <Car className="mr-1 h-4 w-4" /> Car Pool ({carTickets.length})
           </TabsTrigger>
         </TabsList>
 
@@ -64,6 +68,18 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
         <TabsContent value="bus" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {busTickets.map(ticket => (
+              <TicketCard 
+                key={ticket.id} 
+                ticket={ticket} 
+                onDelete={onDeleteTicket}
+              />
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="car" className="mt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {carTickets.map(ticket => (
               <TicketCard 
                 key={ticket.id} 
                 ticket={ticket} 
