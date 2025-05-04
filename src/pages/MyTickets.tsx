@@ -41,7 +41,9 @@ const MyTickets = () => {
     contactInfo: dbTicket.contact_info,
     viewCount: dbTicket.view_count,
     createdAt: dbTicket.created_at,
-    additionalInfo: dbTicket.additional_info || ""
+    additionalInfo: dbTicket.additional_info || "",
+    carModel: dbTicket.car_model,
+    seatsAvailable: dbTicket.seats_available
   });
 
   const fetchUserTickets = async () => {

@@ -34,7 +34,9 @@ const Search = () => {
     viewCount: dbTicket.view_count,
     createdAt: dbTicket.created_at,
     additionalInfo: dbTicket.additional_info || "",
-    status: dbTicket.status || "active"
+    status: dbTicket.status || "active",
+    carModel: dbTicket.car_model,
+    seatsAvailable: dbTicket.seats_available
   });
 
   const fetchTickets = async () => {
@@ -121,7 +123,7 @@ const Search = () => {
     }
     
     if (filters.mode && filters.mode !== 'all') {
-      parts.push(`(${filters.mode === 'rail' ? 'Train' : 'Bus'})`);
+      parts.push(`(${filters.mode === 'rail' ? 'Train' : filters.mode === 'bus' ? 'Bus' : 'Car Pool'})`);
     }
     
     return parts.length > 0 ? parts.join(' ') : 'All tickets';

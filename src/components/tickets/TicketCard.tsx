@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Badge } from '@/components/ui/badge';
 import { format, parseISO } from 'date-fns';
 import { Ticket } from '@/types';
-import { RailSymbol, Bus, Calendar, Eye, Flag } from 'lucide-react';
+import { RailSymbol, Bus, Calendar, Eye, Flag, Car } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import AuthModal from '../auth/AuthModal';
@@ -28,13 +28,19 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
-            <Badge className={ticket.mode === 'rail' ? 'bg-brand-blue' : 'bg-brand-orange'}>
+            <Badge className={
+              ticket.mode === 'rail' ? 'bg-brand-blue' : 
+              ticket.mode === 'bus' ? 'bg-brand-orange' : 
+              'bg-green-600'
+            }>
               {ticket.mode === 'rail' ? (
                 <RailSymbol className="mr-1 h-4 w-4" />
-              ) : (
+              ) : ticket.mode === 'bus' ? (
                 <Bus className="mr-1 h-4 w-4" />
+              ) : (
+                <Car className="mr-1 h-4 w-4" />
               )}
-              {ticket.mode === 'rail' ? 'Rail' : 'Bus'}
+              {ticket.mode === 'rail' ? 'Rail' : ticket.mode === 'bus' ? 'Bus' : 'Car Pool'}
             </Badge>
             <Badge variant="outline" className="ml-2">
               {ticket.ticketType}
@@ -45,9 +51,6 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
               </Badge>
             )}
           </div>
-          {/* <Badge variant={ticket.price === 'Free' ? 'outline' : 'secondary'}>
-            {ticket.price === 'Free' ? 'Free' : `₹${ticket.price}`}
-          </Badge> */}
         </div>
         <CardTitle className="text-xl mt-2 font-bold">
           {ticket.fromCity} → {ticket.toCity}
@@ -62,7 +65,9 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
               <span className="ml-2">at {ticket.departureTime}</span>
             )}
           </div>
-          <p className="text-sm font-medium mt-1">{ticket.trainOrBusName}</p>
+          <p className="text-sm font-medium mt-1">
+            {ticket.mode === 'car' ? `${ticket.carModel} (${ticket.seatsAvailable} seats)` : ticket.trainOrBusName}
+          </p>
           
           {isAuthenticated ? (
             <div className="mt-2">

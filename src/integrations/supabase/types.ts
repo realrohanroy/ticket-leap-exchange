@@ -50,6 +50,7 @@ export type Database = {
       }
       tickets: {
         Row: {
+          car_model: string | null
           contact_info: string
           created_at: string
           departure_time: string | null
@@ -60,6 +61,7 @@ export type Database = {
           report_reason: string | null
           reported: boolean | null
           reported_by: string | null
+          seats_available: number | null
           status: string | null
           ticket_type: string
           to_city: string
@@ -69,6 +71,7 @@ export type Database = {
           view_count: number
         }
         Insert: {
+          car_model?: string | null
           contact_info: string
           created_at?: string
           departure_time?: string | null
@@ -79,6 +82,7 @@ export type Database = {
           report_reason?: string | null
           reported?: boolean | null
           reported_by?: string | null
+          seats_available?: number | null
           status?: string | null
           ticket_type: string
           to_city: string
@@ -88,6 +92,7 @@ export type Database = {
           view_count?: number
         }
         Update: {
+          car_model?: string | null
           contact_info?: string
           created_at?: string
           departure_time?: string | null
@@ -98,6 +103,7 @@ export type Database = {
           report_reason?: string | null
           reported?: boolean | null
           reported_by?: string | null
+          seats_available?: number | null
           status?: string | null
           ticket_type?: string
           to_city?: string
