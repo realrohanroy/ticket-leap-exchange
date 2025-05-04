@@ -14,6 +14,7 @@ import MyTickets from "@/pages/MyTickets";
 import Admin from "@/pages/Admin";
 import NotFound from "@/pages/NotFound";
 import TermsOfUse from "@/pages/TermsOfUse";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/my-tickets" element={<MyTickets />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/terms" element={<TermsOfUse />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
