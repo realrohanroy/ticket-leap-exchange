@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '../auth/AuthModal';
@@ -15,6 +15,15 @@ import {
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handlePostSeatClick = () => {
+    if (isAuthenticated) {
+      navigate('/post-ticket');
+    } else {
+      setAuthModalOpen(true);
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full py-4 bg-white border-b shadow-sm">
@@ -37,7 +46,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <Link to="/post-ticket">
-                <Button variant="outline">Post Ticket</Button>
+                <Button variant="outline">Post Seat</Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -59,8 +68,8 @@ const Navbar = () => {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={() => setAuthModalOpen(true)}>
-              Login / Register
+            <Button onClick={handlePostSeatClick}>
+              Post Your Seat
             </Button>
           )}
         </div>
@@ -69,6 +78,7 @@ const Navbar = () => {
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
+        afterLoginRedirectTo="/post-ticket"
       />
     </nav>
   );

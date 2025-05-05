@@ -37,9 +37,9 @@ const PostTicket = () => {
                 <RailSymbol className="w-12 h-12 text-brand-blue" />
                 <Bus className="w-12 h-12 text-brand-orange -ml-2" />
               </div>
-              <h1 className="text-3xl font-bold mb-4">Log in to Post Tickets</h1>
+              <h1 className="text-3xl font-bold mb-4">Log in to Post Your Seat</h1>
               <p className="text-muted-foreground mb-6 max-w-md">
-                You need to be logged in to post tickets. This helps us ensure quality listings and prevent spam.
+                You need to be logged in to post your travel seat. This helps us ensure quality listings and prevent spam.
               </p>
             </div>
           )}
