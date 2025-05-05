@@ -18,9 +18,10 @@ import { Mail, Eye, EyeOff, Loader2 } from 'lucide-react';
 type AuthModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  afterLoginRedirectTo?: string; // Added this optional prop
 };
 
-const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, afterLoginRedirectTo }) => {
   const [activeTab, setActiveTab] = useState<string>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -51,6 +52,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
       // Wait a short time to ensure the auth state updates before closing
       setTimeout(() => {
         onClose();
+        
+        // If afterLoginRedirectTo is provided, redirect to that path
+        if (afterLoginRedirectTo) {
+          window.location.href = afterLoginRedirectTo;
+        }
       }, 500);
     } catch (error) {
       console.error('Authentication error:', error);
