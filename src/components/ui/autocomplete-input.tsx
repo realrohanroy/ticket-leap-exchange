@@ -4,13 +4,18 @@ import Select from 'react-select';
 import { cn } from '@/lib/utils';
 
 const maharashtraCities = [
-  'Mumbai', 'Thane', 'Kalyan', 'Murbad', 'Igatpuri', 'Nashik', 'Malegaon',
-  'Dhule', 'Jalgaon', 'Malkapur', 'Khamgaon', 'Akola', 'Amravati', 'Badnera',
-  'Wardha', 'Nagpur', 'Pune', 'Ahmednagar', 'Aurangabad', 'Jalna', 'Solapur',
-  'Chandrapur', 'Ballarshah', 'Latur', 'Nanded', 'Delhi', 'Bengaluru', 
-  'Chennai', 'Kolkata', 'Hyderabad', 'Ahmedabad', 'Surat', 'Indore', 
-  'Bhopal', 'Lucknow', 'Kanpur', 'Jaipur', 'Goa', 'Shimla', 'Manali'
-  ].sort((a, b) => a.localeCompare(b));
+  'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 
+  'Aurangabad', 'Solapur', 'Kolhapur', 'Amravati', 'Nanded',
+  'Sangli', 'Latur', 'Dhule', 'Ahmednagar', 'Jalgaon',
+  'Akola', 'Chandrapur', 'Parbhani', 'Satara', 'Yavatmal',
+  'Ratnagiri', 'Osmanabad', 'Beed', 'Wardha', 'Gondia', 
+  'Buldhana', 'Jalna', 'Hingoli', 'Washim', 'Gadchiroli',
+  'Bhandara', 'Sindhudurg', 'Kalyan', 'Vasai-Virar', 'Malegaon',
+  'Bhiwandi', 'Navi Mumbai', 'Panvel', 'Lonavala', 'Alibaug',
+  'Shirdi', 'Palghar', 'Karjat', 'Ambarnath', 'Badlapur', 
+  'Mira-Bhayandar', 'Ulhasnagar', 'Khed', 'Baramati'
+].sort((a, b) => a.localeCompare(b));
+
 // Format cities for react-select
 const cityOptions = maharashtraCities.map(city => ({
   value: city,

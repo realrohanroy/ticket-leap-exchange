@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -30,12 +31,12 @@ const Index = () => {
         
         <div className="container relative pt-6 md:pt-16 pb-12 md:pb-24 flex flex-col items-center text-center z-10 px-4">
           <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 leading-tight">
-            Travel Smarter, Together
+            Connect With Fellow Travelers
           </h1>
           <p className="text-base md:text-xl max-w-2xl mb-6 md:mb-10 opacity-90">
-            Only place to share or find valid intercity travel tickets.
+            A secure platform to find travelers with extra seats on their journey.
             <br className="hidden md:block" />
-            We connect verified users who want to help other travelers.
+            We connect verified users across Maharashtra for hassle-free travel.
           </p>
           
           <TicketSearch 
@@ -49,9 +50,9 @@ const Index = () => {
               <div className="mb-3 md:mb-4 text-accent bg-white bg-opacity-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mx-auto">
                 <Search className="h-5 w-5 md:h-6 md:w-6" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2">Search Tickets</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Find Available Seats</h3>
               <p className="text-xs md:text-sm opacity-80">
-                Find available tickets by city, route, and travel date from fellow travelers.
+                Search for available seats by city, route, and travel date across Maharashtra.
               </p>
             </div>
             
@@ -59,9 +60,9 @@ const Index = () => {
               <div className="mb-3 md:mb-4 text-accent bg-white bg-opacity-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mx-auto">
                 <Calendar className="h-5 w-5 md:h-6 md:w-6" />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2">Last-Minute Travel</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Last-Minute Plans</h3>
               <p className="text-xs md:text-sm opacity-80">
-                Find confirmed tickets when regular options are sold out or waitlisted.
+                Find travel companions when regular options are sold out or waitlisted.
               </p>
             </div>
             
@@ -69,9 +70,9 @@ const Index = () => {
               <div className="mb-3 md:mb-4 text-accent bg-white bg-opacity-20 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center mx-auto">
                 <Bus className="h-5 w-5 md:h-6 md:w-6" strokeWidth={2.5} />
               </div>
-              <h3 className="text-lg md:text-xl font-semibold mb-2">Rail & Bus Options</h3>
+              <h3 className="text-lg md:text-xl font-semibold mb-2">Travel Options</h3>
               <p className="text-xs md:text-sm opacity-80">
-                Browse tickets for both train and bus journeys across all routes.
+                Connect with travelers using trains, buses, and carpools across Maharashtra.
               </p>
             </div>
           </div>
@@ -80,7 +81,7 @@ const Index = () => {
             <div className="bg-white bg-opacity-10 backdrop-blur-md p-4 md:p-6 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-3 md:mb-4">
                 <Info className="h-5 w-5 md:h-6 md:w-6 text-accent" />
-                <h2 className="text-xl md:text-2xl font-semibold">Important Information</h2>
+                <h2 className="text-xl md:text-2xl font-semibold">Trust & Safety</h2>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
@@ -89,8 +90,8 @@ const Index = () => {
                     <AlertTriangle className="h-4 w-4 md:h-5 md:w-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-medium text-sm md:text-base">Not a Ticket Broker</h3>
-                    <p className="text-xs md:text-sm opacity-80">We don't facilitate ticket transfers or guarantee validity of tickets.</p>
+                    <h3 className="font-medium text-sm md:text-base">Information Platform Only</h3>
+                    <p className="text-xs md:text-sm opacity-80">We are not a ticket reseller or transfer service. We simply connect travelers with each other.</p>
                   </div>
                 </div>
                 
@@ -100,7 +101,7 @@ const Index = () => {
                   </div>
                   <div className="text-left">
                     <h3 className="font-medium text-sm md:text-base">Verify Before Meeting</h3>
-                    <p className="text-xs md:text-sm opacity-80">Always verify ticket validity before arranging any transaction.</p>
+                    <p className="text-xs md:text-sm opacity-80">Always verify identity and details before arranging any meeting for your safety.</p>
                   </div>
                 </div>
               </div>
@@ -112,7 +113,7 @@ const Index = () => {
               >
                 <Link to="/terms" className="flex items-center gap-1.5">
                   <Shield className="h-3.5 w-3.5 md:h-4 md:w-4" />
-                  <span>Read Full Terms of Use</span>
+                  <span>Read Our Safety Guidelines</span>
                 </Link>
               </Button>
             </div>
@@ -124,17 +125,17 @@ const Index = () => {
               className="mt-8 md:mt-10 bg-accent hover:bg-accent/90 text-white"
               size={isMobile ? "default" : "lg"}
             >
-              Post Your Ticket Now
+              Post Your Seat Now
             </Button>
           ) : (
             <div className="mt-8 md:mt-10">
-              <p className="mb-2 text-xs md:text-sm">Have a ticket you can't use?</p>
+              <p className="mb-2 text-xs md:text-sm">Have an extra seat on your journey?</p>
               <Button 
                 onClick={() => navigate('/post-ticket')} 
                 className="bg-accent hover:bg-accent/90 text-white"
                 size={isMobile ? "default" : "lg"}
               >
-                Post Your Ticket Now
+                Post Your Seat Now
               </Button>
             </div>
           )}
