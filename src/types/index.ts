@@ -3,6 +3,8 @@ export type User = {
   id: string;
   email: string;
   name?: string;
+  avgRating?: number;
+  reviewCount?: number;
 };
 
 export type Ticket = {
@@ -54,3 +56,17 @@ export type KeyTakeaway = {
   title: string;
   description: string;
 };
+
+// Review system types
+export type Review = {
+  id: string;
+  reviewerId: string;
+  reviewerName?: string;
+  reviewedUserId: string;
+  ticketId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+};
+
+export type ReviewFormData = Omit<Review, 'id' | 'reviewerId' | 'reviewerName' | 'createdAt'>;

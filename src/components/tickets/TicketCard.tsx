@@ -1,14 +1,19 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isPast, addHours } from 'date-fns';
 import { Ticket } from '@/types';
-import { RailSymbol, Bus, Calendar, Eye, Flag, Car } from 'lucide-react';
+import { RailSymbol, Bus, Calendar, Eye, Flag, Car, Star } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import AuthModal from '../auth/AuthModal';
 import ReportTicketModal from './ReportTicketModal';
+import ReviewModal from '../reviews/ReviewModal';
+import UserRatingBadge from '../reviews/UserRatingBadge';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from '@/hooks/use-toast';
 
 type TicketCardProps = {
   ticket: Ticket;
@@ -16,12 +21,95 @@ type TicketCardProps = {
 };
 
 const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
-  const { isAuthenticated } = useAuth();
-  const [authModalOpen, setAuthModalOpen] = React.useState(false);
-  const [reportModalOpen, setReportModalOpen] = React.useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [reviewCount, setReviewCount] = useState(0);
+  const [hasLeftReview, setHasLeftReview] = useState(false);
   
   const formattedDate = format(parseISO(ticket.travelDate), 'MMM dd, yyyy');
-  const isOwner = onDelete !== undefined;
+  const isOwner = onDelete !== undefined || (user && user.id === ticket.userId);
+  const isTravelComplete = isPast(addHours(parseISO(ticket.travelDate), 24)); // 24 hours after travel date
+  
+  // Check if the user has already left a review for this ticket
+  useEffect(() => {
+    if (isAuthenticated && user && ticket) {
+      const checkReviewStatus = async () => {
+        const { data, error } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('reviewer_id', user.id)
+          .eq('ticket_id', ticket.id)
+          .single();
+        
+        if (!error && data) {
+          setHasLeftReview(true);
+        }
+      };
+      
+      checkReviewStatus();
+    }
+  }, [isAuthenticated, user, ticket, reviewModalOpen]);
+  
+  // Fetch the ticket owner's rating data
+  useEffect(() => {
+    const fetchTicketOwnerData = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('avg_rating, review_count')
+          .eq('id', ticket.userId)
+          .single();
+        
+        if (error) throw error;
+        
+        if (data) {
+          setUserRating(data.avg_rating);
+          setReviewCount(data.review_count || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching user rating:', error);
+      }
+    };
+    
+    if (ticket.userId) {
+      fetchTicketOwnerData();
+    }
+  }, [ticket]);
+  
+  // Increment view count
+  useEffect(() => {
+    const incrementViewCount = async () => {
+      try {
+        await supabase
+          .from('tickets')
+          .update({ view_count: ticket.viewCount + 1 })
+          .eq('id', ticket.id);
+      } catch (error) {
+        console.error('Failed to increment view count:', error);
+      }
+    };
+    
+    // Only increment if not the owner viewing
+    if (!isOwner) {
+      incrementViewCount();
+    }
+  }, []);
+  
+  const handleViewProfile = () => {
+    if (ticket.userId) {
+      navigate(`/user/${ticket.userId}`);
+    } else {
+      toast({
+        title: "Error",
+        description: "Could not find user profile",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <Card className="w-full">
@@ -49,6 +137,24 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
               <Badge variant="destructive" className="ml-2">
                 {ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
               </Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={handleViewProfile}
+              className="p-0 h-auto hover:bg-transparent text-muted-foreground"
+            >
+              View Profile
+            </Button>
+            
+            {reviewCount > 0 && (
+              <UserRatingBadge 
+                rating={userRating} 
+                reviewCount={reviewCount} 
+                size="sm" 
+              />
             )}
           </div>
         </div>
@@ -86,15 +192,33 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
                 </Button>
               </a>
               
-              {!isOwner && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2 text-red-600 border-red-200 hover:bg-red-50"
-                  onClick={() => setReportModalOpen(true)}
-                >
-                  <Flag className="h-4 w-4 mr-1" /> Report Ticket
-                </Button>
+              {!isOwner && isTravelComplete && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {hasLeftReview ? (
+                    <Badge variant="outline" className="bg-green-50 border-green-200 text-green-700">
+                      <Star className="h-3 w-3 mr-1 fill-green-500" /> 
+                      You've reviewed this trip
+                    </Badge>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      onClick={() => setReviewModalOpen(true)}
+                    >
+                      <Star className="h-4 w-4 mr-1" /> Leave a Review
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-red-600 border-red-200 hover:bg-red-50"
+                    onClick={() => setReportModalOpen(true)}
+                  >
+                    <Flag className="h-4 w-4 mr-1" /> Report Ticket
+                  </Button>
+                </div>
               )}
             </div>
           ) : (
@@ -139,6 +263,14 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
         onClose={() => setReportModalOpen(false)} 
         ticketId={ticket.id}
       />
+      
+      {ticket && (
+        <ReviewModal
+          isOpen={reviewModalOpen}
+          onClose={() => setReviewModalOpen(false)}
+          ticket={ticket}
+        />
+      )}
     </Card>
   );
 };

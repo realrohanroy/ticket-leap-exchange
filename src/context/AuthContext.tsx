@@ -1,3 +1,4 @@
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User } from '@/types';
 import { toast } from "sonner";
@@ -60,6 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               id: userData.user.id,
               email: userData.user.email || '',
               name: profileData?.name || userData.user.email?.split('@')[0] || '',
+              avgRating: profileData?.avg_rating || null,
+              reviewCount: profileData?.review_count || 0
             };
             
             setUser(userWithProfile);
@@ -89,6 +92,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               id: session.user.id,
               email: session.user.email || '',
               name: profileData?.name || session.user.email?.split('@')[0] || '',
+              avgRating: profileData?.avg_rating || null,
+              reviewCount: profileData?.review_count || 0
             };
             
             setUser(userWithProfile);

@@ -11,21 +11,65 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          avg_rating: number | null
           created_at: string
           id: string
           name: string | null
+          review_count: number | null
         }
         Insert: {
+          avg_rating?: number | null
           created_at?: string
           id: string
           name?: string | null
+          review_count?: number | null
         }
         Update: {
+          avg_rating?: number | null
           created_at?: string
           id?: string
           name?: string | null
+          review_count?: number | null
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          reviewed_user_id: string
+          reviewer_id: string
+          ticket_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          reviewed_user_id: string
+          reviewer_id: string
+          ticket_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          reviewed_user_id?: string
+          reviewer_id?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_settings: {
         Row: {
