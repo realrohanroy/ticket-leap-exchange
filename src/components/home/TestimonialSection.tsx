@@ -20,7 +20,7 @@ const TestimonialSection = () => {
       initials: 'AJ',
       name: 'Amit J.',
       rating: 4,
-      text: '"What I appreciate most about ShareMySeat is the focus on safety. The verification process is thorough, and the safety guidelines are helpful. I've used the platform multiple times for my Aurangabad-Pune travels and always had positive experiences."'
+      text: '"What I appreciate most about ShareMySeat is the focus on safety. The verification process is thorough, and the safety guidelines are helpful. I\'ve used the platform multiple times for my Aurangabad-Pune travels and always had positive experiences."'
     }
   ];
 
