@@ -116,6 +116,9 @@ const UserProfile = () => {
     .join('')
     .toUpperCase() : '??';
 
+  // Fix for the type error: parse the hexadecimal substring from user ID to a number
+  const memberSinceYear = user.id ? new Date(parseInt(user.id.substring(0, 8), 16) * 1000).getFullYear() : new Date().getFullYear();
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -135,7 +138,7 @@ const UserProfile = () => {
                       reviewCount={user.reviewCount || 0}
                     />
                   </div>
-                  <p className="text-muted-foreground">Member since {new Date(user.id.substring(0, 8), 16).getFullYear()}</p>
+                  <p className="text-muted-foreground">Member since {memberSinceYear}</p>
                 </div>
               </div>
             </CardContent>
