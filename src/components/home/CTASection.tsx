@@ -27,7 +27,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
             Ready to Travel Smarter?
           </h2>
           <p className="mt-4 text-lg leading-6 text-blue-100">
-            Join thousands of verified travelers across Maharashtra. Find seats or share your journey today.
+            Join travelers across Maharashtra. Find seats or share your journey today.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             {!isAuthenticated ? (

@@ -45,6 +45,9 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
+              <Link to="/search">
+                <Button variant="ghost">Search Seat</Button>
+              </Link>
               <Link to="/post-ticket">
                 <Button variant="outline">Post Seat</Button>
               </Link>
@@ -68,9 +71,14 @@ const Navbar = () => {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={handlePostSeatClick}>
-              Post Your Seat
-            </Button>
+            <>
+              <Link to="/search">
+                <Button variant="ghost">Search Seat</Button>
+              </Link>
+              <Button onClick={handlePostSeatClick}>
+                Post Your Seat
+              </Button>
+            </>
           )}
         </div>
       </div>
