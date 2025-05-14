@@ -121,7 +121,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                     variant="outline"
                     className={cn(
                       "w-full justify-start text-left font-medium overflow-hidden",
-                      !date ? "text-muted-foreground" : "bg-white text-black"
+                      !date ? "text-muted-foreground" : ""
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
