@@ -10,7 +10,7 @@ import { CalendarIcon, Search } from 'lucide-react';
 import { SearchFilters } from '@/types';
 import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { toast } from '@/hooks/use-toast';
+import { toast } from '@/components/ui/use-toast';
 
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
@@ -120,8 +120,8 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-medium overflow-hidden",
-                      !date ? "text-muted-foreground" : ""
+                      "w-full justify-start text-left font-medium overflow-hidden text-foreground",
+                      !date && "text-muted-foreground"
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
@@ -147,7 +147,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                     initialFocus
                     className="border-0 pointer-events-auto"
                     modifiersClassNames={{
-                      selected: "bg-primary text-white",
+                      selected: "bg-primary text-primary-foreground",
                       today: "font-bold"
                     }}
                   />
@@ -187,7 +187,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-medium overflow-hidden",
+                      "w-full justify-start text-left font-medium overflow-hidden text-foreground",
                       !date && "text-muted-foreground"
                     )}
                   >
@@ -214,7 +214,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
                     initialFocus
                     className="border-0 pointer-events-auto"
                     modifiersClassNames={{
-                      selected: "bg-primary text-white",
+                      selected: "bg-primary text-primary-foreground",
                       today: "font-bold"
                     }}
                   />
