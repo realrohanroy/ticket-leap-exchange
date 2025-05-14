@@ -51,7 +51,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
             <Button 
               asChild
               variant="outline" 
-              className="border-white text-white hover:bg-blue-800/60"
+              className="border-white text-white hover:bg-white/10"
               size={isMobile ? "default" : "lg"}
             >
               <Link to="/search">Find Available Seats</Link>

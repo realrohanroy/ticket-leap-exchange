@@ -2,6 +2,7 @@
 import React from 'react';
 import { Fingerprint, ShieldCheck, MessageSquare, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const TrustSection = () => {
   const trustItems = [
@@ -28,45 +29,49 @@ const TrustSection = () => {
   ];
 
   return (
-    <div className="py-16 bg-white">
+    <div className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="lg:text-center">
           <h2 className="text-base text-brand-blue font-semibold tracking-wide uppercase">Trust & Safety</h2>
           <p className="mt-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl">
             Your Security is Our Priority
           </p>
-          <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+          <p className="mt-4 max-w-2xl text-xl text-gray-600 lg:mx-auto">
             We've built ShareMySeat with safety at its core. Connecting with fellow travelers should be worry-free.
           </p>
         </div>
 
         <div className="mt-16">
-          <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          <div className="grid gap-10 md:grid-cols-2 lg:gap-x-12 lg:gap-y-10">
             {trustItems.map((item, index) => (
-              <div key={index} className="flex">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-12 w-12 rounded-md bg-brand-blue text-white">
-                    <item.icon className="h-6 w-6" />
+              <div key={index} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full bg-brand-blue/10 text-brand-blue">
+                      <item.icon className="h-6 w-6" />
+                    </div>
                   </div>
-                </div>
-                <div className="ml-4">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">{item.title}</h3>
-                  <p className="mt-2 text-base text-gray-500">
-                    {item.description}
-                  </p>
+                  <div className="ml-4">
+                    <h3 className="text-lg font-medium text-gray-900">{item.title}</h3>
+                    <p className="mt-2 text-base text-gray-600">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
           
-          <div className="mt-10 text-center">
-            <Link 
-              to="/terms" 
-              className="inline-flex items-center px-4 py-2 rounded-md shadow-sm text-sm font-medium text-white bg-brand-blue hover:bg-blue-600"
+          <div className="mt-12 text-center">
+            <Button 
+              asChild
+              className="bg-brand-blue hover:bg-blue-600"
             >
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              Read Our Safety Guidelines
-            </Link>
+              <Link to="/terms">
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                Read Our Safety Guidelines
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,34 +1,41 @@
 
 import React from 'react';
-import { Car } from 'lucide-react';
+import { Sparkles, Shield, CalendarCheck } from 'lucide-react';
 
 const StatSection = () => {
-  const stats = [
-    { value: '10+', label: 'Cities Connected' },
-    { value: '500+', label: 'Active Users' },
+  const benefits = [
+    {
+      icon: Shield,
+      title: 'Safe & Verified',
+      description: 'Every traveler on our platform goes through a verification process for your safety and peace of mind.'
+    },
+    {
+      icon: Sparkles,
+      title: 'Last-Minute Bookings',
+      description: 'Find seats even when regular options are sold out or waitlisted.'
+    },
+    {
+      icon: CalendarCheck,
+      title: 'Flexible Travel Options',
+      description: 'Choose from various modes of transport including trains, buses, and carpools that work best for you.'
+    }
   ];
 
   return (
-    <div className="bg-white py-12">
+    <div className="bg-white py-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center">
-              <p className="text-4xl font-extrabold text-brand-blue">{stat.value}</p>
-              <p className="mt-2 text-base font-medium text-gray-500">{stat.label}</p>
+        <h2 className="text-3xl font-bold text-center mb-12 text-gray-900">Why Choose ShareMySeat</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {benefits.map((benefit, index) => (
+            <div key={index} className="flex flex-col items-center text-center group">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mb-4 group-hover:bg-brand-blue/20 transition-colors">
+                <benefit.icon className="w-8 h-8 text-brand-blue" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-3">{benefit.title}</h3>
+              <p className="text-gray-600">{benefit.description}</p>
             </div>
           ))}
-          
-          <div className="text-center p-4 bg-gray-50 rounded-lg shadow-sm">
-            <div className="flex justify-center mb-2">
-              <Car className="w-8 h-8 text-brand-blue" />
-            </div>
-            <p className="text-xl font-bold text-gray-800">Car Pooling</p>
-            <p className="mt-2 text-sm text-gray-600">
-              Share your car journey with others heading in the same direction. 
-              Save costs and reduce your carbon footprint.
-            </p>
-          </div>
         </div>
       </div>
     </div>
