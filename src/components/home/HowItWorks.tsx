@@ -17,15 +17,9 @@ const HowItWorks = () => {
     },
     {
       number: 3,
-      title: 'Connect Directly',
-      description: 'Contact verified travelers through our secure messaging system.',
+      title: 'Connect on WhatsApp',
+      description: 'Contact verified travelers directly through WhatsApp to arrange your journey.',
       color: 'bg-orange-500'
-    },
-    {
-      number: 4,
-      title: 'Travel & Review',
-      description: 'Travel together and leave reviews to help build our trusted community.',
-      color: 'bg-purple-500'
     }
   ];
 
@@ -35,7 +29,7 @@ const HowItWorks = () => {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">How ShareMySeat Works</h2>
           <p className="mt-4 max-w-2xl mx-auto text-xl text-gray-600">
-            Simple steps to connect with fellow travelers in Maharashtra
+            Simple steps to connect with fellow travelers
           </p>
         </div>
 
@@ -44,7 +38,7 @@ const HowItWorks = () => {
             {/* Connection Line */}
             <div className="hidden absolute top-16 w-full h-1 bg-gray-200 lg:block" aria-hidden="true"></div>
             
-            <div className="relative lg:grid lg:grid-cols-4 lg:gap-x-8">
+            <div className="relative lg:grid lg:grid-cols-3 lg:gap-x-8">
               {steps.map((step) => (
                 <div key={step.number} className="lg:col-span-1 mb-10 lg:mb-0">
                   <div className="flex flex-col items-center">

@@ -1,25 +1,27 @@
 
 import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import HeroSection from '@/components/home/HeroSection';
 import StatSection from '@/components/home/StatSection';
 import FeatureSection from '@/components/home/FeatureSection';
-import TrustSection from '@/components/home/TrustSection';
 import HowItWorks from '@/components/home/HowItWorks';
 import TestimonialSection from '@/components/home/TestimonialSection';
 import CTASection from '@/components/home/CTASection';
 import { SearchFilters } from '@/types';
 import { useAuth } from '@/context/AuthContext';
+import { useNavigateWithFallback } from '@/hooks/use-navigate-with-fallback';
 
 const Index = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigateWithFallback();
   const { isAuthenticated } = useAuth();
 
   const handleSearch = (filters: SearchFilters) => {
-    navigate('/search', { state: { filters } });
+    if (navigate) {
+      navigate('/search', { state: { filters } });
+    }
   };
 
   return (
@@ -37,8 +39,6 @@ const Index = () => {
       <StatSection />
       
       <FeatureSection />
-      
-      <TrustSection />
       
       <HowItWorks />
       
