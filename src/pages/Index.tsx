@@ -6,7 +6,6 @@ import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import HeroSection from '@/components/home/HeroSection';
 import StatSection from '@/components/home/StatSection';
-import FeatureSection from '@/components/home/FeatureSection';
 import HowItWorks from '@/components/home/HowItWorks';
 import TestimonialSection from '@/components/home/TestimonialSection';
 import CTASection from '@/components/home/CTASection';
@@ -37,8 +36,6 @@ const Index = () => {
       </HeroSection>
       
       <StatSection />
-      
-      <FeatureSection />
       
       <HowItWorks />
       
