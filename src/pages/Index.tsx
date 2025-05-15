@@ -5,7 +5,6 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import HeroSection from '@/components/home/HeroSection';
-import StatSection from '@/components/home/StatSection';
 import FeatureSection from '@/components/home/FeatureSection';
 import HowItWorks from '@/components/home/HowItWorks';
 import TestimonialSection from '@/components/home/TestimonialSection';
@@ -31,12 +30,10 @@ const Index = () => {
       <HeroSection>
         <TicketSearch 
           onSearch={handleSearch} 
-          className="w-full max-w-3xl mx-auto mt-12" 
+          className="w-full max-w-3xl mx-auto" 
           navigateOnSearch={true}
         />
       </HeroSection>
-      
-      <StatSection />
       
       <FeatureSection />
       
