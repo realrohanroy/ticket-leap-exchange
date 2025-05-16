@@ -52,6 +52,7 @@ const TicketForm: React.FC = () => {
   });
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState<{[key: string]: boolean}>({});
 
   const ticketTypes = {
     rail: ["Sleeper", "3AC", "2AC", "1AC", "Chair Car", "General"],
@@ -77,6 +78,9 @@ const TicketForm: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: false }));
+    }
   };
 
   const handleNumberChange = (
@@ -85,14 +89,23 @@ const TicketForm: React.FC = () => {
     const { name, value } = e.target;
     const numValue = value === "" ? undefined : parseInt(value, 10);
     setFormData((prev) => ({ ...prev, [name]: numValue }));
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: false }));
+    }
   };
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: false }));
+    }
   };
 
   const handleCityChange = (field: "fromCity" | "toCity", value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: false }));
+    }
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -102,7 +115,68 @@ const TicketForm: React.FC = () => {
         ...prev,
         travelDate: format(selectedDate, "yyyy-MM-dd"),
       }));
+      if (formErrors.travelDate) {
+        setFormErrors(prev => ({ ...prev, travelDate: false }));
+      }
     }
+  };
+
+  const validateForm = () => {
+    const errors: {[key: string]: boolean} = {};
+    let hasErrors = false;
+    
+    // Required fields validation
+    if (!formData.fromCity) {
+      errors.fromCity = true;
+      hasErrors = true;
+    }
+    
+    if (!formData.toCity) {
+      errors.toCity = true;
+      hasErrors = true;
+    }
+    
+    if (!formData.travelDate) {
+      errors.travelDate = true;
+      hasErrors = true;
+    }
+    
+    if (!formData.contactInfo) {
+      errors.contactInfo = true;
+      hasErrors = true;
+    }
+    
+    if (formData.mode === 'rail' || formData.mode === 'bus') {
+      if (!formData.trainOrBusName) {
+        errors.trainOrBusName = true;
+        hasErrors = true;
+      }
+    } else if (formData.mode === 'car') {
+      if (!formData.carModel) {
+        errors.carModel = true;
+        hasErrors = true;
+      }
+      
+      if (!formData.seatsAvailable) {
+        errors.seatsAvailable = true;
+        hasErrors = true;
+      }
+    }
+    
+    if (!formData.ticketType) {
+      errors.ticketType = true;
+      hasErrors = true;
+    }
+    
+    // Check if from and to cities are the same
+    if (formData.fromCity && formData.toCity && formData.fromCity === formData.toCity) {
+      toast.error("From and To cities cannot be the same");
+      errors.toCity = true;
+      hasErrors = true;
+    }
+    
+    setFormErrors(errors);
+    return !hasErrors;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,13 +187,8 @@ const TicketForm: React.FC = () => {
     }
 
     // Form validation
-    if (!formData.fromCity || !formData.toCity || !formData.travelDate || !formData.contactInfo) {
+    if (!validateForm()) {
       toast.error("Please fill in all required fields");
-      return;
-    }
-
-    if (formData.fromCity === formData.toCity) {
-      toast.error("From and To cities cannot be the same");
       return;
     }
 
@@ -211,8 +280,8 @@ const TicketForm: React.FC = () => {
           <div className="flex flex-wrap gap-4 mt-3">
             <RadioGroup
               value={formData.mode}
-              onValueChange={(value) => handleSelectChange("mode", value)}
-              className="flex flex-wrap gap-4"
+              onValueChange={(value: "rail" | "bus" | "car") => handleSelectChange("mode", value)}
+              className="flex flex-wrap gap-4 w-full"
             >
               <div className="flex-1 min-w-[120px]">
                 <div 
@@ -221,6 +290,7 @@ const TicketForm: React.FC = () => {
                     formData.mode === "rail" ? "border-primary bg-primary/10" : "hover:bg-accent"
                   )}
                   onClick={() => handleSelectChange("mode", "rail")}
+                  aria-label="Select Rail travel mode"
                 >
                   <RailSymbol className={cn("h-8 w-8", formData.mode === "rail" ? "text-primary" : "text-muted-foreground")} />
                   <div className="flex items-center gap-2">
@@ -236,6 +306,7 @@ const TicketForm: React.FC = () => {
                     formData.mode === "bus" ? "border-primary bg-primary/10" : "hover:bg-accent"
                   )}
                   onClick={() => handleSelectChange("mode", "bus")}
+                  aria-label="Select Bus travel mode"
                 >
                   <Bus className={cn("h-8 w-8", formData.mode === "bus" ? "text-primary" : "text-muted-foreground")} />
                   <div className="flex items-center gap-2">
@@ -251,6 +322,7 @@ const TicketForm: React.FC = () => {
                     formData.mode === "car" ? "border-primary bg-primary/10" : "hover:bg-accent"
                   )}
                   onClick={() => handleSelectChange("mode", "car")}
+                  aria-label="Select Car Pool travel mode"
                 >
                   <Car className={cn("h-8 w-8", formData.mode === "car" ? "text-primary" : "text-muted-foreground")} />
                   <div className="flex items-center gap-2">
@@ -265,27 +337,31 @@ const TicketForm: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="fromCity">From City *</Label>
+            <Label htmlFor="fromCity" className={cn(formErrors.fromCity && "text-destructive")}>From City *</Label>
             <AutocompleteInput
               placeholder="e.g. Mumbai"
               value={formData.fromCity || ""}
               onChange={(value) => handleCityChange("fromCity", value)}
+              className={cn(formErrors.fromCity && "border-destructive")}
             />
+            {formErrors.fromCity && <p className="text-xs text-destructive">From City is required</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="toCity">To City *</Label>
+            <Label htmlFor="toCity" className={cn(formErrors.toCity && "text-destructive")}>To City *</Label>
             <AutocompleteInput
               placeholder="e.g. Delhi"
               value={formData.toCity || ""}
               onChange={(value) => handleCityChange("toCity", value)}
+              className={cn(formErrors.toCity && "border-destructive")}
             />
+            {formErrors.toCity && <p className="text-xs text-destructive">To City is required</p>}
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="travelDate">Travel Date *</Label>
+            <Label htmlFor="travelDate" className={cn(formErrors.travelDate && "text-destructive")}>Travel Date *</Label>
             <Popover>
               <PopoverTrigger asChild>
                   <Button
@@ -293,7 +369,8 @@ const TicketForm: React.FC = () => {
                     className={cn(
                       "w-full justify-start text-left font-normal",
                       date ? "bg-white text-black" : "text-muted-foreground",
-                      "transition-colors duration-200 ease-in-out"
+                      "transition-colors duration-200 ease-in-out",
+                      formErrors.travelDate && "border-destructive"
                     )}
                     aria-label={date ? format(date, "PPP") : "Pick a date"}
                   >
@@ -314,6 +391,7 @@ const TicketForm: React.FC = () => {
                 />
               </PopoverContent>
             </Popover>
+            {formErrors.travelDate && <p className="text-xs text-destructive">Travel Date is required</p>}
           </div>
 
           <div className="space-y-2">
@@ -361,14 +439,14 @@ const TicketForm: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="ticketType">
+            <Label htmlFor="ticketType" className={cn(formErrors.ticketType && "text-destructive")}>
               {formData.mode === "car" ? "Car Type *" : "Ticket Type *"}
             </Label>
             <Select
               value={formData.ticketType}
               onValueChange={(value) => handleSelectChange("ticketType", value)}
             >
-              <SelectTrigger>
+              <SelectTrigger className={cn(formErrors.ticketType && "border-destructive")}>
                 <SelectValue placeholder={formData.mode === "car" ? "Select car type" : "Select ticket type"} />
               </SelectTrigger>
               <SelectContent>
@@ -392,10 +470,14 @@ const TicketForm: React.FC = () => {
                 }
               </SelectContent>
             </Select>
+            {formErrors.ticketType && <p className="text-xs text-destructive">Ticket type is required</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="trainOrBusName">
+            <Label 
+              htmlFor={formData.mode === "car" ? "carModel" : "trainOrBusName"}
+              className={cn((formErrors.trainOrBusName || formErrors.carModel) && "text-destructive")}
+            >
               {formData.mode === "rail"
                 ? "Train Name & Number *"
                 : formData.mode === "bus"
@@ -403,34 +485,44 @@ const TicketForm: React.FC = () => {
                   : "Car Model *"}
             </Label>
             {formData.mode === "car" ? (
-              <Input
-                id="carModel"
-                name="carModel"
-                placeholder="e.g. Honda Civic, Toyota Innova"
-                required
-                value={formData.carModel || ""}
-                onChange={handleChange}
-              />
+              <>
+                <Input
+                  id="carModel"
+                  name="carModel"
+                  placeholder="e.g. Honda Civic, Toyota Innova"
+                  required
+                  value={formData.carModel || ""}
+                  onChange={handleChange}
+                  className={cn(formErrors.carModel && "border-destructive")}
+                  aria-invalid={formErrors.carModel}
+                />
+                {formErrors.carModel && <p className="text-xs text-destructive">Car model is required</p>}
+              </>
             ) : (
-              <Input
-                id="trainOrBusName"
-                name="trainOrBusName"
-                placeholder={
-                  formData.mode === "rail"
-                    ? "e.g. Rajdhani Express 12951"
-                    : "e.g. KSRTC Airavat"
-                }
-                required
-                value={formData.trainOrBusName || ""}
-                onChange={handleChange}
-              />
+              <>
+                <Input
+                  id="trainOrBusName"
+                  name="trainOrBusName"
+                  placeholder={
+                    formData.mode === "rail"
+                      ? "e.g. Rajdhani Express 12951"
+                      : "e.g. KSRTC Airavat"
+                  }
+                  required
+                  value={formData.trainOrBusName || ""}
+                  onChange={handleChange}
+                  className={cn(formErrors.trainOrBusName && "border-destructive")}
+                  aria-invalid={formErrors.trainOrBusName}
+                />
+                {formErrors.trainOrBusName && <p className="text-xs text-destructive">This field is required</p>}
+              </>
             )}
           </div>
         </div>
 
         {formData.mode === "car" && (
           <div className="space-y-2">
-            <Label htmlFor="seatsAvailable">Number of Seats Available *</Label>
+            <Label htmlFor="seatsAvailable" className={cn(formErrors.seatsAvailable && "text-destructive")}>Number of Seats Available *</Label>
             <Input
               id="seatsAvailable"
               name="seatsAvailable"
@@ -441,13 +533,16 @@ const TicketForm: React.FC = () => {
               max={8}
               value={formData.seatsAvailable || ""}
               onChange={handleNumberChange}
+              className={cn(formErrors.seatsAvailable && "border-destructive")}
+              aria-invalid={formErrors.seatsAvailable}
             />
+            {formErrors.seatsAvailable && <p className="text-xs text-destructive">Number of seats is required</p>}
           </div>
         )}
 
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="contactInfo">WhatsApp Number *</Label>
+            <Label htmlFor="contactInfo" className={cn(formErrors.contactInfo && "text-destructive")}>WhatsApp Number *</Label>
             <div className="flex items-center gap-2">
               <Select
                 value={formData.countryCode || "+91"}
@@ -473,17 +568,26 @@ const TicketForm: React.FC = () => {
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, "").slice(0, 10);
                   setFormData((prev) => ({ ...prev, contactInfo: value }));
+                  if (formErrors.contactInfo) {
+                    setFormErrors(prev => ({ ...prev, contactInfo: false }));
+                  }
                 }}
                 pattern="[0-9]{10}"
                 minLength={10}
                 maxLength={10}
                 inputMode="tel"
                 style={{ textSizeAdjust: "100%" }}
+                className={cn(formErrors.contactInfo && "border-destructive")}
+                aria-invalid={formErrors.contactInfo}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Please enter your WhatsApp number
-            </p>
+            {formErrors.contactInfo ? (
+              <p className="text-xs text-destructive">WhatsApp number is required</p>
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Please enter your WhatsApp number
+              </p>
+            )}
           </div>
         </div>
 

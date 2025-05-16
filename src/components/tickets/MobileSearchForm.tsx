@@ -25,13 +25,14 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
   onSubmit
 }) => {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 w-full">
       <div className="w-full">
         <AutocompleteInput
           placeholder="From City"
           value={fromCity}
           onChange={onFromCityChange}
           className="w-full"
+          aria-label="From City"
         />
       </div>
       
@@ -41,6 +42,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           value={toCity}
           onChange={onToCityChange}
           className="w-full"
+          aria-label="To City"
         />
       </div>
       
@@ -51,11 +53,17 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           side="bottom" 
           sideOffset={8} 
           className="w-full" 
+          aria-label="Select Date"
         />
       </div>
       
       <div className="w-full">
-        <Button type="submit" className="w-full h-10" onClick={onSubmit}>
+        <Button 
+          type="submit" 
+          className="w-full h-10" 
+          onClick={onSubmit} 
+          aria-label="Search Tickets"
+        >
           <Search className="mr-2 h-4 w-4" /> Search
         </Button>
       </div>
