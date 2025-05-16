@@ -50,11 +50,12 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           onSelect={onDateSelect} 
           side="bottom" 
           sideOffset={8} 
+          className="w-full" 
         />
       </div>
       
       <div className="w-full">
-        <Button type="submit" className="w-full" onClick={onSubmit}>
+        <Button type="submit" className="w-full h-10" onClick={onSubmit}>
           <Search className="mr-2 h-4 w-4" /> Search
         </Button>
       </div>

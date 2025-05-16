@@ -20,20 +20,20 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-brand-blue to-blue-700 py-16">
+    <div className="bg-gradient-to-b from-brand-blue to-blue-700 py-8 md:py-16">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="text-2xl md:text-3xl font-bold text-white sm:text-4xl">
             Ready to Travel Smarter?
           </h2>
-          <p className="mt-4 text-lg leading-6 text-blue-100">
+          <p className="mt-3 md:mt-4 text-base md:text-lg leading-6 text-blue-100">
             Join travelers across the country. Find seats or share your journey today.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <div className="mt-6 md:mt-8 flex flex-wrap justify-center gap-3 md:gap-4">
             {!isAuthenticated ? (
               <Button 
                 onClick={handleSignUpClick}
-                className="bg-white text-brand-blue hover:bg-blue-50"
+                className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
                 size={isMobile ? "default" : "lg"}
               >
                 Sign up for free
@@ -41,7 +41,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
             ) : (
               <Button 
                 asChild
-                className="bg-white text-brand-blue hover:bg-blue-50"
+                className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
                 size={isMobile ? "default" : "lg"}
               >
                 <Link to="/post-ticket">Post Your Seat</Link>
@@ -50,7 +50,7 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
             
             <Button 
               asChild
-              className="bg-white text-brand-blue hover:bg-blue-50"
+              className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
               size={isMobile ? "default" : "lg"}
             >
               <Link to="/search">Find Available Seats</Link>

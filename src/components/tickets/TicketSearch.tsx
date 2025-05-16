@@ -82,7 +82,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
     <form 
       onSubmit={handleSearch}
       className={cn(
-        "bg-white rounded-lg shadow-lg p-4 md:p-6",
+        "bg-white rounded-lg shadow-lg p-3 md:p-6",
         className
       )}
     >

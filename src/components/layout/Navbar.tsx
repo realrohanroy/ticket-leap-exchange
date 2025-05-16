@@ -4,25 +4,32 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '../auth/AuthModal';
-import { Bus, User } from 'lucide-react';
+import { Bus, User, Menu, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const handleAuthClick = () => {
     setAuthModalOpen(true);
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   return (
-    <nav className="sticky top-0 z-50 w-full py-4 bg-white border-b shadow-sm">
+    <nav className="sticky top-0 z-50 w-full py-3 md:py-4 bg-white border-b shadow-sm">
       <div className="container flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <div className="p-1.5 rounded-lg">
@@ -38,7 +45,15 @@ const Navbar = () => {
           </div>
         </Link>
 
-        <div className="flex items-center space-x-4">
+        {/* Mobile menu button */}
+        <div className="md:hidden">
+          <Button variant="ghost" size="icon" onClick={toggleMobileMenu} className="relative">
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
+
+        {/* Desktop menu */}
+        <div className="hidden md:flex items-center space-x-4">
           {isAuthenticated ? (
             <>
               <Link to="/search">
@@ -78,6 +93,48 @@ const Navbar = () => {
           )}
         </div>
       </div>
+      
+      {/* Mobile menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white pt-2 pb-4 px-4 border-t">
+          <div className="flex flex-col space-y-3">
+            <Link to="/search" onClick={() => setMobileMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">Search Seat</Button>
+            </Link>
+            
+            {isAuthenticated ? (
+              <>
+                <Link to="/post-ticket" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full justify-start">Post Seat</Button>
+                </Link>
+                <Link to="/my-tickets" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="ghost" className="w-full justify-start">My Tickets</Button>
+                </Link>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start"
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <Button 
+                className="w-full" 
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleAuthClick();
+                }}
+              >
+                Login / Signup
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
       
       <AuthModal
         isOpen={authModalOpen}
