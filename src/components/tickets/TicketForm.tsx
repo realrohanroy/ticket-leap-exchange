@@ -36,6 +36,7 @@ interface TicketFormData {
   ticketType: string;
   trainOrBusName: string;
   contactInfo: string;
+  countryCode: string;
   additionalInfo: string;
   carModel?: string;
   seatsAvailable?: number;
@@ -47,6 +48,7 @@ const TicketForm: React.FC = () => {
   const [formData, setFormData] = useState<Partial<TicketFormData>>({
     mode: "rail",
     ticketType: "Sleeper",
+    countryCode: "+91" // Default to India
   });
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +58,19 @@ const TicketForm: React.FC = () => {
     bus: ["Seater", "Semi-Sleeper", "Sleeper", "AC", "Non-AC"],
     car: ["Economy", "Sedan", "SUV", "Luxury", "Mini-Van"]
   };
+
+  const countryCodes = [
+    { code: "+1", country: "US/Canada" },
+    { code: "+44", country: "UK" },
+    { code: "+91", country: "India" },
+    { code: "+61", country: "Australia" },
+    { code: "+65", country: "Singapore" },
+    { code: "+971", country: "UAE" },
+    { code: "+49", country: "Germany" },
+    { code: "+33", country: "France" },
+    { code: "+81", country: "Japan" },
+    { code: "+86", country: "China" },
+  ];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -97,6 +112,17 @@ const TicketForm: React.FC = () => {
       return;
     }
 
+    // Form validation
+    if (!formData.fromCity || !formData.toCity || !formData.travelDate || !formData.contactInfo) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (formData.fromCity === formData.toCity) {
+      toast.error("From and To cities cannot be the same");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -121,6 +147,8 @@ const TicketForm: React.FC = () => {
         return;
       }
 
+      const fullContactInfo = `${formData.countryCode || "+91"}${formData.contactInfo || ""}`;
+      
       const ticketWithDefaults: TicketFormData = {
         mode: formData.mode || "rail",
         fromCity: formData.fromCity || "",
@@ -129,7 +157,8 @@ const TicketForm: React.FC = () => {
         departureTime: formData.departureTime || "",
         ticketType: formData.ticketType || "",
         trainOrBusName: formData.mode === "car" ? formData.carModel || "" : formData.trainOrBusName || "",
-        contactInfo: formData.contactInfo || "",
+        contactInfo: fullContactInfo,
+        countryCode: formData.countryCode || "+91",
         additionalInfo: formData.additionalInfo || "",
         carModel: formData.mode === "car" ? formData.carModel : undefined,
         seatsAvailable: formData.mode === "car" ? formData.seatsAvailable : undefined,
@@ -178,34 +207,60 @@ const TicketForm: React.FC = () => {
 
       <div className="space-y-4">
         <div>
-          <Label>Mode of Travel</Label>
-          <RadioGroup
-            value={formData.mode}
-            onValueChange={(value) => handleSelectChange("mode", value)}
-            className="flex flex-wrap gap-4 mt-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="rail" id="rail" />
-              <Label
-                htmlFor="rail"
-                className="cursor-pointer flex items-center"
-              >
-                <RailSymbol className="mr-1 h-4 w-4" /> Rail
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="bus" id="bus" />
-              <Label htmlFor="bus" className="cursor-pointer flex items-center">
-                <Bus className="mr-1 h-4 w-4" /> Bus
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="car" id="car" />
-              <Label htmlFor="car" className="cursor-pointer flex items-center">
-                <Car className="mr-1 h-4 w-4" /> Car Pool
-              </Label>
-            </div>
-          </RadioGroup>
+          <Label className="text-lg mb-2 font-medium">Mode of Travel</Label>
+          <div className="flex flex-wrap gap-4 mt-3">
+            <RadioGroup
+              value={formData.mode}
+              onValueChange={(value) => handleSelectChange("mode", value)}
+              className="flex flex-wrap gap-4"
+            >
+              <div className="flex-1 min-w-[120px]">
+                <div 
+                  className={cn(
+                    "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                    formData.mode === "rail" ? "border-primary bg-primary/10" : "hover:bg-accent"
+                  )}
+                  onClick={() => handleSelectChange("mode", "rail")}
+                >
+                  <RailSymbol className={cn("h-8 w-8", formData.mode === "rail" ? "text-primary" : "text-muted-foreground")} />
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="rail" id="rail" className="sr-only" />
+                    <Label htmlFor="rail" className="font-medium cursor-pointer">Rail</Label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <div 
+                  className={cn(
+                    "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                    formData.mode === "bus" ? "border-primary bg-primary/10" : "hover:bg-accent"
+                  )}
+                  onClick={() => handleSelectChange("mode", "bus")}
+                >
+                  <Bus className={cn("h-8 w-8", formData.mode === "bus" ? "text-primary" : "text-muted-foreground")} />
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="bus" id="bus" className="sr-only" />
+                    <Label htmlFor="bus" className="font-medium cursor-pointer">Bus</Label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 min-w-[120px]">
+                <div 
+                  className={cn(
+                    "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                    formData.mode === "car" ? "border-primary bg-primary/10" : "hover:bg-accent"
+                  )}
+                  onClick={() => handleSelectChange("mode", "car")}
+                >
+                  <Car className={cn("h-8 w-8", formData.mode === "car" ? "text-primary" : "text-muted-foreground")} />
+                  <div className="flex items-center gap-2">
+                    <RadioGroupItem value="car" id="car" className="sr-only" />
+                    <Label htmlFor="car" className="font-medium cursor-pointer">Car Pool</Label>
+                  </div>
+                </div>
+              </div>
+            </RadioGroup>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -390,27 +445,44 @@ const TicketForm: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="contactInfo">WhatsApp Number (10 digits) *</Label>
-            <Input
-              id="contactInfo"
-              name="contactInfo"
-              placeholder="Please enter your WhatsApp number"
-              required
-              value={formData.contactInfo || ""}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-                setFormData((prev) => ({ ...prev, contactInfo: value }));
-              }}
-              pattern="[0-9]{10}"
-              minLength={10}
-              maxLength={10}
-              inputMode="tel"
-              style={{ textSizeAdjust: "100%" }}
-            />
+            <Label htmlFor="contactInfo">WhatsApp Number *</Label>
+            <div className="flex items-center gap-2">
+              <Select
+                value={formData.countryCode || "+91"}
+                onValueChange={(value) => handleSelectChange("countryCode", value)}
+              >
+                <SelectTrigger className="w-[110px] flex-shrink-0">
+                  <SelectValue placeholder="+91" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countryCodes.map((country) => (
+                    <SelectItem key={country.code} value={country.code}>
+                      {country.code} {country.country}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
+                id="contactInfo"
+                name="contactInfo"
+                placeholder="WhatsApp number without country code"
+                required
+                value={formData.contactInfo || ""}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  setFormData((prev) => ({ ...prev, contactInfo: value }));
+                }}
+                pattern="[0-9]{10}"
+                minLength={10}
+                maxLength={10}
+                inputMode="tel"
+                style={{ textSizeAdjust: "100%" }}
+              />
+            </div>
             <p className="text-xs text-muted-foreground">
-              Please enter your 10-digit WhatsApp number
+              Please enter your WhatsApp number
             </p>
           </div>
         </div>

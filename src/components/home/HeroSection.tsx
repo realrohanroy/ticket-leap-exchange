@@ -7,7 +7,7 @@ interface HeroSectionProps {
 
 const HeroSection: React.FC<HeroSectionProps> = ({ children }) => {
   return (
-    <div className="relative min-h-[600px] flex-1 bg-gradient-to-r from-blue-700 to-blue-900 text-white overflow-hidden">
+    <div className="relative min-h-[600px] flex-1 bg-gradient-to-r from-blue-700 to-blue-900 text-white">
       <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-10"></div>
       
       <div className="container relative py-16 md:py-24 flex flex-col items-center z-10 px-4">
@@ -21,11 +21,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({ children }) => {
           </p>
         </div>
         
-        <div className="w-full relative">
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-white/30 backdrop-blur-md w-full max-w-5xl h-12 rounded-t-xl"></div>
-          <div className="relative bg-white/20 backdrop-blur-sm rounded-xl p-6 w-full max-w-4xl mx-auto shadow-2xl">
-            {children}
-          </div>
+        <div className="w-full max-w-4xl mx-auto">
+          {children}
         </div>
       </div>
     </div>

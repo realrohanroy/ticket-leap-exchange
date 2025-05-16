@@ -17,12 +17,8 @@ const Navbar = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handlePostSeatClick = () => {
-    if (isAuthenticated) {
-      navigate('/post-ticket');
-    } else {
-      setAuthModalOpen(true);
-    }
+  const handleAuthClick = () => {
+    setAuthModalOpen(true);
   };
 
   return (
@@ -75,8 +71,8 @@ const Navbar = () => {
               <Link to="/search">
                 <Button variant="ghost">Search Seat</Button>
               </Link>
-              <Button onClick={handlePostSeatClick}>
-                Post Your Seat
+              <Button onClick={handleAuthClick}>
+                Login / Signup
               </Button>
             </>
           )}
