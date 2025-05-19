@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { format } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { format, parse } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { SearchFilters } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -13,18 +13,33 @@ type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
   className?: string;
   navigateOnSearch?: boolean;
+  initialFilters?: SearchFilters;
 };
 
 const TicketSearch: React.FC<TicketSearchProps> = ({ 
   onSearch, 
   className,
-  navigateOnSearch = false
+  navigateOnSearch = false,
+  initialFilters = {}
 }) => {
   const navigate = navigateOnSearch ? useNavigateWithFallback() : undefined;
-  const [fromCity, setFromCity] = useState('');
-  const [toCity, setToCity] = useState('');
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [fromCity, setFromCity] = useState(initialFilters.fromCity || '');
+  const [toCity, setToCity] = useState(initialFilters.toCity || '');
+  const [date, setDate] = useState<Date | undefined>(
+    initialFilters.travelDate 
+      ? parse(initialFilters.travelDate, 'yyyy-MM-dd', new Date()) 
+      : undefined
+  );
   const isMobile = useIsMobile();
+
+  // Update state when initialFilters change
+  useEffect(() => {
+    setFromCity(initialFilters.fromCity || '');
+    setToCity(initialFilters.toCity || '');
+    setDate(initialFilters.travelDate 
+      ? parse(initialFilters.travelDate, 'yyyy-MM-dd', new Date())
+      : undefined);
+  }, [initialFilters]);
 
   // Update fromCity and prevent same city selection
   const handleFromCityChange = (value: string) => {
@@ -74,7 +89,13 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
     onSearch(filters);
     
     if (navigateOnSearch && navigate) {
-      navigate('/search', { state: { filters } });
+      // Convert filters to search params
+      const params = new URLSearchParams();
+      if (filters.fromCity) params.set('from', filters.fromCity);
+      if (filters.toCity) params.set('to', filters.toCity);
+      if (filters.travelDate) params.set('date', filters.travelDate);
+      
+      navigate(`/search?${params.toString()}`, { state: { filters } });
     }
   };
 

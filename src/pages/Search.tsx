@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import TicketSearch from '@/components/tickets/TicketSearch';
 import TicketList from '@/components/tickets/TicketList';
@@ -14,11 +13,38 @@ import { toast } from '@/hooks/use-toast';
 
 const Search = () => {
   const location = useLocation();
-  const initialFilters = location.state?.filters || {};
+  const [searchParams, setSearchParams] = useSearchParams();
   
-  const [filters, setFilters] = useState<SearchFilters>(initialFilters);
+  // Extract filters from URL params or location state
+  const getInitialFilters = () => {
+    const fromUrl = {
+      fromCity: searchParams.get('from') || undefined,
+      toCity: searchParams.get('to') || undefined,
+      travelDate: searchParams.get('date') || undefined,
+      mode: (searchParams.get('mode') as 'rail' | 'bus' | 'car' | 'all' | undefined) || undefined,
+      ticketType: searchParams.get('type') || undefined
+    };
+    
+    // Use URL params if available, otherwise fall back to location state
+    const hasUrlParams = Object.values(fromUrl).some(value => value !== undefined);
+    return hasUrlParams ? fromUrl : (location.state?.filters || {});
+  };
+  
+  const [filters, setFilters] = useState<SearchFilters>(getInitialFilters());
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (filters.fromCity) params.set('from', filters.fromCity);
+    if (filters.toCity) params.set('to', filters.toCity);
+    if (filters.travelDate) params.set('date', filters.travelDate);
+    if (filters.mode && filters.mode !== 'all') params.set('mode', filters.mode);
+    if (filters.ticketType) params.set('type', filters.ticketType);
+    
+    setSearchParams(params);
+  }, [filters, setSearchParams]);
 
   const mapTicket = (dbTicket: any): Ticket => ({
     id: dbTicket.id,
@@ -161,7 +187,8 @@ const Search = () => {
           <div className="mb-8">
             <TicketSearch 
               onSearch={handleSearch} 
-              navigateOnSearch={false} 
+              navigateOnSearch={false}
+              initialFilters={filters}
             />
           </div>
           
