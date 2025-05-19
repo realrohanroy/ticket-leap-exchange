@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
@@ -5,7 +6,7 @@ import TicketSearch from '@/components/tickets/TicketSearch';
 import TicketList from '@/components/tickets/TicketList';
 import Disclaimer from '@/components/layout/Disclaimer';
 import { SearchFilters, Ticket } from '@/types';
-import { format, parseISO, isAfter, startOfDay } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TriangleAlert } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -34,7 +35,7 @@ const Search = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Update URL when filters change
+  // Update URL when filters change to persist state
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.fromCity) params.set('from', filters.fromCity);
@@ -43,7 +44,8 @@ const Search = () => {
     if (filters.mode && filters.mode !== 'all') params.set('mode', filters.mode);
     if (filters.ticketType) params.set('type', filters.ticketType);
     
-    setSearchParams(params);
+    // Use replaceState to avoid adding to history stack
+    setSearchParams(params, { replace: true });
   }, [filters, setSearchParams]);
 
   const mapTicket = (dbTicket: any): Ticket => ({
@@ -119,6 +121,11 @@ const Search = () => {
       setTickets(mappedTickets);
     } catch (error) {
       console.error('Error fetching tickets:', error);
+      toast({
+        title: "Error loading tickets",
+        description: "Please try again later",
+        variant: "destructive"
+      });
       setTickets([]);
     } finally {
       setLoading(false);

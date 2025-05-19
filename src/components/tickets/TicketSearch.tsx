@@ -95,7 +95,11 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
       if (filters.toCity) params.set('to', filters.toCity);
       if (filters.travelDate) params.set('date', filters.travelDate);
       
-      navigate(`/search?${params.toString()}`, { state: { filters } });
+      // Use replace instead of push to avoid navigation issues
+      navigate(`/search?${params.toString()}`, { 
+        state: { filters },
+        replace: true 
+      });
     }
   };
 
