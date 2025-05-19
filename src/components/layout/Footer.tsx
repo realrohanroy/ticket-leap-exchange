@@ -9,11 +9,11 @@ const Footer = () => {
   const isMobile = useIsMobile();
   
   return (
-    <footer className="bg-gray-900 text-white py-6 md:py-8">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col md:flex-row justify-between mb-6 md:mb-8">
+    <footer className="bg-gray-900 text-white py-8">
+      <div className="container px-4 sm:px-6">
+        <div className="flex flex-col md:flex-row justify-between gap-6 mb-6 md:mb-8">
           <div className="mb-6 md:mb-0">
-            <Link to="/" className="flex items-center space-x-2 mb-3">
+            <Link to="/" className="flex items-center space-x-2 mb-3 touch-manipulation">
               <div className="p-1 rounded-lg">
                 <Bus className="w-5 h-5 md:w-5 md:h-5 text-brand-blue" strokeWidth={2.5} />
               </div>
@@ -33,41 +33,41 @@ const Footer = () => {
           
           <div className={`grid ${isMobile ? 'grid-cols-3' : 'grid-cols-3 gap-8'} gap-6`}>
             <div>
-              <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Platform</h3>
-              <ul className="space-y-1 md:space-y-2">
+              <h3 className="font-semibold mb-3 text-sm md:text-base">Platform</h3>
+              <ul className="space-y-2">
                 <li>
-                  <Link to="/search" className="text-gray-400 hover:text-white transition text-sm">
+                  <Link to="/search" className="text-gray-400 hover:text-white transition text-sm py-1 block touch-manipulation">
                     Search Tickets
                   </Link>
                 </li>
                 <li>
-                  <Link to="/post-ticket" className="text-gray-400 hover:text-white transition text-sm">
+                  <Link to="/post-ticket" className="text-gray-400 hover:text-white transition text-sm py-1 block touch-manipulation">
                     Post a Ticket
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Legal</h3>
-              <ul className="space-y-1 md:space-y-2">
+              <h3 className="font-semibold mb-3 text-sm md:text-base">Legal</h3>
+              <ul className="space-y-2">
                 <li>
-                  <Link to="/terms" className="text-gray-400 hover:text-white transition text-sm">
+                  <Link to="/terms" className="text-gray-400 hover:text-white transition text-sm py-1 block touch-manipulation">
                     Terms of Use
                   </Link>
                 </li>
                 <li>
-                  <Link to="/privacy" className="text-gray-400 hover:text-white transition text-sm">
+                  <Link to="/privacy" className="text-gray-400 hover:text-white transition text-sm py-1 block touch-manipulation">
                     Privacy Policy
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-2 md:mb-3 text-sm md:text-base">Support</h3>
-              <ul className="space-y-1 md:space-y-2">
-                <li className="break-all">
-                  <a href="mailto:support@sharemyseat.com" className="text-gray-400 hover:text-white transition text-sm">
-                    support@sharemyseat.com
+              <h3 className="font-semibold mb-3 text-sm md:text-base">Support</h3>
+              <ul className="space-y-2">
+                <li>
+                  <a href="mailto:support@sharemyseat.com" className="text-gray-400 hover:text-white transition text-sm py-1 block touch-manipulation">
+                    Contact Us
                   </a>
                 </li>
               </ul>
@@ -77,11 +77,11 @@ const Footer = () => {
         
         <Separator className="bg-gray-700" />
         
-        <div className="pt-4 md:pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs md:text-sm text-gray-400 text-center md:text-left">
-            © 2025 ShareMySeat. All rights reserved.
+            © {new Date().getFullYear()} ShareMySeat. All rights reserved.
           </p>
-          <p className="text-xs text-gray-500 mt-2 md:mt-0 text-center md:text-left">
+          <p className="text-xs text-gray-500 mt-3 md:mt-0 text-center md:text-left">
             <span className="text-gray-400">Important: </span>
             We do not facilitate ticket transfers or guarantee validity.
           </p>

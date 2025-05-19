@@ -31,13 +31,13 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
   };
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-4 w-full">
       <div className="w-full relative">
         <AutocompleteInput
           placeholder="From City"
           value={fromCity}
           onChange={onFromCityChange}
-          className="w-full"
+          className="w-full h-12 text-base"
           aria-label="From City"
         />
       </div>
@@ -47,11 +47,11 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           type="button" 
           variant="outline" 
           size="icon" 
-          className="h-8 w-8 rounded-full bg-white shadow-md" 
+          className="h-10 w-10 rounded-full bg-white shadow-md" 
           onClick={handleSwapCities}
           aria-label="Swap cities"
         >
-          <ArrowDownUp className="h-4 w-4" />
+          <ArrowDownUp className="h-5 w-5" />
         </Button>
       </div>
       
@@ -60,7 +60,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           placeholder="To City"
           value={toCity}
           onChange={onToCityChange}
-          className="w-full"
+          className="w-full h-12 text-base"
           aria-label="To City"
         />
       </div>
@@ -71,19 +71,19 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           onSelect={onDateSelect} 
           side="bottom" 
           sideOffset={8} 
-          className="w-full" 
+          className="w-full h-12" 
           aria-label="Select Date"
         />
       </div>
       
-      <div className="w-full">
+      <div className="w-full pt-2">
         <Button 
           type="submit" 
-          className="w-full h-10" 
+          className="w-full h-12 text-base" 
           onClick={onSubmit} 
           aria-label="Search Tickets"
         >
-          <Search className="mr-2 h-4 w-4" /> Search
+          <Search className="mr-2 h-5 w-5" /> Search
         </Button>
       </div>
     </div>

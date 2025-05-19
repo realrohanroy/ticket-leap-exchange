@@ -22,18 +22,22 @@ const StatSection = () => {
   ];
 
   return (
-    <div className="bg-white py-10 md:py-16">
-      <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-12 text-gray-900">Why Choose ShareMySeat</h2>
+    <div className="bg-white py-8 md:py-16">
+      <div className="container mx-auto px-4 sm:px-6">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-center mb-6 md:mb-10 text-gray-900">Why Choose ShareMySeat</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
           {benefits.map((benefit, index) => (
-            <div key={index} className="flex flex-col items-center text-center group p-4">
-              <div className="w-14 h-14 rounded-full bg-brand-blue/10 flex items-center justify-center mb-4 group-hover:bg-brand-blue/20 transition-colors">
-                <benefit.icon className="w-7 h-7 text-brand-blue" />
+            <div key={index} className="flex flex-col items-center text-center group p-4 touch-manipulation">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-brand-blue/10 flex items-center justify-center mb-3 md:mb-4 group-hover:bg-brand-blue/20 transition-colors">
+                <benefit.icon className="w-6 h-6 md:w-7 md:h-7 text-brand-blue" />
               </div>
-              <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2 md:mb-3">{benefit.title}</h3>
-              <p className="text-sm md:text-base text-gray-600">{benefit.description}</p>
+              <h3 className="text-base md:text-lg lg:text-xl font-bold text-gray-800 mb-2">
+                {benefit.title}
+              </h3>
+              <p className="text-sm md:text-base text-gray-600">
+                {benefit.description}
+              </p>
             </div>
           ))}
         </div>

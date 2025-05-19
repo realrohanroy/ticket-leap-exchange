@@ -5,11 +5,27 @@
   text-align: center;
 }
 
+body {
+  -webkit-tap-highlight-color: rgba(0,0,0,0); /* Remove tap highlight on iOS */
+  touch-action: manipulation; /* Improve touch handling */
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
 /* Responsive styles */
 @media (min-width: 768px) {
   #root {
     padding: 1rem;
   }
+}
+
+/* Increase tap target sizes for mobile */
+button, a, [role="button"] {
+  min-height: 44px; /* Apple's recommended minimum touch target size */
+  min-width: 44px;
+}
+
+input, select, textarea {
+  font-size: 16px !important; /* Prevent iOS zoom on focus */
 }
 
 .logo {
@@ -47,3 +63,19 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Touch-friendly styling */
+.touch-manipulation {
+  touch-action: manipulation;
+}
+
+/* Add smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Improve form element touch targets */
+.form-input, .form-select, .form-textarea {
+  min-height: 44px;
+}
+

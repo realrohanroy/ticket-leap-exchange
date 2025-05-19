@@ -1,0 +1,18 @@
+
+{
+  "name": "ShareMySeat - Travel Connected",
+  "short_name": "ShareMySeat",
+  "description": "Connect with verified travelers to find or share available seats",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "orientation": "portrait"
+}

@@ -19,15 +19,21 @@ export default defineConfig(({ mode }) => ({
     },
     allowedHosts: ["f2cc2b83-a2fe-4463-86dd-5d502f519bbd.lovableproject.com"],
   },
-  base: mode === 'production' ? '/' : '/',
+  base: '/',
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: mode !== 'production',
+    sourcemap: mode === 'development',
+    minify: mode === 'production',
+    target: 'es2015', 
+    cssMinify: mode === 'production',
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')
     }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query'],
   }
 }));
