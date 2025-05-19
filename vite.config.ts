@@ -13,6 +13,10 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     strictPort: true,
+    hmr: true,
+    watch: {
+      usePolling: true,
+    },
     allowedHosts: ["f2cc2b83-a2fe-4463-86dd-5d502f519bbd.lovableproject.com"],
   },
   base: mode === 'production' ? '/' : '/',

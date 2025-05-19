@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, ArrowDownUp } from 'lucide-react';
 import { AutocompleteInput } from '@/components/ui/autocomplete-input';
 import DatePickerField from './DatePickerField';
 
@@ -24,9 +24,15 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
   onDateSelect,
   onSubmit
 }) => {
+  const handleSwapCities = () => {
+    const tempFromCity = fromCity;
+    onFromCityChange(toCity);
+    onToCityChange(tempFromCity);
+  };
+
   return (
     <div className="space-y-3 w-full">
-      <div className="w-full">
+      <div className="w-full relative">
         <AutocompleteInput
           placeholder="From City"
           value={fromCity}
@@ -34,6 +40,19 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           className="w-full"
           aria-label="From City"
         />
+      </div>
+      
+      <div className="w-full flex justify-center -my-2 z-10">
+        <Button 
+          type="button" 
+          variant="outline" 
+          size="icon" 
+          className="h-8 w-8 rounded-full bg-white shadow-md" 
+          onClick={handleSwapCities}
+          aria-label="Swap cities"
+        >
+          <ArrowDownUp className="h-4 w-4" />
+        </Button>
       </div>
       
       <div className="w-full">
