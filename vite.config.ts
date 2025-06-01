@@ -23,10 +23,10 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false,
-    minify: 'terser',
+    sourcemap: mode === 'development',
+    minify: mode === 'production' ? 'terser' : false,
     target: 'es2015',
-    cssMinify: true,
+    cssMinify: mode === 'production',
     rollupOptions: {
       output: {
         manualChunks: undefined,
