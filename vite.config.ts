@@ -23,10 +23,20 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: mode === 'development',
-    minify: mode === 'production',
-    target: 'es2015', 
-    cssMinify: mode === 'production',
+    sourcemap: false,
+    minify: 'terser',
+    target: 'es2015',
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+        assetFileNames: 'assets/[name].[hash].[ext]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js'
+      }
+    },
+    assetsDir: 'assets',
+    copyPublicDir: true
   },
   resolve: {
     alias: {
@@ -35,5 +45,6 @@ export default defineConfig(({ mode }) => ({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', '@tanstack/react-query'],
-  }
+  },
+  publicDir: 'public'
 }));
