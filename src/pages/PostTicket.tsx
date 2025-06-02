@@ -7,12 +7,14 @@ import TicketForm from '@/components/tickets/TicketForm';
 import { useAuth } from '@/context/AuthContext';
 import AuthModal from '@/components/auth/AuthModal';
 import Disclaimer from '@/components/layout/Disclaimer';
-import { Bus, RailSymbol } from 'lucide-react';
+import { Bus, RailSymbol, Plus } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const PostTicket = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -21,15 +23,40 @@ const PostTicket = () => {
   }, [isAuthenticated, isLoading]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
       
-      <main className="flex-1 py-10">
-        <div className="container max-w-3xl">
+      <main className="flex-1 py-4 md:py-10">
+        <div className={`container ${isMobile ? 'px-4' : 'max-w-3xl'}`}>
           {isAuthenticated ? (
             <>
+              {/* Mobile-optimized header */}
+              <div className={`mb-6 ${isMobile ? 'text-center' : ''}`}>
+                <div className="flex items-center justify-center mb-4">
+                  <div className="relative">
+                    <div className="flex items-center">
+                      <RailSymbol className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} text-brand-blue`} />
+                      <Bus className={`${isMobile ? 'w-10 h-10' : 'w-12 h-12'} text-brand-orange -ml-2`} />
+                    </div>
+                    <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
+                      <Plus className="w-3 h-3 text-white" />
+                    </div>
+                  </div>
+                </div>
+                <h1 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`}>
+                  Post Your Seat
+                </h1>
+                <p className={`text-muted-foreground ${isMobile ? 'text-sm px-4' : ''}`}>
+                  Share your available seat with fellow travelers and earn money while helping others
+                </p>
+              </div>
+
               <Disclaimer className="mb-6" />
-              <TicketForm />
+              
+              {/* Mobile-optimized form container */}
+              <div className={`${isMobile ? 'bg-white rounded-xl shadow-sm border' : 'bg-white rounded-lg shadow-lg'} p-6`}>
+                <TicketForm />
+              </div>
             </>
           ) : (
             <div className="flex flex-col items-center justify-center h-full py-16 text-center">

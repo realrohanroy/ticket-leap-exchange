@@ -3,12 +3,26 @@
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
+  min-height: 100vh;
 }
 
 body {
   -webkit-tap-highlight-color: rgba(0,0,0,0); /* Remove tap highlight on iOS */
   touch-action: manipulation; /* Improve touch handling */
   overflow-x: hidden; /* Prevent horizontal scrolling */
+  font-size: 16px; /* Prevent iOS zoom on input focus */
+  -webkit-user-select: none; /* Prevent text selection on mobile */
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection for specific elements */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
 }
 
 /* Responsive styles */
@@ -16,16 +30,53 @@ body {
   #root {
     padding: 1rem;
   }
+  
+  body {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+  }
 }
 
-/* Increase tap target sizes for mobile */
-button, a, [role="button"] {
-  min-height: 44px; /* Apple's recommended minimum touch target size */
-  min-width: 44px;
+/* Mobile-first touch targets */
+button, a, [role="button"], .touch-target {
+  min-height: 48px; /* Increased from 44px for better touch */
+  min-width: 48px;
+  touch-action: manipulation;
+  position: relative;
 }
 
+/* Enhanced form elements for mobile */
 input, select, textarea {
   font-size: 16px !important; /* Prevent iOS zoom on focus */
+  border-radius: 8px;
+  padding: 12px 16px;
+  min-height: 48px;
+}
+
+/* Mobile keyboard handling */
+@media screen and (max-width: 767px) {
+  .keyboard-adjust {
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+  
+  /* Fix viewport issues on mobile browsers */
+  html {
+    height: -webkit-fill-available;
+  }
+  
+  body {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Safe area handling for devices with notches */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .logo {
@@ -64,7 +115,7 @@ input, select, textarea {
   color: #888;
 }
 
-/* Touch-friendly styling */
+/* Enhanced touch-friendly styling */
 .touch-manipulation {
   touch-action: manipulation;
 }
@@ -74,8 +125,71 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Improve form element touch targets */
-.form-input, .form-select, .form-textarea {
-  min-height: 44px;
+/* Improve form element touch targets on mobile */
+@media (max-width: 767px) {
+  .form-input, .form-select, .form-textarea {
+    min-height: 48px;
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+  
+  /* Better button spacing on mobile */
+  .mobile-button-spacing {
+    margin: 8px 0;
+  }
+  
+  /* Improved list item touch targets */
+  li, .list-item {
+    min-height: 48px;
+    padding: 12px 16px;
+  }
 }
 
+/* Loading states optimization */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 767px) {
+  /* Reduce margins and padding for mobile */
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  /* Optimize modal sizing for mobile */
+  .modal-content {
+    margin: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+  
+  /* Better search form layout */
+  .search-form {
+    gap: 12px;
+  }
+  
+  /* Optimize dropdown positioning */
+  .dropdown-mobile {
+    position: fixed !important;
+    top: auto !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 16px !important;
+    width: auto !important;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}

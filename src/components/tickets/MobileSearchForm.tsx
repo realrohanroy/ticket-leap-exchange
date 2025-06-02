@@ -37,21 +37,21 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           placeholder="From City"
           value={fromCity}
           onChange={onFromCityChange}
-          className="w-full h-12 text-base"
+          className="w-full h-14 text-lg font-medium"
           aria-label="From City"
         />
       </div>
       
-      <div className="w-full flex justify-center -my-2 z-10">
+      <div className="w-full flex justify-center -my-2 z-10 relative">
         <Button 
           type="button" 
           variant="outline" 
           size="icon" 
-          className="h-10 w-10 rounded-full bg-white shadow-md" 
+          className="h-12 w-12 rounded-full bg-white shadow-lg border-2 touch-manipulation" 
           onClick={handleSwapCities}
           aria-label="Swap cities"
         >
-          <ArrowDownUp className="h-5 w-5" />
+          <ArrowDownUp className="h-6 w-6" />
         </Button>
       </div>
       
@@ -60,7 +60,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           placeholder="To City"
           value={toCity}
           onChange={onToCityChange}
-          className="w-full h-12 text-base"
+          className="w-full h-14 text-lg font-medium"
           aria-label="To City"
         />
       </div>
@@ -71,7 +71,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           onSelect={onDateSelect} 
           side="bottom" 
           sideOffset={8} 
-          className="w-full h-12" 
+          className="w-full h-14 text-lg font-medium justify-start" 
           aria-label="Select Date"
         />
       </div>
@@ -79,11 +79,11 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
       <div className="w-full pt-2">
         <Button 
           type="submit" 
-          className="w-full h-12 text-base" 
+          className="w-full h-14 text-lg font-semibold touch-manipulation" 
           onClick={onSubmit} 
           aria-label="Search Tickets"
         >
-          <Search className="mr-2 h-5 w-5" /> Search
+          <Search className="mr-3 h-6 w-6" /> Search Tickets
         </Button>
       </div>
     </div>

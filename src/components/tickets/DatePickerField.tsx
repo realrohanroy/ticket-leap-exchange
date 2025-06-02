@@ -20,7 +20,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   date, 
   onSelect, 
   className,
-  side = "right",
+  side = "bottom",
   sideOffset = 12,
   align = "start"
 }) => {
@@ -30,14 +30,14 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-medium overflow-hidden text-foreground",
+            "w-full justify-start text-left font-medium overflow-hidden text-foreground bg-white border-input hover:bg-accent hover:text-accent-foreground touch-manipulation",
             !date && "text-muted-foreground",
             className
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+          <CalendarIcon className="mr-3 h-5 w-5 flex-shrink-0" />
           {date ? (
-            <span className="truncate">
+            <span className="truncate text-foreground">
               {format(date, "EEE, MMM d, yyyy")}
             </span>
           ) : (
@@ -46,7 +46,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         </Button>
       </PopoverTrigger>
       <PopoverContent 
-        className="w-auto p-0 bg-white shadow-lg rounded-lg"
+        className="w-auto p-0 bg-white shadow-xl rounded-lg border-2 z-50"
         align={align}
         side={side}
         sideOffset={sideOffset}
@@ -56,11 +56,12 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
           selected={date}
           onSelect={onSelect}
           initialFocus
-          className="border-0 pointer-events-auto"
+          className="border-0 pointer-events-auto p-4"
           modifiersClassNames={{
-            selected: "bg-primary text-primary-foreground",
-            today: "font-bold"
+            selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
+            today: "font-bold bg-accent text-accent-foreground"
           }}
+          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
         />
       </PopoverContent>
     </Popover>

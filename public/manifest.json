@@ -7,12 +7,54 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["travel", "transportation", "social"],
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any maskable"
     }
   ],
-  "orientation": "portrait"
+  "screenshots": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "640x480",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Tickets",
+      "short_name": "Search",
+      "description": "Find available travel seats",
+      "url": "/search",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Post Ticket",
+      "short_name": "Post",
+      "description": "Share your available seat",
+      "url": "/post-ticket",
+      "icons": [
+        {
+          "src": "/favicon.ico",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "dir": "ltr",
+  "splash_pages": null
 }

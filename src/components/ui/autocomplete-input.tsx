@@ -41,24 +41,37 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     onChange(selectedOption ? selectedOption.value : '');
   };
 
-  // Custom styles to match our design and ensure text visibility
+  // Enhanced mobile-first styles
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
       borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
-      boxShadow: state.isFocused ? '0 0 0 1px hsl(var(--ring))' : 'none',
+      boxShadow: state.isFocused ? '0 0 0 2px hsl(var(--ring) / 0.2)' : 'none',
       '&:hover': {
         borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))'
       },
-      minHeight: '40px',
-      background: 'hsl(var(--background))'
+      minHeight: '48px',
+      background: 'white',
+      borderRadius: '8px',
+      fontSize: '16px',
+      fontWeight: '500',
+      borderWidth: '2px',
+      cursor: 'text'
     }),
     menu: (provided: any) => ({
       ...provided,
-      backgroundColor: 'white',  // Explicit white background for the dropdown
+      backgroundColor: 'white',
       zIndex: 50,
-      border: '1px solid hsl(var(--border))',
-      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+      border: '2px solid hsl(var(--border))',
+      borderRadius: '12px',
+      boxShadow: '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      overflow: 'hidden',
+      maxHeight: '300px'
+    }),
+    menuList: (provided: any) => ({
+      ...provided,
+      padding: '8px',
+      maxHeight: '280px'
     }),
     option: (provided: any, state: any) => ({
       ...provided,
@@ -66,49 +79,66 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         ? 'hsl(var(--primary))' 
         : state.isFocused 
           ? 'hsl(var(--accent))' 
-          : 'white',   // White background for non-selected/non-focused options
+          : 'white',
       color: state.isSelected 
         ? 'hsl(var(--primary-foreground))' 
-        : 'black',   // Black text for options
+        : 'hsl(var(--foreground))',
       cursor: 'pointer',
+      padding: '12px 16px',
+      borderRadius: '6px',
+      margin: '2px 0',
+      fontSize: '16px',
+      fontWeight: state.isSelected ? '600' : '500',
       '&:active': {
         backgroundColor: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--accent))'
-      }
+      },
+      transition: 'all 0.15s ease'
     }),
     input: (provided: any) => ({
       ...provided,
-      color: 'black'  // Black text for input
+      color: 'hsl(var(--foreground))',
+      fontSize: '16px'
     }),
     singleValue: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--foreground))'
+      color: 'hsl(var(--foreground))',
+      fontSize: '16px',
+      fontWeight: '500'
     }),
     placeholder: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))'
+      color: 'hsl(var(--muted-foreground))',
+      fontSize: '16px',
+      fontWeight: '400'
     }),
     dropdownIndicator: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))'
+      color: 'hsl(var(--muted-foreground))',
+      padding: '8px 12px'
     }),
     clearIndicator: (provided: any) => ({
       ...provided,
-      color: 'hsl(var(--muted-foreground))'
+      color: 'hsl(var(--muted-foreground))',
+      padding: '8px 4px',
+      cursor: 'pointer',
+      '&:hover': {
+        color: 'hsl(var(--foreground))'
+      }
     }),
-    // Ensure the multi-value display has proper contrast
-    multiValue: (provided: any) => ({
+    indicatorSeparator: (provided: any) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--secondary))'
+      backgroundColor: 'hsl(var(--border))',
+      margin: '8px 4px'
     }),
-    multiValueLabel: (provided: any) => ({
+    valueContainer: (provided: any) => ({
       ...provided,
-      color: 'black'
+      padding: '8px 16px'
     })
   };
 
   return (
     <Select
-      className={cn("", className)}
+      className={cn("text-base", className)}
       classNamePrefix="city-select"
       value={selectedOption}
       onChange={handleChange}
@@ -118,6 +148,8 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       isSearchable
       styles={customStyles}
       menuPlacement="auto"
+      menuPosition="fixed"
+      menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
       theme={(theme) => ({
         ...theme,
         colors: {
@@ -126,19 +158,22 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           primary75: 'hsl(var(--primary) / 0.75)',
           primary50: 'hsl(var(--primary) / 0.5)',
           primary25: 'hsl(var(--primary) / 0.25)',
-          neutral0: 'white',       // Background color
+          neutral0: 'white',
           neutral5: '#f9f9f9',
           neutral10: '#f3f3f3',
-          neutral20: '#e0e0e0',    // Border
+          neutral20: 'hsl(var(--border))',
           neutral30: '#cccccc',
-          neutral40: '#999999',    // Placeholder text
+          neutral40: 'hsl(var(--muted-foreground))',
           neutral50: '#808080',
           neutral60: '#666666',
           neutral70: '#4d4d4d',
-          neutral80: '#333333',    // Text
+          neutral80: 'hsl(var(--foreground))',
           neutral90: '#1a1a1a',
         },
       })}
+      components={{
+        IndicatorSeparator: () => null // Remove separator for cleaner look
+      }}
     />
   );
 };
