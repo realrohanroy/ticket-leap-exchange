@@ -7,8 +7,6 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { AuthProvider } from "@/context/AuthContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import InviteOnlyGate from "@/components/common/InviteOnlyGate";
-import { useState, useEffect } from "react";
 
 // Import pages
 import Index from "@/pages/Index";
@@ -31,34 +29,6 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const [hasValidInvite, setHasValidInvite] = useState(false);
-  const [isCheckingInvite, setIsCheckingInvite] = useState(true);
-
-  useEffect(() => {
-    // Check if user already has a valid invite
-    const validInvite = localStorage.getItem('validInvite');
-    if (validInvite) {
-      setHasValidInvite(true);
-    }
-    setIsCheckingInvite(false);
-  }, []);
-
-  if (isCheckingInvite) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-brand-blue" />
-      </div>
-    );
-  }
-
-  if (!hasValidInvite) {
-    return (
-      <ErrorBoundary>
-        <InviteOnlyGate onValidInvite={() => setHasValidInvite(true)} />
-      </ErrorBoundary>
-    );
-  }
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
