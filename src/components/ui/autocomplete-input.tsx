@@ -114,7 +114,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       ...provided,
       color: 'hsl(var(--foreground))',
       fontSize: isMobile ? '16px' : '14px',
-      fontWeight: '500'
+      fontWeight: '600'
     }),
     placeholder: (provided: any) => ({
       ...provided,

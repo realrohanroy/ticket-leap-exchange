@@ -52,7 +52,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
             </span>
           ) : (
             <span className="truncate text-muted-foreground">
-              {isMobile ? "Select Date" : "Select Travel Date"}
+              Date
             </span>
           )}
         </Button>

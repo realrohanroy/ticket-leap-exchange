@@ -38,7 +38,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           From City
         </label>
         <AutocompleteInput
-          placeholder="Select departure city"
+          placeholder="From City"
           value={fromCity}
           onChange={onFromCityChange}
           className="w-full"
@@ -67,7 +67,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           To City
         </label>
         <AutocompleteInput
-          placeholder="Select destination city"
+          placeholder="To City"
           value={toCity}
           onChange={onToCityChange}
           className="w-full"
