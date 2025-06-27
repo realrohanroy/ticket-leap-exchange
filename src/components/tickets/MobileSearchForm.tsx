@@ -31,59 +31,76 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
   };
 
   return (
-    <div className="space-y-4 w-full">
+    <div className="space-y-6 w-full">
+      {/* From City */}
       <div className="w-full relative">
+        <label htmlFor="fromCity" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+          From City
+        </label>
         <AutocompleteInput
-          placeholder="From City"
+          placeholder="Select departure city"
           value={fromCity}
           onChange={onFromCityChange}
-          className="w-full h-14 text-lg font-medium"
+          className="w-full"
           aria-label="From City"
         />
       </div>
       
-      <div className="w-full flex justify-center -my-2 z-10 relative">
+      {/* Swap Button */}
+      <div className="w-full flex justify-center -my-3 z-10 relative">
         <Button 
           type="button" 
           variant="outline" 
           size="icon" 
-          className="h-12 w-12 rounded-full bg-white shadow-lg border-2 touch-manipulation" 
+          className="h-12 w-12 rounded-full bg-white shadow-lg border-2 touch-manipulation hover:bg-accent hover:text-accent-foreground transition-all duration-200 focus:ring-2 focus:ring-ring focus:ring-offset-2" 
           onClick={handleSwapCities}
-          aria-label="Swap cities"
+          aria-label="Swap departure and destination cities"
+          style={{ WebkitTapHighlightColor: 'transparent' }}
         >
           <ArrowDownUp className="h-6 w-6" />
         </Button>
       </div>
       
+      {/* To City */}
       <div className="w-full">
+        <label htmlFor="toCity" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+          To City
+        </label>
         <AutocompleteInput
-          placeholder="To City"
+          placeholder="Select destination city"
           value={toCity}
           onChange={onToCityChange}
-          className="w-full h-14 text-lg font-medium"
+          className="w-full"
           aria-label="To City"
         />
       </div>
       
+      {/* Date Picker */}
       <div className="w-full">
+        <label htmlFor="travelDate" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+          Travel Date
+        </label>
         <DatePickerField 
           date={date} 
           onSelect={onDateSelect} 
           side="bottom" 
           sideOffset={8} 
-          className="w-full h-14 text-lg font-medium justify-start" 
-          aria-label="Select Date"
+          className="w-full" 
+          aria-label="Select Travel Date"
         />
       </div>
       
-      <div className="w-full pt-2">
+      {/* Search Button */}
+      <div className="w-full pt-4">
         <Button 
           type="submit" 
-          className="w-full h-14 text-lg font-semibold touch-manipulation" 
+          className="w-full h-14 text-lg font-semibold touch-manipulation bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 rounded-xl shadow-lg" 
           onClick={onSubmit} 
-          aria-label="Search Tickets"
+          aria-label="Search Available Seats"
+          style={{ WebkitTapHighlightColor: 'transparent' }}
         >
-          <Search className="mr-3 h-6 w-6" /> Search Tickets
+          <Search className="mr-3 h-6 w-6" /> 
+          Search Available Seats
         </Button>
       </div>
     </div>

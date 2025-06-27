@@ -2,6 +2,7 @@
 import React from 'react';
 import Select from 'react-select';
 import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const maharashtraCities = [
   'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 
@@ -16,7 +17,6 @@ const maharashtraCities = [
   'Mira-Bhayandar', 'Ulhasnagar', 'Khed', 'Baramati'
 ].sort((a, b) => a.localeCompare(b));
 
-// Format cities for react-select
 const cityOptions = maharashtraCities.map(city => ({
   value: city,
   label: city
@@ -27,21 +27,23 @@ interface AutocompleteInputProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  'aria-label'?: string;
 }
 
 export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   placeholder = "Search location...",
   value,
   onChange,
-  className
+  className,
+  'aria-label': ariaLabel
 }) => {
+  const isMobile = useIsMobile();
   const selectedOption = cityOptions.find(option => option.value === value) || null;
 
   const handleChange = (selectedOption: any) => {
     onChange(selectedOption ? selectedOption.value : '');
   };
 
-  // Enhanced mobile-first styles
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
@@ -50,28 +52,34 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       '&:hover': {
         borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))'
       },
-      minHeight: '48px',
+      minHeight: isMobile ? '48px' : '40px',
       background: 'white',
-      borderRadius: '8px',
-      fontSize: '16px',
+      borderRadius: isMobile ? '12px' : '8px',
+      fontSize: isMobile ? '16px' : '14px',
       fontWeight: '500',
       borderWidth: '2px',
-      cursor: 'text'
+      cursor: 'text',
+      transition: 'all 0.2s ease-in-out'
     }),
     menu: (provided: any) => ({
       ...provided,
       backgroundColor: 'white',
-      zIndex: 50,
+      zIndex: 60,
       border: '2px solid hsl(var(--border))',
-      borderRadius: '12px',
-      boxShadow: '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+      borderRadius: isMobile ? '16px' : '12px',
+      boxShadow: isMobile 
+        ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        : '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       overflow: 'hidden',
-      maxHeight: '300px'
+      maxHeight: isMobile ? '60vh' : '300px',
+      marginTop: '4px'
     }),
     menuList: (provided: any) => ({
       ...provided,
-      padding: '8px',
-      maxHeight: '280px'
+      padding: isMobile ? '12px' : '8px',
+      maxHeight: isMobile ? 'calc(60vh - 24px)' : '280px',
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch'
     }),
     option: (provided: any, state: any) => ({
       ...provided,
@@ -84,61 +92,62 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         ? 'hsl(var(--primary-foreground))' 
         : 'hsl(var(--foreground))',
       cursor: 'pointer',
-      padding: '12px 16px',
-      borderRadius: '6px',
+      padding: isMobile ? '16px 20px' : '12px 16px',
+      borderRadius: isMobile ? '10px' : '6px',
       margin: '2px 0',
-      fontSize: '16px',
+      fontSize: isMobile ? '16px' : '14px',
       fontWeight: state.isSelected ? '600' : '500',
       '&:active': {
         backgroundColor: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--accent))'
       },
-      transition: 'all 0.15s ease'
+      transition: 'all 0.15s ease',
+      minHeight: isMobile ? '48px' : 'auto',
+      display: 'flex',
+      alignItems: 'center'
     }),
     input: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--foreground))',
-      fontSize: '16px'
+      fontSize: isMobile ? '16px' : '14px'
     }),
     singleValue: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--foreground))',
-      fontSize: '16px',
+      fontSize: isMobile ? '16px' : '14px',
       fontWeight: '500'
     }),
     placeholder: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--muted-foreground))',
-      fontSize: '16px',
+      fontSize: isMobile ? '16px' : '14px',
       fontWeight: '400'
     }),
     dropdownIndicator: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--muted-foreground))',
-      padding: '8px 12px'
+      padding: isMobile ? '12px 16px' : '8px 12px',
+      '&:hover': {
+        color: 'hsl(var(--foreground))'
+      }
     }),
     clearIndicator: (provided: any) => ({
       ...provided,
       color: 'hsl(var(--muted-foreground))',
-      padding: '8px 4px',
+      padding: isMobile ? '12px 8px' : '8px 4px',
       cursor: 'pointer',
       '&:hover': {
         color: 'hsl(var(--foreground))'
       }
     }),
-    indicatorSeparator: (provided: any) => ({
-      ...provided,
-      backgroundColor: 'hsl(var(--border))',
-      margin: '8px 4px'
-    }),
     valueContainer: (provided: any) => ({
       ...provided,
-      padding: '8px 16px'
+      padding: isMobile ? '8px 20px' : '8px 16px'
     })
   };
 
   return (
     <Select
-      className={cn("text-base", className)}
+      className={cn("text-base touch-manipulation", className)}
       classNamePrefix="city-select"
       value={selectedOption}
       onChange={handleChange}
@@ -148,8 +157,9 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       isSearchable
       styles={customStyles}
       menuPlacement="auto"
-      menuPosition="fixed"
-      menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+      menuPosition={isMobile ? "fixed" : "absolute"}
+      menuPortalTarget={isMobile && typeof document !== 'undefined' ? document.body : null}
+      aria-label={ariaLabel}
       theme={(theme) => ({
         ...theme,
         colors: {
@@ -172,8 +182,14 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         },
       })}
       components={{
-        IndicatorSeparator: () => null // Remove separator for cleaner look
+        IndicatorSeparator: () => null
       }}
+      noOptionsMessage={({ inputValue }) => 
+        inputValue ? `No cities found matching "${inputValue}"` : "Start typing to search cities"
+      }
+      filterOption={(option, inputValue) =>
+        option.label.toLowerCase().includes(inputValue.toLowerCase())
+      }
     />
   );
 };
