@@ -57,7 +57,7 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           aria-label="Swap departure and destination cities"
           style={{ WebkitTapHighlightColor: 'transparent' }}
         >
-          <ArrowDownUp className="h-6 w-6" />
+          <ArrowDownUp className="h-6 w-6 text-black" />
         </Button>
       </div>
       
