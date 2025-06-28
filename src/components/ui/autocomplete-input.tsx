@@ -38,7 +38,9 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   'aria-label': ariaLabel
 }) => {
   const isMobile = useIsMobile();
-  const selectedOption = cityOptions.find(option => option.value === value) || null;
+  
+  // Ensure we find the correct selected option
+  const selectedOption = value ? cityOptions.find(option => option.value === value) : null;
 
   const handleChange = (selectedOption: any) => {
     onChange(selectedOption ? selectedOption.value : '');
@@ -64,7 +66,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     menu: (provided: any) => ({
       ...provided,
       backgroundColor: 'white',
-      zIndex: 60,
+      zIndex: 9999,
       border: '2px solid hsl(var(--border))',
       borderRadius: isMobile ? '16px' : '12px',
       boxShadow: isMobile 

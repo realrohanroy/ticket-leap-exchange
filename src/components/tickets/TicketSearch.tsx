@@ -104,37 +104,39 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   };
 
   return (
-    <form 
-      onSubmit={handleSearch}
-      className={cn(
-        "bg-white rounded-lg shadow-lg p-3 md:p-6",
-        className
-      )}
-    >
-      <div className={`${isMobile ? 'space-y-3' : 'grid grid-cols-1 sm:grid-cols-6 gap-4'}`}>
-        {isMobile ? (
-          <MobileSearchForm 
-            fromCity={fromCity}
-            toCity={toCity}
-            date={date}
-            onFromCityChange={handleFromCityChange}
-            onToCityChange={handleToCityChange}
-            onDateSelect={setDate}
-            onSubmit={handleSearch}
-          />
-        ) : (
-          <DesktopSearchForm 
-            fromCity={fromCity}
-            toCity={toCity}
-            date={date}
-            onFromCityChange={handleFromCityChange}
-            onToCityChange={handleToCityChange}
-            onDateSelect={setDate}
-            onSubmit={handleSearch}
-          />
+    <div className="w-full">
+      <form 
+        onSubmit={handleSearch}
+        className={cn(
+          "bg-white rounded-lg shadow-lg p-3 md:p-6 w-full",
+          className
         )}
-      </div>
-    </form>
+      >
+        <div className={`${isMobile ? 'space-y-3' : 'grid grid-cols-1 sm:grid-cols-6 gap-4'} w-full`}>
+          {isMobile ? (
+            <MobileSearchForm 
+              fromCity={fromCity}
+              toCity={toCity}
+              date={date}
+              onFromCityChange={handleFromCityChange}
+              onToCityChange={handleToCityChange}
+              onDateSelect={setDate}
+              onSubmit={handleSearch}
+            />
+          ) : (
+            <DesktopSearchForm 
+              fromCity={fromCity}
+              toCity={toCity}
+              date={date}
+              onFromCityChange={handleFromCityChange}
+              onToCityChange={handleToCityChange}
+              onDateSelect={setDate}
+              onSubmit={handleSearch}
+            />
+          )}
+        </div>
+      </form>
+    </div>
   );
 };
 
