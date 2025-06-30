@@ -12,13 +12,6 @@ const SpeedInsightsWrapper = () => {
   try {
     return (
       <SpeedInsights 
-        beforeSend={(event) => {
-          // Only send analytics for actual page views
-          if (event.name === 'route-change' || event.name === 'beforeunload') {
-            return event;
-          }
-          return event;
-        }}
         sampleRate={1}
         route={window.location.pathname}
       />
