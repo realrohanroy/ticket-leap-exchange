@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
-import SpeedInsightsWrapper from "@/components/common/SpeedInsightsWrapper";
 
 // Import pages
 import Index from "@/pages/Index";
@@ -36,7 +35,6 @@ const App = () => {
           <AuthProvider>
             <SiteSettingsProvider>
               <Toaster />
-              <SpeedInsightsWrapper />
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
