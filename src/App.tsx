@@ -3,10 +3,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { SpeedInsights } from "@vercel/speed-insights/react";
 import { AuthProvider } from "@/context/AuthContext";
 import { SiteSettingsProvider } from "@/context/SiteSettingsContext";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
+import SpeedInsightsWrapper from "@/components/common/SpeedInsightsWrapper";
 
 // Import pages
 import Index from "@/pages/Index";
@@ -36,7 +36,7 @@ const App = () => {
           <AuthProvider>
             <SiteSettingsProvider>
               <Toaster />
-              <SpeedInsights />
+              <SpeedInsightsWrapper />
               <BrowserRouter>
                 <Routes>
                   <Route path="/" element={<Index />} />
