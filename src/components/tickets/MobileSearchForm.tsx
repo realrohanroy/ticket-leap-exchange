@@ -31,53 +31,65 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
   };
 
   return (
-    <div className="space-y-6 w-full">
+    <div className="space-y-5 w-full">
       {/* From City */}
       <div className="w-full relative">
-        <label htmlFor="fromCity" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+        <label htmlFor="fromCity" className="block text-sm font-bold text-foreground mb-3 px-1">
           From City
         </label>
         <AutocompleteInput
-          placeholder="From City"
+          placeholder="Select departure city"
           value={fromCity}
           onChange={onFromCityChange}
           className="w-full"
           aria-label="From City"
         />
+        {fromCity && (
+          <div className="mt-2 px-3 py-2 bg-primary/10 border border-primary/20 rounded-lg">
+            <div className="text-xs font-medium text-muted-foreground">Departure from:</div>
+            <div className="text-base font-bold text-primary">{fromCity}</div>
+          </div>
+        )}
       </div>
       
       {/* Swap Button */}
-      <div className="w-full flex justify-center -my-3 z-10 relative">
+      <div className="w-full flex justify-center -my-2 z-20 relative">
         <Button 
           type="button" 
           variant="outline" 
           size="icon" 
-          className="h-12 w-12 rounded-full bg-white shadow-lg border-2 touch-manipulation hover:bg-accent hover:text-accent-foreground transition-all duration-200 focus:ring-2 focus:ring-ring focus:ring-offset-2" 
+          className="h-14 w-14 rounded-full bg-background shadow-xl border-2 border-primary/20 touch-manipulation hover:bg-primary hover:text-primary-foreground transition-all duration-300 focus:ring-4 focus:ring-primary/20 focus:ring-offset-2" 
           onClick={handleSwapCities}
           aria-label="Swap departure and destination cities"
           style={{ WebkitTapHighlightColor: 'transparent' }}
         >
-          <ArrowDownUp className="h-6 w-6 text-black" />
+          <ArrowDownUp className="h-7 w-7" />
         </Button>
       </div>
       
       {/* To City */}
       <div className="w-full">
-        <label htmlFor="toCity" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+        <label htmlFor="toCity" className="block text-sm font-bold text-foreground mb-3 px-1">
           To City
         </label>
         <AutocompleteInput
-          placeholder="To City"
+          placeholder="Select destination city"
           value={toCity}
           onChange={onToCityChange}
           className="w-full"
           aria-label="To City"
         />
+        {toCity && (
+          <div className="mt-2 px-3 py-2 bg-secondary/10 border border-secondary/20 rounded-lg">
+            <div className="text-xs font-medium text-muted-foreground">Destination to:</div>
+            <div className="text-base font-bold text-secondary-foreground">{toCity}</div>
+          </div>
+        )}
       </div>
       
       {/* Date Picker */}
       <div className="w-full">
-        <label htmlFor="travelDate" className="block text-sm font-semibold text-gray-700 mb-2 px-1">
+        <label htmlFor="travelDate" className="block text-sm font-bold text-foreground mb-3 px-1">
           Travel Date
         </label>
         <DatePickerField 
@@ -88,13 +100,26 @@ const MobileSearchForm: React.FC<MobileSearchFormProps> = ({
           className="w-full" 
           aria-label="Select Travel Date"
         />
+        {date && (
+          <div className="mt-2 px-3 py-2 bg-accent/10 border border-accent/20 rounded-lg">
+            <div className="text-xs font-medium text-muted-foreground">Travel date:</div>
+            <div className="text-base font-bold text-accent-foreground">
+              {date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </div>
+          </div>
+        )}
       </div>
       
       {/* Search Button */}
-      <div className="w-full pt-4">
+      <div className="w-full pt-6">
         <Button 
           type="submit" 
-          className="w-full h-14 text-lg font-semibold touch-manipulation bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200 rounded-xl shadow-lg" 
+          className="w-full h-16 text-lg font-bold touch-manipulation bg-primary hover:bg-primary/90 focus:ring-4 focus:ring-primary/20 focus:ring-offset-2 transition-all duration-300 rounded-2xl shadow-xl hover:shadow-2xl" 
           onClick={onSubmit} 
           aria-label="Search Available Seats"
           style={{ WebkitTapHighlightColor: 'transparent' }}

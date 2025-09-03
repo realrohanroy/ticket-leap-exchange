@@ -33,9 +33,11 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-medium overflow-hidden bg-white border-2 border-input hover:bg-accent hover:text-accent-foreground focus:ring-2 focus:ring-ring focus:border-ring touch-manipulation transition-all duration-200",
-            !date && "text-muted-foreground",
-            isMobile && "min-h-[48px] text-base px-4 py-3",
+            "w-full justify-start text-left font-medium overflow-hidden bg-background border-2 hover:bg-accent hover:text-accent-foreground focus:ring-4 focus:ring-primary/20 focus:border-primary touch-manipulation transition-all duration-300",
+            !date && "text-muted-foreground border-border",
+            date && "border-primary/40 bg-primary/5 text-foreground font-semibold",
+            isMobile && "min-h-[56px] text-base px-6 py-4 rounded-2xl",
+            !isMobile && "min-h-[44px] rounded-xl px-4 py-3",
             className
           )}
           style={{
@@ -43,30 +45,31 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
           }}
         >
           <CalendarIcon className={cn(
-            "flex-shrink-0 text-muted-foreground",
-            isMobile ? "mr-3 h-6 w-6" : "mr-3 h-5 w-5"
+            "flex-shrink-0",
+            date ? "text-primary" : "text-muted-foreground",
+            isMobile ? "mr-4 h-7 w-7" : "mr-3 h-5 w-5"
           )} />
           {date ? (
-            <span className="truncate text-foreground font-medium">
-              {format(date, isMobile ? "MMM d, yyyy" : "EEE, MMM d, yyyy")}
+            <span className="truncate text-foreground font-bold">
+              {format(date, isMobile ? "EEEE, MMMM d, yyyy" : "EEE, MMM d, yyyy")}
             </span>
           ) : (
-            <span className="truncate text-muted-foreground">
-              Date
+            <span className="truncate text-muted-foreground font-medium">
+              Select travel date
             </span>
           )}
         </Button>
       </PopoverTrigger>
       <PopoverContent 
         className={cn(
-          "w-auto p-0 bg-white shadow-xl rounded-xl border-2 z-50",
-          isMobile && "mx-4 w-[calc(100vw-2rem)] max-w-sm"
+          "w-auto p-0 bg-background/95 backdrop-blur-lg shadow-2xl border-2 border-primary/20 z-50",
+          isMobile ? "mx-4 w-[calc(100vw-2rem)] max-w-sm rounded-3xl" : "rounded-2xl"
         )}
         align={isMobile ? "center" : align}
         side={isMobile ? "bottom" : side}
-        sideOffset={isMobile ? 8 : sideOffset}
+        sideOffset={isMobile ? 12 : sideOffset}
         avoidCollisions={true}
-        collisionPadding={16}
+        collisionPadding={20}
       >
         <Calendar
           mode="single"
@@ -75,7 +78,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
           initialFocus
           className={cn(
             "border-0 pointer-events-auto",
-            isMobile ? "p-4 text-base" : "p-4"
+            isMobile ? "p-6 text-base" : "p-5"
           )}
           modifiersClassNames={{
             selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
@@ -84,17 +87,17 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
           classNames={{
             day: cn(
-              "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors",
-              isMobile && "h-11 w-11 text-base touch-manipulation"
+              "p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-xl transition-all duration-200",
+              isMobile ? "h-12 w-12 text-base touch-manipulation font-medium" : "h-9 w-9"
             ),
-            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-            day_today: "bg-accent text-accent-foreground font-semibold",
+            day_selected: "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground font-bold shadow-lg",
+            day_today: "bg-accent text-accent-foreground font-bold border-2 border-primary/30",
             nav_button: cn(
-              "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all",
-              isMobile && "h-10 w-10 touch-manipulation"
+              "bg-transparent p-0 opacity-60 hover:opacity-100 hover:bg-accent rounded-xl transition-all duration-200",
+              isMobile ? "h-12 w-12 touch-manipulation" : "h-8 w-8"
             ),
-            caption: "flex justify-center pt-1 relative items-center",
-            caption_label: isMobile ? "text-base font-semibold" : "text-sm font-medium"
+            caption: "flex justify-center pt-2 relative items-center mb-2",
+            caption_label: isMobile ? "text-lg font-bold text-foreground" : "text-base font-semibold text-foreground"
           }}
         />
       </PopoverContent>
