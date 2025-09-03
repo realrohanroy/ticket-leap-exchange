@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Ticket } from '@/types';
-import TicketCard from './TicketCard';
+import MemoizedTicketCard from './MemoizedTicketCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RailSymbol, Bus, Ticket as TicketIcon, Car } from 'lucide-react';
 
@@ -19,9 +19,11 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
     );
   }
 
-  const railTickets = tickets.filter(ticket => ticket.mode === 'rail');
-  const busTickets = tickets.filter(ticket => ticket.mode === 'bus');
-  const carTickets = tickets.filter(ticket => ticket.mode === 'car');
+  const { railTickets, busTickets, carTickets } = useMemo(() => ({
+    railTickets: tickets.filter(ticket => ticket.mode === 'rail'),
+    busTickets: tickets.filter(ticket => ticket.mode === 'bus'),
+    carTickets: tickets.filter(ticket => ticket.mode === 'car')
+  }), [tickets]);
 
   return (
     <div>
@@ -44,7 +46,7 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
         <TabsContent value="all" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tickets.map(ticket => (
-              <TicketCard 
+              <MemoizedTicketCard 
                 key={ticket.id} 
                 ticket={ticket} 
                 onDelete={onDeleteTicket}
@@ -56,7 +58,7 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
         <TabsContent value="rail" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {railTickets.map(ticket => (
-              <TicketCard 
+              <MemoizedTicketCard 
                 key={ticket.id} 
                 ticket={ticket} 
                 onDelete={onDeleteTicket}
@@ -68,7 +70,7 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
         <TabsContent value="bus" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {busTickets.map(ticket => (
-              <TicketCard 
+              <MemoizedTicketCard 
                 key={ticket.id} 
                 ticket={ticket} 
                 onDelete={onDeleteTicket}
@@ -80,7 +82,7 @@ const TicketList: React.FC<TicketListProps> = ({ tickets, onDeleteTicket }) => {
         <TabsContent value="car" className="mt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {carTickets.map(ticket => (
-              <TicketCard 
+              <MemoizedTicketCard 
                 key={ticket.id} 
                 ticket={ticket} 
                 onDelete={onDeleteTicket}

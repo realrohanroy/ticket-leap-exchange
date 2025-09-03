@@ -109,15 +109,6 @@ const Search = () => {
       }
       
       const mappedTickets = data.map(mapTicket);
-      
-      // Update view counts
-      for (const ticket of data) {
-        await supabase
-          .from('tickets')
-          .update({ view_count: ticket.view_count + 1 })
-          .eq('id', ticket.id);
-      }
-      
       setTickets(mappedTickets);
     } catch (error) {
       console.error('Error fetching tickets:', error);

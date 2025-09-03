@@ -80,24 +80,7 @@ const TicketCard: React.FC<TicketCardProps> = ({ ticket, onDelete }) => {
     }
   }, [ticket]);
   
-  // Increment view count
-  useEffect(() => {
-    const incrementViewCount = async () => {
-      try {
-        await supabase
-          .from('tickets')
-          .update({ view_count: ticket.viewCount + 1 })
-          .eq('id', ticket.id);
-      } catch (error) {
-        console.error('Failed to increment view count:', error);
-      }
-    };
-    
-    // Only increment if not the owner viewing
-    if (!isOwner) {
-      incrementViewCount();
-    }
-  }, []);
+  // Note: View count incrementing removed for performance - handled server-side if needed
   
   const handleViewProfile = () => {
     if (ticket.userId) {
