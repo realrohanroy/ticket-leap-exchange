@@ -49,78 +49,63 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const customStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
-      borderColor: state.isFocused ? 'hsl(var(--primary))' : value ? 'hsl(var(--primary) / 0.4)' : 'hsl(var(--border))',
-      boxShadow: state.isFocused ? '0 0 0 3px hsl(var(--primary) / 0.15)' : value ? '0 0 0 2px hsl(var(--primary) / 0.1)' : 'none',
+      borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))',
+      boxShadow: state.isFocused ? '0 0 0 2px hsl(var(--ring) / 0.2)' : 'none',
       '&:hover': {
-        borderColor: state.isFocused ? 'hsl(var(--primary))' : 'hsl(var(--primary) / 0.3)'
+        borderColor: state.isFocused ? 'hsl(var(--ring))' : 'hsl(var(--border))'
       },
-      minHeight: isMobile ? '56px' : '44px',
-      background: value ? 'hsl(var(--primary) / 0.02)' : 'hsl(var(--background))',
-      borderRadius: isMobile ? '16px' : '12px',
+      minHeight: isMobile ? '48px' : '40px',
+      background: 'white',
+      borderRadius: isMobile ? '12px' : '8px',
       fontSize: isMobile ? '16px' : '14px',
-      fontWeight: value ? '600' : '500',
+      fontWeight: '500',
       borderWidth: '2px',
       cursor: 'text',
-      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-      backdropFilter: 'blur(8px)'
+      transition: 'all 0.2s ease-in-out'
     }),
     menu: (provided: any) => ({
       ...provided,
-      backgroundColor: 'hsl(var(--background))',
+      backgroundColor: 'white',
       zIndex: 9999,
-      border: '2px solid hsl(var(--primary) / 0.2)',
-      borderRadius: isMobile ? '20px' : '16px',
+      border: '2px solid hsl(var(--border))',
+      borderRadius: isMobile ? '16px' : '12px',
       boxShadow: isMobile 
-        ? '0 25px 50px -12px hsl(var(--primary) / 0.25), 0 0 0 1px hsl(var(--primary) / 0.05)'
-        : '0 20px 25px -5px hsl(var(--primary) / 0.1), 0 10px 10px -5px hsl(var(--primary) / 0.04)',
+        ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        : '0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       overflow: 'hidden',
-      maxHeight: isMobile ? '65vh' : '320px',
-      marginTop: '8px',
-      backdropFilter: 'blur(16px)'
+      maxHeight: isMobile ? '60vh' : '300px',
+      marginTop: '4px'
     }),
     menuList: (provided: any) => ({
       ...provided,
-      padding: isMobile ? '16px' : '12px',
-      maxHeight: isMobile ? 'calc(65vh - 32px)' : '300px',
+      padding: isMobile ? '12px' : '8px',
+      maxHeight: isMobile ? 'calc(60vh - 24px)' : '280px',
       overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch',
-      '&::-webkit-scrollbar': {
-        width: '8px'
-      },
-      '&::-webkit-scrollbar-track': {
-        background: 'hsl(var(--muted))',
-        borderRadius: '4px'
-      },
-      '&::-webkit-scrollbar-thumb': {
-        background: 'hsl(var(--primary) / 0.3)',
-        borderRadius: '4px'
-      }
+      WebkitOverflowScrolling: 'touch'
     }),
     option: (provided: any, state: any) => ({
       ...provided,
       backgroundColor: state.isSelected 
         ? 'hsl(var(--primary))' 
         : state.isFocused 
-          ? 'hsl(var(--primary) / 0.1)' 
-          : 'transparent',
+          ? 'hsl(var(--accent))' 
+          : 'white',
       color: state.isSelected 
         ? 'hsl(var(--primary-foreground))' 
         : 'hsl(var(--foreground))',
       cursor: 'pointer',
-      padding: isMobile ? '18px 24px' : '14px 18px',
-      borderRadius: isMobile ? '14px' : '10px',
-      margin: isMobile ? '4px 0' : '2px 0',
+      padding: isMobile ? '16px 20px' : '12px 16px',
+      borderRadius: isMobile ? '10px' : '6px',
+      margin: '2px 0',
       fontSize: isMobile ? '16px' : '14px',
-      fontWeight: state.isSelected ? '700' : state.isFocused ? '600' : '500',
+      fontWeight: state.isSelected ? '600' : '500',
       '&:active': {
-        backgroundColor: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--primary) / 0.15)',
-        transform: 'scale(0.98)'
+        backgroundColor: state.isSelected ? 'hsl(var(--primary))' : 'hsl(var(--accent))'
       },
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      minHeight: isMobile ? '52px' : 'auto',
+      transition: 'all 0.15s ease',
+      minHeight: isMobile ? '48px' : 'auto',
       display: 'flex',
-      alignItems: 'center',
-      border: state.isFocused ? '1px solid hsl(var(--primary) / 0.3)' : '1px solid transparent'
+      alignItems: 'center'
     }),
     input: (provided: any) => ({
       ...provided,
@@ -158,11 +143,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }),
     valueContainer: (provided: any) => ({
       ...provided,
-      padding: isMobile ? '12px 24px' : '10px 18px'
-    }),
-    indicatorsContainer: (provided: any) => ({
-      ...provided,
-      padding: isMobile ? '12px 16px' : '8px 12px'
+      padding: isMobile ? '8px 20px' : '8px 16px'
     })
   };
 
