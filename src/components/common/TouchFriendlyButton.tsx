@@ -1,29 +1,23 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface LoadingButtonProps extends React.ComponentProps<typeof Button> {
-  isLoading: boolean;
-  loadingText?: string;
+interface TouchFriendlyButtonProps extends React.ComponentProps<typeof Button> {
   children: React.ReactNode;
+  className?: string;
   isMobile?: boolean;
 }
 
-export const LoadingButton: React.FC<LoadingButtonProps> = ({
-  isLoading,
-  loadingText,
+export const TouchFriendlyButton: React.FC<TouchFriendlyButtonProps> = ({
   children,
-  disabled,
   className,
   isMobile = false,
   ...props
 }) => {
   return (
     <Button
-      disabled={disabled || isLoading}
       className={cn(
-        'gap-2 transition-all duration-200 ease-in-out touch-manipulation',
+        'transition-all duration-200 ease-in-out touch-manipulation',
         'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         'active:scale-95 transform',
         isMobile && [
@@ -37,8 +31,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
       }}
       {...props}
     >
-      {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      {isLoading ? (loadingText || 'Loading...') : children}
+      {children}
     </Button>
   );
 };

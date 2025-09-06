@@ -2,12 +2,14 @@
 import React from 'react';
 import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { TouchFriendlyButton } from "@/components/common/TouchFriendlyButton";
+import { SelectedValueDisplay } from "@/components/common/SelectedValueDisplay";
+import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DateTimeFieldsProps {
   date?: Date;
@@ -26,71 +28,163 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
   onTimeToggle,
   formErrors
 }) => {
+  const isMobile = useIsMobile();
+  
+  // Create selected values for display
+  const selectedValues = [];
+  if (date) {
+    selectedValues.push({
+      label: `Date: ${format(date, "MMM d, yyyy")}`,
+      value: format(date, "yyyy-MM-dd"),
+      variant: 'default' as const,
+      onRemove: () => onDateSelect(undefined)
+    });
+  }
+  if (departureTime) {
+    const timeFormatted = format(new Date(`2000-01-01T${departureTime}`), "h:mm a");
+    selectedValues.push({
+      label: `Time: ${timeFormatted}`,
+      value: departureTime,
+      variant: 'outline' as const,
+      onRemove: () => onTimeChange({ target: { name: 'departureTime', value: '' } } as React.ChangeEvent<HTMLInputElement>)
+    });
+  }
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="space-y-2">
-        <Label htmlFor="travelDate" className={cn(formErrors.travelDate && "text-destructive")}>Travel Date *</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
+    <div className="space-y-4 form-fade-in">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label 
+            htmlFor="travelDate" 
+            className={cn(
+              "text-sm font-medium transition-colors",
+              formErrors.travelDate && "text-destructive",
+              "after:content-['*'] after:ml-0.5 after:text-destructive"
+            )}
+          >
+            Travel Date
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <TouchFriendlyButton
+                variant="outline"
+                isMobile={isMobile}
                 className={cn(
-                  "w-full justify-start text-left font-normal",
-                  date ? "bg-white text-black" : "text-muted-foreground",
-                  "transition-colors duration-200 ease-in-out",
-                  formErrors.travelDate && "border-destructive"
+                  "w-full justify-start text-left font-normal bg-background",
+                  !date && "text-muted-foreground",
+                  formErrors.travelDate && "border-destructive focus-visible:ring-destructive",
+                  "hover:bg-accent hover:text-accent-foreground"
                 )}
                 aria-label={date ? format(date, "PPP") : "Pick a date"}
+                aria-invalid={!!formErrors.travelDate}
+                aria-describedby={formErrors.travelDate ? "travelDate-error" : undefined}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP") : <span>Pick a date</span>}
-              </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={onDateSelect}
-              initialFocus
-              disabled={(date) =>
-                date < new Date(new Date().setHours(0, 0, 0, 0))
-              }
-              className="pointer-events-auto"
-            />
-          </PopoverContent>
-        </Popover>
-        {formErrors.travelDate && <p className="text-xs text-destructive">Travel Date is required</p>}
+                <CalendarIcon className={cn(
+                  "mr-2 flex-shrink-0",
+                  isMobile ? "h-5 w-5" : "h-4 w-4"
+                )} />
+                <span className="truncate">
+                  {date ? format(date, isMobile ? "MMM d, yyyy" : "PPP") : "Pick a date"}
+                </span>
+              </TouchFriendlyButton>
+            </PopoverTrigger>
+            <PopoverContent 
+              className={cn(
+                "w-auto p-0 bg-white shadow-xl rounded-xl border",
+                isMobile && "mx-4 w-[calc(100vw-2rem)] max-w-sm"
+              )} 
+              align={isMobile ? "center" : "start"}
+              side={isMobile ? "bottom" : "bottom"}
+              sideOffset={8}
+              avoidCollisions={true}
+              collisionPadding={16}
+            >
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={onDateSelect}
+                initialFocus
+                disabled={(date) =>
+                  date < new Date(new Date().setHours(0, 0, 0, 0))
+                }
+                className={cn(
+                  "border-0 pointer-events-auto",
+                  isMobile ? "p-4" : "p-3"
+                )}
+                classNames={{
+                  day: cn(
+                    "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors",
+                    isMobile && "h-11 w-11 text-base touch-manipulation"
+                  ),
+                  day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground font-semibold",
+                  nav_button: cn(
+                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all touch-manipulation",
+                    isMobile && "h-10 w-10"
+                  ),
+                  caption: "flex justify-center pt-1 relative items-center",
+                  caption_label: isMobile ? "text-base font-semibold" : "text-sm font-medium"
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+          {formErrors.travelDate && (
+            <p id="travelDate-error" className="text-xs text-destructive animate-fade-in">
+              Travel Date is required
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="departureTime" className="text-sm font-medium">
+            Departure Time <span className="text-muted-foreground">(Optional)</span>
+          </Label>
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <Clock className={cn(
+                "absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground",
+                isMobile ? "h-5 w-5" : "h-4 w-4"
+              )} />
+              <Input
+                id="departureTime"
+                name="departureTime"
+                type="time"
+                value={departureTime || ""}
+                onChange={onTimeChange}
+                className={cn(
+                  "pl-10 transition-all duration-200 focus-ring",
+                  isMobile && "min-h-[48px] text-base"
+                )}
+                placeholder="HH:MM"
+                pattern="[0-9]{2}:[0-9]{2}"
+              />
+            </div>
+            {departureTime && (
+              <TouchFriendlyButton
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onTimeToggle}
+                isMobile={isMobile}
+                className="flex-shrink-0"
+                aria-label="Toggle AM/PM"
+              >
+                {parseInt(departureTime.split(":")[0]) >= 12 ? "PM" : "AM"}
+              </TouchFriendlyButton>
+            )}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Format: HH:MM (24-hour) {departureTime && "or use AM/PM toggle"}
+          </p>
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="departureTime">Departure Time (Optional)</Label>
-        <div className="flex items-center gap-2">
-          <Input
-            id="departureTime"
-            name="departureTime"
-            type="time"
-            value={departureTime || ""}
-            onChange={onTimeChange}
-            className="w-full"
-            placeholder="HH:MM"
-            pattern="[0-9]{2}:[0-9]{2}"
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={onTimeToggle}
-          >
-            {departureTime &&
-            parseInt(departureTime.split(":")[0]) >= 12
-              ? "PM"
-              : "AM"}
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Format: HH:MM (24-hour) or use AM/PM toggle
-        </p>
-      </div>
+      {/* Selected values display */}
+      <SelectedValueDisplay 
+        values={selectedValues}
+        title="Selected Date & Time"
+        className="mt-4"
+      />
     </div>
   );
 };

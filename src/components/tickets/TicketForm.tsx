@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 // Import refactored components
 import TravelModeSelector from "./formSections/TravelModeSelector";
@@ -259,10 +260,14 @@ const TicketForm: React.FC = () => {
 
       <LoadingButton 
         type="submit" 
-        className="w-full" 
+        className={cn(
+          "w-full mt-6 font-medium transition-all duration-200",
+          "hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        )}
         isLoading={isSubmitting}
         loadingText="Posting..."
         disabled={hasErrors}
+        isMobile={true}
       >
         Post Ticket
       </LoadingButton>

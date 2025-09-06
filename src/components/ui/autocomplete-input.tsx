@@ -28,6 +28,9 @@ interface AutocompleteInputProps {
   onChange: (value: string) => void;
   className?: string;
   'aria-label'?: string;
+  id?: string;
+  'aria-invalid'?: boolean;
+  'aria-describedby'?: string;
 }
 
 export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
@@ -35,7 +38,10 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   value,
   onChange,
   className,
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
+  id,
+  'aria-invalid': ariaInvalid,
+  'aria-describedby': ariaDescribedBy
 }) => {
   const isMobile = useIsMobile();
   
@@ -148,50 +154,53 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   };
 
   return (
-    <Select
-      className={cn("text-base touch-manipulation", className)}
-      classNamePrefix="city-select"
-      value={selectedOption}
-      onChange={handleChange}
-      options={cityOptions}
-      placeholder={placeholder}
-      isClearable
-      isSearchable
-      styles={customStyles}
-      menuPlacement="auto"
-      menuPosition={isMobile ? "fixed" : "absolute"}
-      menuPortalTarget={isMobile && typeof document !== 'undefined' ? document.body : null}
-      aria-label={ariaLabel}
-      theme={(theme) => ({
-        ...theme,
-        colors: {
-          ...theme.colors,
-          primary: 'hsl(var(--primary))',
-          primary75: 'hsl(var(--primary) / 0.75)',
-          primary50: 'hsl(var(--primary) / 0.5)',
-          primary25: 'hsl(var(--primary) / 0.25)',
-          neutral0: 'white',
-          neutral5: '#f9f9f9',
-          neutral10: '#f3f3f3',
-          neutral20: 'hsl(var(--border))',
-          neutral30: '#cccccc',
-          neutral40: 'hsl(var(--muted-foreground))',
-          neutral50: '#808080',
-          neutral60: '#666666',
-          neutral70: '#4d4d4d',
-          neutral80: 'hsl(var(--foreground))',
-          neutral90: '#1a1a1a',
-        },
-      })}
-      components={{
-        IndicatorSeparator: () => null
-      }}
-      noOptionsMessage={({ inputValue }) => 
-        inputValue ? `No cities found matching "${inputValue}"` : "Start typing to search cities"
-      }
-      filterOption={(option, inputValue) =>
-        option.label.toLowerCase().includes(inputValue.toLowerCase())
-      }
-    />
+    <div className={cn("relative", className)}>
+      <Select
+        value={selectedOption}
+        onChange={handleChange}
+        options={cityOptions}
+        placeholder={placeholder}
+        isClearable
+        isSearchable
+        styles={customStyles}
+        menuPlacement="auto"
+        menuPosition={isMobile ? "fixed" : "absolute"}
+        menuPortalTarget={isMobile && typeof document !== 'undefined' ? document.body : null}
+        aria-label={ariaLabel}
+        inputId={id}
+        aria-invalid={ariaInvalid}
+        aria-describedby={ariaDescribedBy}
+        theme={(theme) => ({
+          ...theme,
+          colors: {
+            ...theme.colors,
+            primary: 'hsl(var(--primary))',
+            primary75: 'hsl(var(--primary) / 0.75)',
+            primary50: 'hsl(var(--primary) / 0.5)',
+            primary25: 'hsl(var(--primary) / 0.25)',
+            neutral0: 'white',
+            neutral5: '#f9f9f9',
+            neutral10: '#f3f3f3',
+            neutral20: 'hsl(var(--border))',
+            neutral30: '#cccccc',
+            neutral40: 'hsl(var(--muted-foreground))',
+            neutral50: '#808080',
+            neutral60: '#666666',
+            neutral70: '#4d4d4d',
+            neutral80: 'hsl(var(--foreground))',
+            neutral90: '#1a1a1a',
+          },
+        })}
+        components={{
+          IndicatorSeparator: () => null
+        }}
+        noOptionsMessage={({ inputValue }) => 
+          inputValue ? `No cities found matching "${inputValue}"` : "Start typing to search cities"
+        }
+        filterOption={(option, inputValue) =>
+          option.label.toLowerCase().includes(inputValue.toLowerCase())
+        }
+      />
+    </div>
   );
 };
