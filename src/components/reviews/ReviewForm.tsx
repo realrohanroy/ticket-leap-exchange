@@ -2,9 +2,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
@@ -13,18 +11,18 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { ReviewFormData } from '@/types';
-
-const reviewSchema = z.object({
-  rating: z.number().min(1).max(5),
-  comment: z.string().optional(),
-});
+import { LoadingButton } from '@/components/common/LoadingButton';
+import { ErrorAlert } from '@/components/common/ErrorAlert';
+import { reviewFormSchema, type ReviewFormData } from '@/schemas/reviewSchema';
 
 interface ReviewFormProps {
   ticketId: string;
   reviewedUserId: string;
-  onSubmit: (data: ReviewFormData) => void;
+  onSubmit: (data: ReviewFormData) => Promise<void>;
   isSubmitting: boolean;
+  error?: string;
+  onRetry?: () => void;
+  onDismissError?: () => void;
 }
 
 const ReviewForm: React.FC<ReviewFormProps> = ({
@@ -32,30 +30,37 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
   reviewedUserId,
   onSubmit,
   isSubmitting,
+  error,
+  onRetry,
+  onDismissError
 }) => {
-  const form = useForm<z.infer<typeof reviewSchema>>({
-    resolver: zodResolver(reviewSchema),
+  const form = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewFormSchema),
     defaultValues: {
       rating: 0,
       comment: '',
+      ticketId,
+      reviewedUserId
     },
   });
 
   const [hoveredRating, setHoveredRating] = React.useState(0);
   const rating = form.watch('rating');
 
-  const handleSubmit = (values: z.infer<typeof reviewSchema>) => {
-    onSubmit({
-      ticketId,
-      reviewedUserId,
-      rating: values.rating,
-      comment: values.comment,
-    });
+  const handleSubmit = async (values: ReviewFormData) => {
+    await onSubmit(values);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        {error && (
+          <ErrorAlert 
+            message={error}
+            onRetry={onRetry}
+            onDismiss={onDismissError}
+          />
+        )}
         <div className="flex flex-col items-center">
           <p className="text-sm text-muted-foreground mb-2">Rate your experience</p>
           <FormField
@@ -103,9 +108,15 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
           )}
         />
 
-        <Button type="submit" className="w-full" disabled={rating === 0 || isSubmitting}>
-          {isSubmitting ? 'Submitting...' : 'Submit Review'}
-        </Button>
+        <LoadingButton 
+          type="submit" 
+          className="w-full" 
+          isLoading={isSubmitting}
+          loadingText="Submitting..."
+          disabled={rating === 0}
+        >
+          Submit Review
+        </LoadingButton>
       </form>
     </Form>
   );

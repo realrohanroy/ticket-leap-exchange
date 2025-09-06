@@ -1,10 +1,8 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 // Import refactored components
@@ -13,42 +11,66 @@ import LocationFields from "./formSections/LocationFields";
 import DateTimeFields from "./formSections/DateTimeFields";
 import TicketTypeFields from "./formSections/TicketTypeFields";
 import ContactFields from "./formSections/ContactFields";
-import { validateTicketForm } from "./utils/formValidation";
 
-interface TicketFormData {
-  mode: "rail" | "bus" | "car";
-  fromCity: string;
-  toCity: string;
-  travelDate: string;
-  departureTime: string;
-  ticketType: string;
-  trainOrBusName: string;
-  contactInfo: string;
-  countryCode: string;
-  additionalInfo: string;
-  carModel?: string;
-  seatsAvailable?: number;
-}
+// Import new validation and error handling
+import { useFormValidation } from "@/hooks/useFormValidation";
+import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { ticketFormSchema, type TicketFormData } from "@/schemas/ticketSchema";
+import { LoadingButton } from "@/components/common/LoadingButton";
+import { ErrorAlert } from "@/components/common/ErrorAlert";
+
+// Use schema type instead of duplicate interface
 
 const TicketForm: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<Partial<TicketFormData>>({
+  
+  const initialValues: TicketFormData = {
     mode: "rail",
+    fromCity: "",
+    toCity: "",
+    travelDate: format(new Date(), "yyyy-MM-dd"),
+    departureTime: "",
     ticketType: "Sleeper",
-    countryCode: "+91" // Default to India
-  });
+    trainOrBusName: "",
+    contactInfo: "",
+    countryCode: "+91",
+    additionalInfo: "",
+    carModel: "",
+    seatsAvailable: 1
+  };
+  
+  const [formData, setFormData] = useState<TicketFormData>(initialValues);
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formErrors, setFormErrors] = useState<{[key: string]: boolean}>({});
+  
+  const {
+    errors,
+    hasErrors,
+    validateForm,
+    validateField,
+    clearFieldError,
+    setFieldError
+  } = useFormValidation(ticketFormSchema, initialValues);
+  
+  const {
+    execute: submitForm,
+    isLoading: isSubmitting,
+    error: submitError,
+    reset: resetSubmitError
+  } = useAsyncOperation({
+    showSuccessToast: true,
+    showErrorToast: true,
+    successMessage: "Ticket posted successfully!",
+    onSuccess: () => navigate("/my-tickets")
+  });
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: false }));
+    if (errors[name]) {
+      clearFieldError(name as keyof TicketFormData);
     }
   };
 
@@ -56,24 +78,24 @@ const TicketForm: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
-    const numValue = value === "" ? undefined : parseInt(value, 10);
+    const numValue = value === "" ? 1 : parseInt(value, 10);
     setFormData((prev) => ({ ...prev, [name]: numValue }));
-    if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: false }));
+    if (errors[name]) {
+      clearFieldError(name as keyof TicketFormData);
     }
   };
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (formErrors[name]) {
-      setFormErrors(prev => ({ ...prev, [name]: false }));
+    if (errors[name]) {
+      clearFieldError(name as keyof TicketFormData);
     }
   };
 
   const handleCityChange = (field: "fromCity" | "toCity", value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (formErrors[field]) {
-      setFormErrors(prev => ({ ...prev, [field]: false }));
+    if (errors[field]) {
+      clearFieldError(field);
     }
   };
 
@@ -84,8 +106,8 @@ const TicketForm: React.FC = () => {
         ...prev,
         travelDate: format(selectedDate, "yyyy-MM-dd"),
       }));
-      if (formErrors.travelDate) {
-        setFormErrors(prev => ({ ...prev, travelDate: false }));
+      if (errors.travelDate) {
+        clearFieldError('travelDate');
       }
     }
   };
@@ -106,27 +128,24 @@ const TicketForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    resetSubmitError();
+    
     if (!user) {
-      toast.error("You must be logged in to post a ticket");
+      setFieldError('contactInfo', 'You must be logged in to post a ticket');
       return;
     }
 
     // Form validation
-    const { errors, hasErrors } = validateTicketForm(formData);
-    if (hasErrors) {
-      setFormErrors(errors);
-      toast.error("Please fill in all required fields");
+    const isValid = await validateForm(formData);
+    if (!isValid) {
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
+    await submitForm(async () => {
       const { data: sessionData } = await supabase.auth.getSession();
 
       if (!sessionData.session) {
-        toast.error("Authentication session expired. Please log in again.");
-        throw new Error("No active session");
+        throw new Error("Authentication session expired. Please log in again.");
       }
 
       const { data: activeTickets, error: countError } = await supabase
@@ -138,42 +157,25 @@ const TicketForm: React.FC = () => {
       if (countError) throw countError;
       
       if (activeTickets && activeTickets.length >= 2) {
-        toast.error("You can only have up to 2 active tickets at a time. Please delete an existing ticket to post a new one.");
-        setIsSubmitting(false);
-        return;
+        throw new Error("You can only have up to 2 active tickets at a time. Please delete an existing ticket to post a new one.");
       }
 
-      const fullContactInfo = `${formData.countryCode || "+91"}${formData.contactInfo || ""}`;
+      const fullContactInfo = `${formData.countryCode}${formData.contactInfo}`;
       
-      const ticketWithDefaults: TicketFormData = {
-        mode: formData.mode || "rail",
-        fromCity: formData.fromCity || "",
-        toCity: formData.toCity || "",
-        travelDate: formData.travelDate || format(new Date(), "yyyy-MM-dd"),
-        departureTime: formData.departureTime || "",
-        ticketType: formData.ticketType || "",
-        trainOrBusName: formData.mode === "car" ? formData.carModel || "" : formData.trainOrBusName || "",
-        contactInfo: fullContactInfo,
-        countryCode: formData.countryCode || "+91",
-        additionalInfo: formData.additionalInfo || "",
-        carModel: formData.mode === "car" ? formData.carModel : undefined,
-        seatsAvailable: formData.mode === "car" ? formData.seatsAvailable : undefined,
-      };
-
       const ticketData = {
         user_id: user.id,
-        mode: ticketWithDefaults.mode,
-        from_city: ticketWithDefaults.fromCity,
-        to_city: ticketWithDefaults.toCity,
-        travel_date: ticketWithDefaults.travelDate,
-        departure_time: ticketWithDefaults.departureTime || null,
-        ticket_type: ticketWithDefaults.ticketType,
-        train_or_bus_name: ticketWithDefaults.trainOrBusName,
-        contact_info: ticketWithDefaults.contactInfo,
+        mode: formData.mode,
+        from_city: formData.fromCity,
+        to_city: formData.toCity,
+        travel_date: formData.travelDate,
+        departure_time: formData.departureTime || null,
+        ticket_type: formData.ticketType,
+        train_or_bus_name: formData.mode === "car" ? formData.carModel : formData.trainOrBusName,
+        contact_info: fullContactInfo,
         view_count: 0,
         status: 'active',
-        car_model: ticketWithDefaults.carModel,
-        seats_available: ticketWithDefaults.seatsAvailable
+        car_model: formData.mode === "car" ? formData.carModel : null,
+        seats_available: formData.mode === "car" ? formData.seatsAvailable : null
       };
 
       const { data, error } = await supabase
@@ -182,14 +184,8 @@ const TicketForm: React.FC = () => {
         .select();
 
       if (error) throw error;
-
-      toast.success("Ticket posted successfully!");
-      navigate("/my-tickets");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to post ticket. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+      return data;
+    });
   };
 
   return (
@@ -208,11 +204,11 @@ const TicketForm: React.FC = () => {
         />
 
         <LocationFields
-          fromCity={formData.fromCity || ""}
-          toCity={formData.toCity || ""}
+          fromCity={formData.fromCity}
+          toCity={formData.toCity}
           onFromCityChange={(value) => handleCityChange("fromCity", value)}
           onToCityChange={(value) => handleCityChange("toCity", value)}
-          formErrors={formErrors}
+          formErrors={{ fromCity: !!errors.fromCity, toCity: !!errors.toCity }}
         />
 
         <DateTimeFields
@@ -221,12 +217,12 @@ const TicketForm: React.FC = () => {
           onDateSelect={handleDateSelect}
           onTimeChange={handleChange}
           onTimeToggle={handleTimeToggle}
-          formErrors={formErrors}
+          formErrors={{ travelDate: !!errors.travelDate }}
         />
 
         <TicketTypeFields
-          mode={formData.mode as "rail" | "bus" | "car"}
-          ticketType={formData.ticketType || ""}
+          mode={formData.mode}
+          ticketType={formData.ticketType}
           trainOrBusName={formData.trainOrBusName}
           carModel={formData.carModel}
           seatsAvailable={formData.seatsAvailable}
@@ -234,23 +230,42 @@ const TicketForm: React.FC = () => {
           onTrainBusNameChange={handleChange}
           onCarModelChange={handleChange}
           onSeatsChange={handleNumberChange}
-          formErrors={formErrors}
+          formErrors={{ 
+            ticketType: !!errors.ticketType,
+            trainOrBusName: !!errors.trainOrBusName,
+            carModel: !!errors.carModel,
+            seatsAvailable: !!errors.seatsAvailable
+          }}
         />
 
         <ContactFields
-          contactInfo={formData.contactInfo || ""}
-          countryCode={formData.countryCode || "+91"}
+          contactInfo={formData.contactInfo}
+          countryCode={formData.countryCode}
           additionalInfo={formData.additionalInfo}
           onContactInfoChange={(value) => setFormData((prev) => ({ ...prev, contactInfo: value }))}
           onCountryCodeChange={(value) => handleSelectChange("countryCode", value)}
           onAdditionalInfoChange={handleChange}
-          formErrors={formErrors}
+          formErrors={{ contactInfo: !!errors.contactInfo }}
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Posting..." : "Post Ticket"}
-      </Button>
+      {submitError && (
+        <ErrorAlert 
+          message={submitError}
+          onRetry={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
+          onDismiss={resetSubmitError}
+        />
+      )}
+
+      <LoadingButton 
+        type="submit" 
+        className="w-full" 
+        isLoading={isSubmitting}
+        loadingText="Posting..."
+        disabled={hasErrors}
+      >
+        Post Ticket
+      </LoadingButton>
     </form>
   );
 };
