@@ -4,23 +4,7 @@ import Select from 'react-select';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const maharashtraCities = [
-  'Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 
-  'Aurangabad', 'Solapur', 'Kolhapur', 'Amravati', 'Nanded',
-  'Sangli', 'Latur', 'Dhule', 'Ahmednagar', 'Jalgaon',
-  'Akola', 'Chandrapur', 'Parbhani', 'Satara', 'Yavatmal',
-  'Ratnagiri', 'Osmanabad', 'Beed', 'Wardha', 'Gondia', 
-  'Buldhana', 'Jalna', 'Hingoli', 'Washim', 'Gadchiroli',
-  'Bhandara', 'Sindhudurg', 'Kalyan', 'Vasai-Virar', 'Malegaon',
-  'Bhiwandi', 'Navi Mumbai', 'Panvel', 'Lonavala', 'Alibaug',
-  'Shirdi', 'Palghar', 'Karjat', 'Ambarnath', 'Badlapur', 
-  'Mira-Bhayandar', 'Ulhasnagar', 'Khed', 'Baramati'
-].sort((a, b) => a.localeCompare(b));
-
-const cityOptions = maharashtraCities.map(city => ({
-  value: city,
-  label: city
-}));
+import { cityOptions, UIText } from '@/lib/constants';
 
 interface AutocompleteInputProps {
   placeholder?: string;
@@ -195,7 +179,7 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           IndicatorSeparator: () => null
         }}
         noOptionsMessage={({ inputValue }) => 
-          inputValue ? `No cities found matching "${inputValue}"` : "Start typing to search cities"
+          inputValue ? UIText.NO_CITIES_FOUND(inputValue) : UIText.SEARCH_PLACEHOLDER
         }
         filterOption={(option, inputValue) =>
           option.label.toLowerCase().includes(inputValue.toLowerCase())

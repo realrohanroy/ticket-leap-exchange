@@ -42,7 +42,18 @@ export type SearchFilters = {
   ticketType?: string;
 };
 
-export type AlertVariant = 'default' | 'destructive' | 'warning';
+// Re-export common types
+export type { 
+  Status, 
+  TravelMode, 
+  AlertVariant, 
+  FormErrors, 
+  ValidationResult, 
+  ApiResponse, 
+  PaginatedResponse,
+  BaseComponentProps,
+  FormFieldProps 
+} from './common';
 
 // Terms of Use structure
 export type TermSection = {
