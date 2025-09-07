@@ -30,6 +30,10 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
       ? parse(initialFilters.travelDate, 'yyyy-MM-dd', new Date()) 
       : undefined
   );
+
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    setDate(selectedDate);
+  };
   const isMobile = useIsMobile();
 
   // Update state when initialFilters change
@@ -120,7 +124,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               date={date}
               onFromCityChange={handleFromCityChange}
               onToCityChange={handleToCityChange}
-              onDateSelect={setDate}
+              onDateSelect={handleDateSelect}
               onSubmit={handleSearch}
             />
           ) : (
@@ -130,7 +134,7 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
               date={date}
               onFromCityChange={handleFromCityChange}
               onToCityChange={handleToCityChange}
-              onDateSelect={setDate}
+              onDateSelect={handleDateSelect}
               onSubmit={handleSearch}
             />
           )}

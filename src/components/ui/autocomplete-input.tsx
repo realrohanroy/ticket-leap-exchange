@@ -30,7 +30,9 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const isMobile = useIsMobile();
   
   // Ensure we find the correct selected option
-  const selectedOption = value ? cityOptions.find(option => option.value === value) : null;
+  const selectedOption = React.useMemo(() => {
+    return value ? cityOptions.find(option => option.value === value) || null : null;
+  }, [value]);
 
   const handleChange = (selectedOption: any) => {
     onChange(selectedOption ? selectedOption.value : '');
