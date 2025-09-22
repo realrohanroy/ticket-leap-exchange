@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { format, parse } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { SearchFilters } from '@/types';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from '@/components/ui/use-toast';
-import MobileSearchForm from './MobileSearchForm';
-import DesktopSearchForm from './DesktopSearchForm';
 import { useNavigateWithFallback } from '@/hooks/use-navigate-with-fallback';
+import { AutocompleteInput } from '@/components/ui/autocomplete-input';
+import DatePickerField from './DatePickerField';
+import { Button } from '@/components/ui/button';
 
 type TicketSearchProps = {
   onSearch: (filters: SearchFilters) => void;
@@ -20,13 +20,13 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   onSearch, 
   className,
   navigateOnSearch = false,
-  initialFilters = {}
+  initialFilters
 }) => {
   const navigate = navigateOnSearch ? useNavigateWithFallback() : undefined;
-  const [fromCity, setFromCity] = useState(initialFilters.fromCity || '');
-  const [toCity, setToCity] = useState(initialFilters.toCity || '');
+  const [fromCity, setFromCity] = useState(initialFilters?.fromCity || '');
+  const [toCity, setToCity] = useState(initialFilters?.toCity || '');
   const [date, setDate] = useState<Date | undefined>(
-    initialFilters.travelDate 
+    initialFilters?.travelDate 
       ? parse(initialFilters.travelDate, 'yyyy-MM-dd', new Date()) 
       : undefined
   );
@@ -34,21 +34,21 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
   const handleDateSelect = (selectedDate: Date | undefined) => {
     setDate(selectedDate);
   };
-  const isMobile = useIsMobile();
 
   // Update state when initialFilters change
   useEffect(() => {
-    setFromCity(initialFilters.fromCity || '');
-    setToCity(initialFilters.toCity || '');
-    setDate(initialFilters.travelDate 
+    setFromCity(initialFilters?.fromCity || '');
+    setToCity(initialFilters?.toCity || '');
+    setDate(initialFilters?.travelDate 
       ? parse(initialFilters.travelDate, 'yyyy-MM-dd', new Date())
       : undefined);
-  }, [initialFilters]);
+  }, [initialFilters?.fromCity, initialFilters?.toCity, initialFilters?.travelDate]);
 
   // Update fromCity and prevent same city selection
   const handleFromCityChange = (value: string) => {
-    setFromCity(value);
-    if (value && value === toCity) {
+    const normalized = (value || '').trim();
+    setFromCity(normalized);
+    if (normalized && normalized.toLowerCase() === toCity.toLowerCase()) {
       setToCity('');
       toast({
         title: "Same city selected",
@@ -60,7 +60,8 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
 
   // Update toCity and prevent same city selection
   const handleToCityChange = (value: string) => {
-    if (value && value === fromCity) {
+    const normalized = (value || '').trim();
+    if (normalized && normalized.toLowerCase() === fromCity.toLowerCase()) {
       toast({
         title: "Same city selected",
         description: "Departure and destination cities cannot be the same",
@@ -68,14 +69,14 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
       });
       return;
     }
-    setToCity(value);
+    setToCity(normalized);
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Prevent search with same cities
-    if (fromCity && toCity && fromCity === toCity) {
+    if (fromCity && toCity && fromCity.toLowerCase() === toCity.toLowerCase()) {
       toast({
         title: "Invalid search",
         description: "Departure and destination cities cannot be the same",
@@ -116,28 +117,39 @@ const TicketSearch: React.FC<TicketSearchProps> = ({
           className
         )}
       >
-        <div className={`${isMobile ? 'space-y-3' : 'grid grid-cols-1 sm:grid-cols-6 gap-4'} w-full`}>
-          {isMobile ? (
-            <MobileSearchForm 
-              fromCity={fromCity}
-              toCity={toCity}
-              date={date}
-              onFromCityChange={handleFromCityChange}
-              onToCityChange={handleToCityChange}
-              onDateSelect={handleDateSelect}
-              onSubmit={handleSearch}
+        <div className={"grid grid-cols-1 sm:grid-cols-6 gap-4 w-full"}>
+          <div className="sm:col-span-2">
+            <AutocompleteInput
+              placeholder="From City"
+              value={fromCity}
+              onChange={handleFromCityChange}
+              className="w-full"
+              aria-label="From City"
             />
-          ) : (
-            <DesktopSearchForm 
-              fromCity={fromCity}
-              toCity={toCity}
-              date={date}
-              onFromCityChange={handleFromCityChange}
-              onToCityChange={handleToCityChange}
-              onDateSelect={handleDateSelect}
-              onSubmit={handleSearch}
+          </div>
+
+          <div className="sm:col-span-2">
+            <AutocompleteInput
+              placeholder="To City"
+              value={toCity}
+              onChange={handleToCityChange}
+              className="w-full"
+              aria-label="To City"
             />
-          )}
+          </div>
+
+          <div className="sm:col-span-1">
+            <DatePickerField 
+              date={date} 
+              onSelect={handleDateSelect}
+            />
+          </div>
+
+          <div className="sm:col-span-1">
+            <Button type="submit" className="w-full">
+              Search
+            </Button>
+          </div>
         </div>
       </form>
     </div>
