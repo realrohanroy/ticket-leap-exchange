@@ -30,7 +30,7 @@ const TicketForm: React.FC = () => {
     mode: "rail",
     fromCity: "",
     toCity: "",
-    travelDate: format(new Date(), "yyyy-MM-dd"),
+    travelDate: "",
     departureTime: "",
     ticketType: "Sleeper",
     trainOrBusName: "",
@@ -42,7 +42,7 @@ const TicketForm: React.FC = () => {
   };
   
   const [formData, setFormData] = useState<TicketFormData>(initialValues);
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>(undefined);
   
   const {
     errors,
@@ -170,7 +170,7 @@ const TicketForm: React.FC = () => {
         to_city: formData.toCity,
         travel_date: formData.travelDate,
         departure_time: formData.departureTime || null,
-        ticket_type: formData.ticketType,
+        ticket_type: formData.mode === "car" ? null : formData.ticketType,
         train_or_bus_name: formData.mode === "car" ? formData.carModel : formData.trainOrBusName,
         contact_info: fullContactInfo,
         view_count: 0,

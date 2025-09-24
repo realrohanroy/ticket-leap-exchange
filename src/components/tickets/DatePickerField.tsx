@@ -26,9 +26,10 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
   align = "start"
 }) => {
   const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
   
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -71,15 +72,18 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
         <Calendar
           mode="single"
           selected={date}
-          onSelect={onSelect}
+          onSelect={(d) => {
+            onSelect(d);
+            if (d) setOpen(false);
+          }}
           initialFocus
           className={cn(
             "border-0 pointer-events-auto",
             isMobile ? "p-4 text-base" : "p-4"
           )}
           modifiersClassNames={{
-            selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-            today: "font-bold bg-accent text-accent-foreground border border-primary"
+            selected: "bg-orange-500 text-white hover:bg-orange-500 hover:text-white focus:bg-orange-500 focus:text-white",
+            today: "font-bold bg-accent text-accent-foreground"
           }}
           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
           classNames={{
@@ -87,7 +91,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
               "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors",
               isMobile && "h-11 w-11 text-base touch-manipulation"
             ),
-            day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+            day_selected: "bg-orange-500 text-white hover:bg-orange-500 hover:text-white focus:bg-orange-500 focus:text-white",
             day_today: "bg-accent text-accent-foreground font-semibold",
             nav_button: cn(
               "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all",

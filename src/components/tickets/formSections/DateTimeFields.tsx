@@ -48,6 +48,8 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
     });
   }
 
+  const [open, setOpen] = React.useState(false);
+
   return (
     <div className="space-y-4 form-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -62,7 +64,7 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
           >
             Travel Date
           </Label>
-          <Popover>
+          <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <TouchFriendlyButton
                 variant="outline"
@@ -100,6 +102,7 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
                 selected={date}
                 onSelect={(d) => {
                   onDateSelect(d);
+                  if (d) setOpen(false);
                 }}
                 initialFocus
                 disabled={(date) =>
@@ -112,7 +115,7 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
                   day: cn(
                     "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors"
                   ),
-                  day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                  day_selected: "bg-orange-500 text-white hover:bg-orange-500 hover:text-white focus:bg-orange-500 focus:text-white",
                   day_today: "bg-accent text-accent-foreground font-semibold",
                   nav_button: cn(
                     "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all touch-manipulation"

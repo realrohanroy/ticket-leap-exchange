@@ -19,8 +19,7 @@ export const ticketFormSchema = z.object({
       return date >= today;
     }, 'Travel date must be today or in the future'),
   departureTime: z.string().optional(),
-  ticketType: z.string()
-    .min(1, 'Ticket type is required'),
+  ticketType: z.string().optional(),
   trainOrBusName: z.string().optional(),
   contactInfo: z.string()
     .min(10, 'Contact number must be at least 10 digits')
@@ -49,6 +48,15 @@ export const ticketFormSchema = z.object({
 }, {
   message: 'Train/Bus name is required for rail and bus travel',
   path: ['trainOrBusName']
+}).refine(data => {
+  // For rail/bus mode, ticket type is required
+  if (data.mode === 'rail' || data.mode === 'bus') {
+    return !!data.ticketType && data.ticketType.length > 0;
+  }
+  return true;
+}, {
+  message: 'Ticket type is required for rail and bus travel',
+  path: ['ticketType']
 }).refine(data => {
   // For car mode, car model and seats are required
   if (data.mode === 'car') {

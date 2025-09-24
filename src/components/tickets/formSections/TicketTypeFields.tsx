@@ -33,41 +33,37 @@ const TicketTypeFields: React.FC<TicketTypeFieldsProps> = ({
 }) => {
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="ticketType" className={cn(formErrors.ticketType && "text-destructive")}>
-            {mode === "car" ? "Car Type *" : "Ticket Type *"}
-          </Label>
-          <Select
-            value={ticketType}
-            onValueChange={onTicketTypeChange}
-          >
-            <SelectTrigger className={cn(formErrors.ticketType && "border-destructive")}>
-              <SelectValue placeholder={mode === "car" ? "Select car type" : "Select ticket type"} />
-            </SelectTrigger>
-            <SelectContent>
-              {mode === "rail"
-                ? ticketTypes.rail.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))
-                : mode === "bus"
-                  ? ticketTypes.bus.map((type) => (
+      <div className={"grid grid-cols-1 md:grid-cols-2 gap-4"}>
+        {mode !== "car" && (
+          <div className="space-y-2">
+            <Label htmlFor="ticketType" className={cn(formErrors.ticketType && "text-destructive")}>
+              Ticket Type *
+            </Label>
+            <Select
+              value={ticketType}
+              onValueChange={onTicketTypeChange}
+            >
+              <SelectTrigger className={cn(formErrors.ticketType && "border-destructive")}>
+                <SelectValue placeholder="Select ticket type" />
+              </SelectTrigger>
+              <SelectContent>
+                {mode === "rail"
+                  ? ticketTypes.rail.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
                       </SelectItem>
                     ))
-                  : ticketTypes.car.map((type) => (
+                  : ticketTypes.bus.map((type) => (
                       <SelectItem key={type} value={type}>
                         {type}
                       </SelectItem>
                     ))
-              }
-            </SelectContent>
-          </Select>
-          {formErrors.ticketType && <p className="text-xs text-destructive">Ticket type is required</p>}
-        </div>
+                }
+              </SelectContent>
+            </Select>
+            {formErrors.ticketType && <p className="text-xs text-destructive">Ticket type is required</p>}
+          </div>
+        )}
 
         <div className="space-y-2">
           <Label 

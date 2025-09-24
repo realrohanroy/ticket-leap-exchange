@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
     },
     allowedHosts: ["f2cc2b83-a2fe-4463-86dd-5d502f519bbd.lovableproject.com"],
   },
-  base: '/',
+  base: './',
   build: {
     outDir: 'dist',
     emptyOutDir: true,

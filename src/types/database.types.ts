@@ -34,7 +34,7 @@ export type Database = {
           to_city: string;
           travel_date: string;
           departure_time: string | null;
-          ticket_type: string;
+          ticket_type?: string; // made optional to allow car mode without type
           train_or_bus_name: string;
           price: number;
           contact_info: string;
@@ -56,7 +56,7 @@ export type Database = {
           to_city: string;
           travel_date: string;
           departure_time?: string | null;
-          ticket_type: string;
+          ticket_type?: string; // made optional to allow car mode without type
           train_or_bus_name: string;
           price?: number;
           contact_info: string;

@@ -18,8 +18,7 @@ export const cityOptions = maharashtraCities.map(city => ({
 // Ticket types by travel mode
 export const ticketTypes = {
   rail: ["Sleeper", "3AC", "2AC", "1AC", "Chair Car", "General"],
-  bus: ["Seater", "Semi-Sleeper", "Sleeper", "AC", "Non-AC"],
-  car: ["Economy", "Sedan", "SUV", "Luxury", "Mini-Van"]
+  bus: ["Seater", "Semi-Sleeper", "Sleeper", "AC", "Non-AC"]
 };
 
 // Country codes for contact fields
