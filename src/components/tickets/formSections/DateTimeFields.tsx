@@ -9,7 +9,6 @@ import { TouchFriendlyButton } from "@/components/common/TouchFriendlyButton";
 import { SelectedValueDisplay } from "@/components/common/SelectedValueDisplay";
 import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DateTimeFieldsProps {
   date?: Date;
@@ -28,7 +27,6 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
   onTimeToggle,
   formErrors
 }) => {
-  const isMobile = useIsMobile();
   
   // Create selected values for display
   const selectedValues = [];
@@ -68,7 +66,6 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
             <PopoverTrigger asChild>
               <TouchFriendlyButton
                 variant="outline"
-                isMobile={isMobile}
                 className={cn(
                   "w-full justify-start text-left font-normal bg-background",
                   !date && "text-muted-foreground",
@@ -81,20 +78,19 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
               >
                 <CalendarIcon className={cn(
                   "mr-2 flex-shrink-0",
-                  isMobile ? "h-5 w-5" : "h-4 w-4"
+                  "h-5 w-5"
                 )} />
                 <span className="truncate">
-                  {date ? format(date, isMobile ? "MMM d, yyyy" : "PPP") : "Pick a date"}
+                  {date ? format(date, "PPP") : "Pick a date"}
                 </span>
               </TouchFriendlyButton>
             </PopoverTrigger>
             <PopoverContent 
               className={cn(
-                "w-auto p-0 bg-white shadow-xl rounded-xl border",
-                isMobile && "mx-4 w-[calc(100vw-2rem)] max-w-sm"
+                "w-auto p-0 bg-white shadow-xl rounded-xl border"
               )} 
-              align={isMobile ? "center" : "start"}
-              side={isMobile ? "bottom" : "bottom"}
+              align="start"
+              side="bottom"
               sideOffset={8}
               avoidCollisions={true}
               collisionPadding={16}
@@ -102,28 +98,27 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
               <Calendar
                 mode="single"
                 selected={date}
-                onSelect={onDateSelect}
+                onSelect={(d) => {
+                  onDateSelect(d);
+                }}
                 initialFocus
                 disabled={(date) =>
                   date < new Date(new Date().setHours(0, 0, 0, 0))
                 }
                 className={cn(
-                  "border-0 pointer-events-auto",
-                  isMobile ? "p-4" : "p-3"
+                  "border-0 pointer-events-auto p-3"
                 )}
                 classNames={{
                   day: cn(
-                    "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors",
-                    isMobile && "h-11 w-11 text-base touch-manipulation"
+                    "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground rounded-md transition-colors"
                   ),
                   day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
                   day_today: "bg-accent text-accent-foreground font-semibold",
                   nav_button: cn(
-                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all touch-manipulation",
-                    isMobile && "h-10 w-10"
+                    "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-md transition-all touch-manipulation"
                   ),
                   caption: "flex justify-center pt-1 relative items-center",
-                  caption_label: isMobile ? "text-base font-semibold" : "text-sm font-medium"
+                  caption_label: "text-sm font-medium"
                 }}
               />
             </PopoverContent>
@@ -142,8 +137,7 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Clock className={cn(
-                "absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground",
-                isMobile ? "h-5 w-5" : "h-4 w-4"
+                "absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4"
               )} />
               <Input
                 id="departureTime"
@@ -152,8 +146,7 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
                 value={departureTime || ""}
                 onChange={onTimeChange}
                 className={cn(
-                  "pl-10 transition-all duration-200 focus-ring",
-                  isMobile && "min-h-[48px] text-base"
+                  "pl-10 transition-all duration-200 focus-ring"
                 )}
                 placeholder="HH:MM"
                 pattern="[0-9]{2}:[0-9]{2}"
@@ -165,7 +158,6 @@ const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={onTimeToggle}
-                isMobile={isMobile}
                 className="flex-shrink-0"
                 aria-label="Toggle AM/PM"
               >

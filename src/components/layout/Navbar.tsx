@@ -87,7 +87,7 @@ const Navbar = () => {
                 <Button variant="ghost">Search Seat</Button>
               </Link>
               <Button onClick={handleAuthClick}>
-                Login / Signup
+                Post Seat
               </Button>
             </>
           )}
@@ -129,7 +129,7 @@ const Navbar = () => {
                   handleAuthClick();
                 }}
               >
-                Login / Signup
+                Post Seat
               </Button>
             )}
           </div>

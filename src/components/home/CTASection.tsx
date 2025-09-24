@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import AuthModal from '@/components/auth/AuthModal';
 
@@ -12,9 +12,12 @@ interface CTASectionProps {
 const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
-  const handleSignUpClick = () => {
-    if (!isAuthenticated) {
+  const handlePostTicketClick = () => {
+    if (isAuthenticated) {
+      navigate('/post-ticket');
+    } else {
       setAuthModalOpen(true);
     }
   };
@@ -30,23 +33,13 @@ const CTASection: React.FC<CTASectionProps> = ({ isAuthenticated }) => {
             Join travelers across the country. Find seats or share your journey today.
           </p>
           <div className="mt-6 md:mt-8 flex flex-wrap justify-center gap-3 md:gap-4">
-            {!isAuthenticated ? (
-              <Button 
-                onClick={handleSignUpClick}
-                className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
-                size={isMobile ? "default" : "lg"}
-              >
-                Sign up for free
-              </Button>
-            ) : (
-              <Button 
-                asChild
-                className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
-                size={isMobile ? "default" : "lg"}
-              >
-                <Link to="/post-ticket">Post Your Seat</Link>
-              </Button>
-            )}
+            <Button 
+              onClick={handlePostTicketClick}
+              className="bg-white text-brand-blue hover:bg-blue-50 w-full md:w-auto"
+              size={isMobile ? "default" : "lg"}
+            >
+              Post Ticket
+            </Button>
             
             <Button 
               asChild

@@ -21,52 +21,52 @@ const TravelModeSelector: React.FC<TravelModeSelectorProps> = ({ mode, onModeCha
           className="flex flex-wrap gap-4 w-full"
         >
           <div className="flex-1 min-w-[120px]">
-            <div 
+            <Label
+              htmlFor="rail"
               className={cn(
-                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 w-full",
                 mode === "rail" ? "border-primary bg-primary/10" : "hover:bg-accent"
               )}
-              onClick={() => onModeChange("rail")}
               aria-label="Select Rail travel mode"
             >
               <RailSymbol className={cn("h-8 w-8", mode === "rail" ? "text-primary" : "text-muted-foreground")} />
               <div className="flex items-center gap-2">
-                <RadioGroupItem value="rail" id="rail" className="sr-only" />
-                <Label htmlFor="rail" className="font-medium cursor-pointer">Rail</Label>
+                <RadioGroupItem value="rail" id="rail" />
+                <span className="font-medium">Rail</span>
               </div>
-            </div>
+            </Label>
           </div>
           <div className="flex-1 min-w-[120px]">
-            <div 
+            <Label
+              htmlFor="bus"
               className={cn(
-                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 w-full",
                 mode === "bus" ? "border-primary bg-primary/10" : "hover:bg-accent"
               )}
-              onClick={() => onModeChange("bus")}
               aria-label="Select Bus travel mode"
             >
               <Bus className={cn("h-8 w-8", mode === "bus" ? "text-primary" : "text-muted-foreground")} />
               <div className="flex items-center gap-2">
-                <RadioGroupItem value="bus" id="bus" className="sr-only" />
-                <Label htmlFor="bus" className="font-medium cursor-pointer">Bus</Label>
+                <RadioGroupItem value="bus" id="bus" />
+                <span className="font-medium">Bus</span>
               </div>
-            </div>
+            </Label>
           </div>
           <div className="flex-1 min-w-[120px]">
-            <div 
+            <Label
+              htmlFor="car"
               className={cn(
-                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2",
+                "border rounded-lg p-4 cursor-pointer transition-all flex flex-col items-center justify-center gap-2 w-full",
                 mode === "car" ? "border-primary bg-primary/10" : "hover:bg-accent"
               )}
-              onClick={() => onModeChange("car")}
               aria-label="Select Car Pool travel mode"
             >
               <Car className={cn("h-8 w-8", mode === "car" ? "text-primary" : "text-muted-foreground")} />
               <div className="flex items-center gap-2">
-                <RadioGroupItem value="car" id="car" className="sr-only" />
-                <Label htmlFor="car" className="font-medium cursor-pointer">Car Pool</Label>
+                <RadioGroupItem value="car" id="car" />
+                <span className="font-medium">Car Pool</span>
               </div>
-            </div>
+            </Label>
           </div>
         </RadioGroup>
       </div>

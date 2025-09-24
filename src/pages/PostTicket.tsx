@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import TicketForm from '@/components/tickets/TicketForm';
@@ -13,14 +13,20 @@ import { useIsMobile } from '@/hooks/use-mobile';
 const PostTicket = () => {
   const { isAuthenticated, isLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [authModalOpen, setAuthModalOpen] = React.useState(false);
   const isMobile = useIsMobile();
+  
+  // Dev-only bypass to test posting form without signing in: add ?debug=1
+  const queryParams = new URLSearchParams(location.search);
+  const bypassAuth = import.meta.env.DEV && queryParams.get('debug') === '1';
+  const canAccess = isAuthenticated || bypassAuth;
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
+    if (!isLoading && !canAccess) {
       setAuthModalOpen(true);
     }
-  }, [isAuthenticated, isLoading]);
+  }, [canAccess, isLoading]);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -28,7 +34,7 @@ const PostTicket = () => {
       
       <main className="flex-1 py-4 md:py-10">
         <div className={`container ${isMobile ? 'px-4' : 'max-w-3xl'}`}>
-          {isAuthenticated ? (
+          {canAccess ? (
             <>
               {/* Mobile-optimized header */}
               <div className={`mb-6 ${isMobile ? 'text-center' : ''}`}>

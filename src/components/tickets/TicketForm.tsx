@@ -199,7 +199,7 @@ const TicketForm: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        <TravelModeSelector 
+        <TravelModeSelector
           mode={formData.mode as "rail" | "bus" | "car"}
           onModeChange={(mode) => handleSelectChange("mode", mode)}
         />
@@ -231,7 +231,7 @@ const TicketForm: React.FC = () => {
           onTrainBusNameChange={handleChange}
           onCarModelChange={handleChange}
           onSeatsChange={handleNumberChange}
-          formErrors={{ 
+          formErrors={{
             ticketType: !!errors.ticketType,
             trainOrBusName: !!errors.trainOrBusName,
             carModel: !!errors.carModel,
@@ -251,15 +251,15 @@ const TicketForm: React.FC = () => {
       </div>
 
       {submitError && (
-        <ErrorAlert 
+        <ErrorAlert
           message={submitError}
           onRetry={() => handleSubmit({ preventDefault: () => {} } as React.FormEvent)}
           onDismiss={resetSubmitError}
         />
       )}
 
-      <LoadingButton 
-        type="submit" 
+      <LoadingButton
+        type="submit"
         className={cn(
           "w-full mt-6 font-medium transition-all duration-200",
           "hover:shadow-lg focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
