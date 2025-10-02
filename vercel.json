@@ -33,7 +33,7 @@
       "source": "/(.*\\.mjs)$",
       "headers": [
         {
-          "key": "Content-Type",
+          "key": "Content-Type", 
           "value": "application/javascript; charset=utf-8"
         }
       ]
@@ -44,6 +44,15 @@
         {
           "key": "Content-Type",
           "value": "application/manifest+json"
+        }
+      ]
+    },
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"
         }
       ]
     }
