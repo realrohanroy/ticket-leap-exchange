@@ -11,9 +11,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 )
 
 // Register service worker for production
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.getRegistrations().then((registrations) => {
-    registrations.forEach((registration) => registration.unregister());
-  });
-}
+// if ("serviceWorker" in navigator) {
+//   navigator.serviceWorker.getRegistrations().then((registrations) => {
+//     registrations.forEach((registration) => registration.unregister());
+//   });
+// }
 
