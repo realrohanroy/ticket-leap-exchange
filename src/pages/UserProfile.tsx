@@ -4,11 +4,8 @@ import { useParams } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Ticket, User } from '@/types';
 import { supabase } from '@/integrations/supabase/client';
-import UserReviews from '@/components/reviews/UserReviews';
-import UserRatingBadge from '@/components/reviews/UserRatingBadge';
 import TicketList from '@/components/tickets/TicketList';
 
 const UserProfile = () => {
@@ -131,37 +128,23 @@ const UserProfile = () => {
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-center md:items-start gap-2">
-                  <div className="flex flex-col md:flex-row items-center gap-2">
-                    <h1 className="text-2xl font-bold">{user.name}</h1>
-                    <UserRatingBadge 
-                      rating={user.avgRating || null} 
-                      reviewCount={user.reviewCount || 0}
-                    />
-                  </div>
+                  <h1 className="text-2xl font-bold">{user.name}</h1>
                   <p className="text-muted-foreground">Member since {memberSinceYear}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Tabs defaultValue="reviews" className="mt-8">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="tickets">Active Tickets</TabsTrigger>
-            </TabsList>
-            <TabsContent value="reviews" className="mt-6">
-              <UserReviews userId={userId || ''} />
-            </TabsContent>
-            <TabsContent value="tickets" className="mt-6">
-              {userTickets.length > 0 ? (
-                <TicketList tickets={userTickets} />
-              ) : (
-                <div className="py-6 text-center text-muted-foreground border rounded-md bg-muted/10">
-                  No active tickets found
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+          <div className="mt-8">
+            <h2 className="text-xl font-bold mb-4">Active Tickets</h2>
+            {userTickets.length > 0 ? (
+              <TicketList tickets={userTickets} />
+            ) : (
+              <div className="py-6 text-center text-muted-foreground border rounded-md bg-muted/10">
+                No active tickets found
+              </div>
+            )}
+          </div>
         </div>
       </main>
     </div>

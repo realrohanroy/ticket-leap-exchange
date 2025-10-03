@@ -67,17 +67,3 @@ export type KeyTakeaway = {
   title: string;
   description: string;
 };
-
-// Review system types
-export type Review = {
-  id: string;
-  reviewerId: string;
-  reviewerName?: string;
-  reviewedUserId: string;
-  ticketId: string;
-  rating: number;
-  comment?: string;
-  createdAt: string;
-};
-
-export type ReviewFormData = Omit<Review, 'id' | 'reviewerId' | 'reviewerName' | 'createdAt'>;

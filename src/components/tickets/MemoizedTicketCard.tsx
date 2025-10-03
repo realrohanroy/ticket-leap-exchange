@@ -13,7 +13,6 @@ const MemoizedTicketCard: React.FC<MemoizedTicketCardProps> = React.memo(({ tick
   // Custom comparison function to optimize re-renders
   return (
     prevProps.ticket.id === nextProps.ticket.id &&
-    prevProps.ticket.viewCount === nextProps.ticket.viewCount &&
     prevProps.ticket.status === nextProps.ticket.status &&
     prevProps.onDelete === nextProps.onDelete
   );

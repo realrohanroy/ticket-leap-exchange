@@ -7,7 +7,6 @@ import TicketSearch from '@/components/tickets/TicketSearch';
 import HeroSection from '@/components/home/HeroSection';
 import StatSection from '@/components/home/StatSection';
 import HowItWorks from '@/components/home/HowItWorks';
-import TestimonialSection from '@/components/home/TestimonialSection';
 import CTASection from '@/components/home/CTASection';
 import { SearchFilters } from '@/types';
 import { useAuth } from '@/context/AuthContext';
@@ -38,8 +37,6 @@ const Index = () => {
       <StatSection />
       
       <HowItWorks />
-      
-      <TestimonialSection />
       
       <CTASection isAuthenticated={isAuthenticated} />
       
