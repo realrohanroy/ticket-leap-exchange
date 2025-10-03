@@ -149,9 +149,9 @@ export const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         isClearable
         isSearchable
         styles={customStyles}
-        menuPlacement="auto"
-        menuPosition={isMobile ? "fixed" : "absolute"}
-        menuPortalTarget={isMobile && typeof document !== 'undefined' ? document.body : null}
+        menuPlacement="bottom"
+        menuPosition="absolute"
+        menuShouldBlockScroll={isMobile}
         aria-label={ariaLabel}
         inputId={id}
         aria-invalid={ariaInvalid}
