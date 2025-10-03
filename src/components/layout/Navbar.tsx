@@ -69,7 +69,7 @@ const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem className="font-medium">
+                  <DropdownMenuItem onClick={() => navigate(`/user/${user?.id}`)}>
                     {user?.name || user?.email}
                   </DropdownMenuItem>
                   <DropdownMenuItem>
